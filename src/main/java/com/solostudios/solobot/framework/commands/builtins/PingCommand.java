@@ -20,8 +20,9 @@
 package com.solostudios.solobot.framework.commands.builtins;
 
 import com.solostudios.solobot.abstracts.AbstractCommand;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class PingCommand extends AbstractCommand {
 
@@ -44,7 +45,7 @@ public class PingCommand extends AbstractCommand {
     }
 
     @Override
-    public void run(MessageReceivedEvent event, Message message, String[] args) throws IllegalArgumentException {
+    public void run(MessageReceivedEvent event, @NotNull Message message, @NotNull String[] args) throws IllegalArgumentException {
 
         if (args.length > 1) {
             throw new IllegalArgumentException();

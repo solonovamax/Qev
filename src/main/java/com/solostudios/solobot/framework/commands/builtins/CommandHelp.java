@@ -22,10 +22,11 @@ package com.solostudios.solobot.framework.commands.builtins;
 import com.solostudios.solobot.abstracts.AbstractCategory;
 import com.solostudios.solobot.abstracts.AbstractCommand;
 import com.solostudios.solobot.framework.commands.CommandHandler;
-import com.solostudios.solobot.main.LogHandler;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import com.solostudios.solobot.framework.main.LogHandler;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.TreeMap;
@@ -44,7 +45,7 @@ public class CommandHelp extends AbstractCommand {
     }
 
     @Override
-    public void run(MessageReceivedEvent event, Message message, String[] args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, @NotNull String[] args) throws IllegalArgumentException {
 
         if (args.length < 2) {
             LogHandler.debug("Retrieving category list.");

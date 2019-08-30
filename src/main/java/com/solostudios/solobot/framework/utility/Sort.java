@@ -19,10 +19,13 @@
 
 package com.solostudios.solobot.framework.utility;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 
 public class Sort {
-    public static <T, V extends Comparable<V>> HashMap<T, V> sortByValue(HashMap<T, V> hm) {
+    @NotNull
+    public static <T, V extends Comparable<V>> HashMap<T, V> sortByValue(@NotNull HashMap<T, V> hm) {
         // Create a list from elements of HashMap
         List<Map.Entry<T, V>> list =
                 new LinkedList<>(hm.entrySet());
@@ -53,7 +56,8 @@ public class Sort {
         return fin;
     }
 
-    public static <T extends Comparable<T>, V> HashMap<T, V> sortByKey(HashMap<T, V> hm) {
+    @NotNull
+    public static <T extends Comparable<T>, V> HashMap<T, V> sortByKey(@NotNull HashMap<T, V> hm) {
         // Create a list from elements of HashMap
         List<Map.Entry<T, V>> list =
                 new LinkedList<>(hm.entrySet());

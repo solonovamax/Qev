@@ -19,31 +19,22 @@
 
 public class Main {
     public static void main(String[] args) {
-        /*
-
-        System.out.println(System.currentTimeMillis());
-        final String uriString = "mongodb://bot:tob@localhost:27017/GuildXP?authSource=admin";
-        MongoClient mongoClient = MongoClients.create(uriString);
-
-        MongoDatabase guildXP = mongoClient.getDatabase("GuildXP");
-        MongoCollection<Document> collection = guildXP.getCollection("GuildXP");
-
-        Document guild = collection.find(new Document("String", "s")).first();
-
-        System.out.println(new JSONObject(guild.toJson()).toString(4));
-        System.out.println(guild.values().toString());
-
-        System.out.println(toJSONObject(guild).toString(4));
-
-        System.out.println(toJSONObject(guild).getLong("Int64"));
-
-
-        mongoClient.close();
-
-         */
-
-
-        System.out.println(((int) ((System.currentTimeMillis() - (System.currentTimeMillis() - 500000000)) / 1000.00 / 60.00 / 60.00 * 100.00)) / 100.00 + " hours");
-
+        InterfaceUse.useInterface((x, y) -> {
+            for (int i = 0; i < x; i++) {
+                String[] arr = new String[10000];
+                for (int j = 0; j < 10000; j++) {
+                    arr[j] = new Object().toString();
+                }
+                if (i % 10 == 0) {
+                    System.out.println("[2:] " + Math.sin(i) + " " + Math.signum(i) + " " + Math.sqrt(i));
+                }
+            }
+        });
+        for (int i = 0; i < 100000; i++) {
+            if (i % 1000 == 0) {
+                System.out.println("[1:] " + Math.sin(i) + " " + Math.signum(i) + " " + Math.sqrt(i));
+            }
+        }
     }
+
 }

@@ -20,12 +20,14 @@
 package com.solostudios.solobot.commands.administrative;
 
 import com.solostudios.solobot.abstracts.AbstractCommand;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.EnumSet;
 import java.util.List;
 
 public class Ban extends AbstractCommand {
@@ -44,12 +46,12 @@ public class Ban extends AbstractCommand {
     }
 
     @Override
-    public void run(MessageReceivedEvent event, Message message, String[] args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, @NotNull String[] args) throws IllegalArgumentException {
         User author = event.getAuthor();
         List<Member> mentionedMembers = message.getMentionedMembers();
         Member mentionedMember = mentionedMembers.get(0);
 
-        List<Permission> permissions = event.getGuild().getMember(event.getJDA().getSelfUser()).getPermissions();
+        EnumSet<Permission> permissions = event.getGuild().getMember(event.getJDA().getSelfUser()).getPermissions();
         if (!(permissions.contains(Permission.KICK_MEMBERS) && permissions.contains(Permission.BAN_MEMBERS))) {
             message.getChannel().sendMessage("You must give me ban & kick permissions!").queue();
             return;
@@ -84,10 +86,10 @@ public class Ban extends AbstractCommand {
             }
             message.getChannel().sendMessage("Banned user " + mentionedMember.getAsMention() + "!\n" +
                     "For reason: `" + reason.toString() + "`").queue(); //Queue ban message
-            message.getGuild().getController().ban(mentionedMember, 7, reason.toString()).queue(); //Ban member.
+            message.getGuild().ban(mentionedMember, 7, reason.toString()).queue(); //Ban member.
         } else {
             message.getChannel().sendMessage("Banned user " + mentionedMember.getAsMention() + "!").queue(); //Queue ban message
-            message.getGuild().getController().ban(mentionedMember, 7).queue(); //Ban member.
+            message.getGuild().ban(mentionedMember, 7).queue(); //Ban member.
         }
 
     }

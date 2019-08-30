@@ -17,7 +17,7 @@
  *
  */
 
-package com.solostudios.solobot.main;
+package com.solostudios.solobot.framework.main;
 
 import com.solostudios.solobot.soloBOT;
 

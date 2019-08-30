@@ -17,25 +17,14 @@
  *
  */
 
-package com.solostudios.solobot.framework.utility;
+package com.solostudios.solobot.framework.main.MongoOperations;
 
-import org.bson.Document;
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
+import com.solostudios.solobot.framework.main.MongoGetOperation;
 
-import java.util.Map;
+public class MongoOperationContainer {
+    private MongoGetOperation operation;
 
-public final class MongoDBtoJSON {
-    @NotNull
-    public static final JSONObject toJSONObject(@NotNull Document document) {
-
-        JSONObject result = new JSONObject();
-
-        for (Map.Entry<String, Object> item : document.entrySet()) {
-            result.put(item.getKey(), item.getValue());
-        }
-
-        return result;
-
+    public MongoOperationContainer(MongoGetOperation op) {
+        operation = op;
     }
 }

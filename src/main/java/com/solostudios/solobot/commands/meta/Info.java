@@ -21,10 +21,11 @@ package com.solostudios.solobot.commands.meta;
 
 import com.solostudios.solobot.abstracts.AbstractCommand;
 import com.solostudios.solobot.soloBOT;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class Info extends AbstractCommand {
     public Info() {
@@ -36,22 +37,49 @@ public class Info extends AbstractCommand {
     }
 
     @Override
-    public void run(MessageReceivedEvent event, Message message, String[] args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, String[] args) throws IllegalArgumentException {
+
+        long tDiff = (System.currentTimeMillis() - (soloBOT.START_TIME));
+        int uMonths = (int) (tDiff / 1000 / 60 / 60 / 24 / 30.42);
+        int uDays = (int) (tDiff / 1000 / 60 / 60 / 24 % 30.42);
+        int uHours = (int) (tDiff / 1000 / 60 / 60 % 24);
+        int uMinutes = (int) (tDiff / 1000 / 60 % 60);
+        int uSeconds = (int) (tDiff / 1000 % 60);
+
+        String uptime = getUptime(uMonths, uDays, uHours, uMinutes, uSeconds);
+
         JDA jda = event.getJDA();
         JDA.ShardInfo shardInfo = jda.getShardInfo();
         int shardID = shardInfo.getShardId();
         int shardTotal = shardInfo.getShardTotal();
         message.getChannel().sendMessage(new EmbedBuilder()
                 .setTitle("soloBOT Shard #" + (shardID + 1) + " out of " + shardTotal)
-                .addField("# of servers", event.getJDA().getGuilds().size() + "", false)
+                .addField("Number of servers in this shard", event.getJDA().getGuilds().size() + "", false)
                 .addField("Github", "https://github.com/solonovamax/soloBOT", false)
-                .addField("Uptime: ",
-                        ((int) ((System.currentTimeMillis() - (soloBOT.START_TIME)) / 1000.00 / 60.00 / 60.00 * 100.00)) / 100.00 + " hours",
+                .addField("Uptime:",
+                        uptime,
                         false)
                 .addField("Support Server", soloBOT.SUPPORT_SERVER, false)
                 .setThumbnail(jda.getSelfUser().getAvatarUrl())
-                .setImage(jda.getSelfUser().getAvatarUrl())
                 .setFooter("By solonovamax#3163", "https://cdn.discordapp.com/avatars/195735703726981120/f6277c9582ee4509be2ab7094b340dec.png")
                 .build()).queue();
+    }
+
+    @NotNull
+    private String getUptime(int uMonths, int uDays, int uHours, int uMinutes, int uSeconds) {
+        return getWithPlural(uMonths, "month") + ", " +
+                getWithPlural(uDays, "day") + ", " +
+                getWithPlural(uHours, "hour") + ", " +
+                getWithPlural(uMinutes, "minute") + ", " +
+                getWithPlural(uSeconds, "second");
+    }
+
+    @NotNull
+    private String getWithPlural(int x, String name) {
+        if (x == 1) {
+            return x + " " + name;
+        } else {
+            return x + " " + name + "s";
+        }
     }
 }

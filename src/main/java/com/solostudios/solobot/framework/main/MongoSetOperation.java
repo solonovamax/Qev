@@ -17,25 +17,14 @@
  *
  */
 
-package com.solostudios.solobot.framework.utility;
+package com.solostudios.solobot.framework.main;
 
+import com.mongodb.client.MongoCollection;
 import org.bson.Document;
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
 
-import java.util.Map;
+import java.util.concurrent.Exchanger;
 
-public final class MongoDBtoJSON {
-    @NotNull
-    public static final JSONObject toJSONObject(@NotNull Document document) {
-
-        JSONObject result = new JSONObject();
-
-        for (Map.Entry<String, Object> item : document.entrySet()) {
-            result.put(item.getKey(), item.getValue());
-        }
-
-        return result;
-
-    }
+@FunctionalInterface
+public interface MongoSetOperation {
+    void run(MongoCollection<Document> userData, Long guildID, Long userID, Exchanger ex);
 }

@@ -22,25 +22,31 @@ package com.solostudios.solobot;
 import com.solostudios.solobot.framework.commands.CommandHandler;
 import com.solostudios.solobot.framework.commands.CommandListener;
 import com.solostudios.solobot.framework.events.EventHandler;
+import com.solostudios.solobot.framework.main.LogHandler;
+import com.solostudios.solobot.framework.main.MongoDBInterface;
+import com.solostudios.solobot.framework.main.Settings;
 import com.solostudios.solobot.framework.utility.GameSwitcher;
-import com.solostudios.solobot.main.LogHandler;
-import com.solostudios.solobot.main.Settings;
-import com.solostudios.solobot.main.StatsHandler;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
 import javax.security.auth.login.LoginException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class soloBOT {
+
+    @Nullable
     public static final JSONObject settings = Settings.get(); //Can be accessed by other classes to allow for global settings check, Cannot be changed though.
+    public static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(10);
     public static final long START_TIME = System.currentTimeMillis(); //Might use this for an uptime command.
     public static final int shardCount = 3;
-    public static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-    public static StatsHandler level; //Create level handler. This object can be access by any class to allow commands to check levels.
+    @NotNull
+    public static ExecutorService threadPool = Executors.newFixedThreadPool(10);
     public static String DEFAULT_STATUS;
     public static String PREFIX;
     public static boolean DEBUG;
@@ -53,7 +59,7 @@ public class soloBOT {
     public static void main(String[] args) {
 
         LogHandler.info("Initializing level handler.");
-        level = new StatsHandler();
+        new MongoDBInterface();
 
         //Loads settings from the file.
         PREFIX = settings.getString("prefix");
@@ -61,7 +67,7 @@ public class soloBOT {
         DEBUG = settings.getBoolean("debug");
         SUPPORT_SERVER = settings.getString("supportServer");
 
-        LogHandler.info("Registering on DiscordBotList");
+        //LogHandler.info("Registering on DiscordBotList");
 
         /*
         dblapi = new DiscordBotListAPI.Builder()
@@ -93,8 +99,7 @@ public class soloBOT {
 
         //Add listeners for commands and assorted events, respectively.
         LogHandler.info("--- Attaching Listeners ---");
-        shardBuilder.addEventListener(new CommandListener());
-        shardBuilder.addEventListener(new EventHandler());
+        shardBuilder.addEventListeners(new CommandListener(), new EventHandler());
 
         LogHandler.info("--- Sharding Bot ---");
         for (int i = 0; i < shardCount; i++) {
@@ -109,5 +114,14 @@ public class soloBOT {
                 LogHandler.fatal("You token is not valid!");
             }
         }
+
+        executor.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                System.gc();
+            }
+        }, 10L, 10L, TimeUnit.MINUTES);
+
+
     }
 }

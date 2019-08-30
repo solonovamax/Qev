@@ -20,10 +20,11 @@
 package com.solostudios.solobot.commands.administrative;
 
 import com.solostudios.solobot.abstracts.AbstractCommand;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageHistory;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageHistory;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -43,8 +44,13 @@ public class Clear extends AbstractCommand {
     }
 
     @Override
-    public void run(MessageReceivedEvent event, Message message, String[] args) throws IllegalArgumentException {
+    public void run(MessageReceivedEvent event, @NotNull Message message, String[] args) throws IllegalArgumentException {
         message.delete().complete();
+
+        if (!event.getGuild().getMember(message.getAuthor()).getPermissions().contains(Permission.MESSAGE_MANAGE)) { //Check if the user can ban members.
+            message.getChannel().sendMessage("You have insufficient permissions\n" + message.getAuthor().getAsMention()).queue();
+            return;
+        }
 
         int len;
         try {

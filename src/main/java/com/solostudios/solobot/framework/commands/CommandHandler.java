@@ -21,14 +21,13 @@ package com.solostudios.solobot.framework.commands;
 
 import com.solostudios.solobot.abstracts.AbstractCategory;
 import com.solostudios.solobot.abstracts.AbstractCommand;
-import com.solostudios.solobot.main.LogHandler;
+import com.solostudios.solobot.framework.main.LogHandler;
 import com.solostudios.solobot.soloBOT;
 import javassist.bytecode.DuplicateMemberException;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
@@ -39,8 +38,11 @@ import java.util.Set;
 
 public class CommandHandler {
 
+    @NotNull
     public static HashMap<String, AbstractCommand> executedCommandList = new HashMap<>();
+    @NotNull
     public static HashMap<String, AbstractCommand> commandList = new HashMap<>();
+    @NotNull
     public static HashMap<AbstractCategory, HashMap<String, AbstractCommand>> categoryList = new HashMap<>();
 
     public CommandHandler() {
@@ -65,7 +67,7 @@ public class CommandHandler {
                 categoryList.put(c, new HashMap<>());
                 LogHandler.info("Command " + category.getName() + " successfully added.");
 
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            } catch (@NotNull InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 e.printStackTrace();
             }
         }
@@ -96,7 +98,7 @@ public class CommandHandler {
                 addCommand(c, c.getName(), c.getAliases());
                 LogHandler.info("Command " + command.getName() + " successfully added.");
 
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            } catch (@NotNull InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 e.printStackTrace();
             } catch (DuplicateMemberException e) {
                 LogHandler.warning("Rejecting " + command.getName() + ", as there is already a command with that name or alias in the command list.\n" +
@@ -130,7 +132,7 @@ public class CommandHandler {
                 addCommand(c, c.getName(), c.getAliases());
                 LogHandler.info("Command " + command.getName() + " successfully added.");
 
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            } catch (@NotNull InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 e.printStackTrace();
             } catch (DuplicateMemberException e) {
                 LogHandler.warning("Rejecting " + command.getName() + ", as there is already a command with that name or alias in the command list.\n" +
@@ -142,70 +144,49 @@ public class CommandHandler {
     }
 
 
-    public static void parseMessage(MessageReceivedEvent event, Message msg) {
+    public static void parseMessage(@NotNull MessageReceivedEvent event, @NotNull Message msg, String[] args) {
 
-        if (!event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).hasPermission(Permission.MESSAGE_WRITE)) {
-            event.getAuthor().openPrivateChannel().queue(pms -> {
-                pms.sendMessage("I do not have permission to post messages in chat.\n" +
-                        "Please contact the server owner, and request them to give me this permission, if you wish to use any of the functionality of this bot.").queue();
-            });
-            return;
-        }
-
-
-        JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
-        int shardId = shardInfo.getShardId();
-        int shardTotal = shardInfo.getShardTotal();
-
-        LogHandler.debug("Received message from shard " + (shardId + 1) + "/" + shardTotal + ". Attempting to parse.");
-
-        String[] args = msg.getContentRaw().toLowerCase().split(" ");
-        args[0] = args[0].replace(soloBOT.PREFIX, "");
-
-        if (args[args.length - 1].equals("-hide")) {
-            if (event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).getPermissions().contains(Permission.MESSAGE_MANAGE)) {
-                msg.delete().queue();
-            } else {
-                msg.getChannel().sendMessage("I do not have permission to delete messages.\n" +
-                        "Please contact the admins/owners of this server if you think this is a mistake.").queue();
-            }
-        }
 
         AbstractCommand command = executedCommandList.get(args[0]);
-        if (command != null) {
-            LogHandler.debug("Message contains valid command. Attempting to run " + command.getName());
-            try {
-                if (event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).hasPermission(event.getTextChannel(), command.getPermissions())) {
-                    command.run(event, msg, args);
-                    LogHandler.debug(command.getName() + " command run properly.");
-                } else {
-                    event.getChannel().sendMessage("Insufficient permissions.\n" +
-                            "I require the " + command.getPermissions().getName() + " permission to run this command.").queue();
-                }
-            } catch (IllegalArgumentException e) {
-                LogHandler.debug("Command syntax is illegal! Returning usage message.");
-                StringBuilder aliases = new StringBuilder();
-                for (String alias : command.getAliases()) {
-                    aliases.append("\n `").append(alias).append("`");
-                }
 
-                msg.getChannel().sendMessage(new EmbedBuilder()
-                        .setTitle("Incorrect syntax!")
-                        .addField(command.getName().toUpperCase(), "", false)
-                        .addField("Usage:", "`" + command.getUsage() + "`", false)
-                        .addField("Aliases: `", aliases.toString() + "`", false)
-                        .setColor(0x0084ff)
-                        .build())
-                        .queue();
-            } catch (Exception e) {
-                e.printStackTrace();
+        Thread commandThread = new Thread(() -> {
+            if (command != null) {
+                LogHandler.debug("Message contains valid command. Attempting to run " + command.getName());
+                try {
+                    if (event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).hasPermission(event.getTextChannel(), command.getPermissions())) {
+                        command.run(event, msg, args);
+                        LogHandler.debug(command.getName() + " command run properly.");
+                    } else {
+                        event.getChannel().sendMessage("Insufficient permissions.\n" +
+                                "I require the " + command.getPermissions().getName() + " permission to run this command.").queue();
+                    }
+                } catch (IllegalArgumentException e) {
+                    LogHandler.debug("Command syntax is illegal! Returning usage message.");
+                    StringBuilder aliases = new StringBuilder();
+                    for (String alias : command.getAliases()) {
+                        aliases.append("\n `").append(alias).append("`");
+                    }
+
+                    msg.getChannel().sendMessage(new EmbedBuilder()
+                            .setTitle("Incorrect syntax!")
+                            .addField(command.getName().toUpperCase(), "", false)
+                            .addField("Usage:", "`" + command.getUsage() + "`", false)
+                            .addField("Aliases: `", aliases.toString() + "`", false)
+                            .setColor(0x0084ff)
+                            .build())
+                            .queue();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }
+        });
+
+        soloBOT.threadPool.execute(commandThread);
 
 
     }
 
-    private static void addCommand(AbstractCommand command, String name, String... aliases) throws DuplicateMemberException {
+    private static void addCommand(@NotNull AbstractCommand command, String name, @NotNull String... aliases) throws DuplicateMemberException {
 
         if (executedCommandList.get(name) != null) {
             throw new DuplicateMemberException("");
@@ -235,14 +216,17 @@ public class CommandHandler {
         }
     }
 
+    @NotNull
     public static HashMap<String, AbstractCommand> getCommandList() {
         return commandList;
     }
 
+    @NotNull
     public static HashMap<String, AbstractCommand> getExecutedCommandList() {
         return executedCommandList;
     }
 
+    @NotNull
     public static HashMap<AbstractCategory, HashMap<String, AbstractCommand>> getCategoryList() {
         return categoryList;
     }

@@ -17,25 +17,6 @@
  *
  */
 
-package com.solostudios.solobot.framework.utility;
-
-import org.bson.Document;
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
-
-import java.util.Map;
-
-public final class MongoDBtoJSON {
-    @NotNull
-    public static final JSONObject toJSONObject(@NotNull Document document) {
-
-        JSONObject result = new JSONObject();
-
-        for (Map.Entry<String, Object> item : document.entrySet()) {
-            result.put(item.getKey(), item.getValue());
-        }
-
-        return result;
-
-    }
+public interface InterfaceTest {
+    void run(int x, int y);
 }

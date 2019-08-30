@@ -19,8 +19,8 @@
 
 package com.solostudios.solobot.framework.utility;
 
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Activity;
 
 public class GameSwitcher extends Thread {
     private JDA shard;
@@ -33,9 +33,7 @@ public class GameSwitcher extends Thread {
     public void run() {
         int index = (int) Math.round(Math.random() * (Presence.values().length - 1));
         Presence p = Presence.values()[index];
-        Game.GameType gameType = p.getGameType();
-        String action = p.getAction();
-        shard.getPresence().setGame(Game.of(gameType, action));
+        Activity.of(p.getGameType(), p.getAction());
     }
 }
 

@@ -20,12 +20,13 @@
 package com.solostudios.solobot.commands.administrative;
 
 import com.solostudios.solobot.abstracts.AbstractCommand;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.EnumSet;
 
 public class Kick extends AbstractCommand {
     public Kick() {
@@ -43,9 +44,9 @@ public class Kick extends AbstractCommand {
     }
 
     @Override
-    public void run(MessageReceivedEvent event, Message message, String[] args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, String[] args) throws IllegalArgumentException {
 
-        List<Permission> permissions = event.getGuild().getMember(event.getJDA().getSelfUser()).getPermissions();
+        EnumSet<Permission> permissions = event.getGuild().getMember(event.getJDA().getSelfUser()).getPermissions();
         if (!(permissions.contains(Permission.KICK_MEMBERS) && permissions.contains(Permission.BAN_MEMBERS))) {
             message.getChannel().sendMessage("You must give me ban & kick permissions!").queue();
             return;
@@ -73,6 +74,6 @@ public class Kick extends AbstractCommand {
         }
 
         message.getChannel().sendMessage("Banned user " + message.getMentionedMembers().get(0).getAsMention() + "!").queue(); //Queue ban message
-        message.getGuild().getController().kick(message.getMentionedMembers().get(0)).queue(); //Ban member.
+        message.getGuild().kick(message.getMentionedMembers().get(0)).queue(); //Ban member.
     }
 }

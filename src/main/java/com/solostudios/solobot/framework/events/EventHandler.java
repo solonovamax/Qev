@@ -19,24 +19,25 @@
 
 package com.solostudios.solobot.framework.events;
 
-import com.solostudios.solobot.main.StatsHandler;
-import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import com.solostudios.solobot.framework.main.MongoDBInterface;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 
 public class EventHandler extends ListenerAdapter {
 
 
     @Override
-    public void onGuildJoin(GuildJoinEvent e) {
-        StatsHandler.guildJoinEvent(e); //Forward guild join event to the Level Handler.
+    public void onGuildJoin(@NotNull GuildJoinEvent e) {
+        MongoDBInterface.guildJoinEvent(e); //Forward guild join event to the Level Handler.
     }
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.getGuild() == null)
             return;
 
-        StatsHandler.messageEvent(event); //Forward message receive event to the Level Handler.
+        MongoDBInterface.messageEvent(event); //Forward message receive event to the Level Handler.
     }
 }

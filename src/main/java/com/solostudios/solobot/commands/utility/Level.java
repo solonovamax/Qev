@@ -20,11 +20,16 @@
 package com.solostudios.solobot.commands.utility;
 
 import com.solostudios.solobot.abstracts.AbstractCommand;
-import com.solostudios.solobot.main.StatsHandler;
-import com.solostudios.solobot.main.UserStats;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import com.solostudios.solobot.framework.main.MongoDBInterface;
+import com.solostudios.solobot.framework.main.UserStats;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
+import java.util.concurrent.Exchanger;
 
 public class Level extends AbstractCommand {
 
@@ -39,11 +44,8 @@ public class Level extends AbstractCommand {
     }
 
     @Override
-    public void run(MessageReceivedEvent event, Message message, String[] args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, @NotNull String[] args) throws IllegalArgumentException {
         User author = event.getAuthor();
-
-
-        UserStats stats;
         User user;
         if (args.length > 1) {
             try {
@@ -54,9 +56,26 @@ public class Level extends AbstractCommand {
         } else {
             user = author;
         }
+        Exchanger exchanger = new Exchanger<>();
 
-        stats = StatsHandler.getUserStats(user, message.getGuild());
-        message.getChannel().sendMessage("User " + user.getAsMention() + " has " + stats.getXP() + " xp!").queue();
+        EmbedBuilder embed = (EmbedBuilder) MongoDBInterface.get((gDoc, uID, ex) -> {
+            UserStats stats = new UserStats(gDoc, uID);
+            // (int) (((455.0/6)* xp) + (22.5*Math.pow(xp, 2.0)) + ((5/3)*Math.pow(xp, 3.0)));
+            EmbedBuilder em = new EmbedBuilder()
+                    .addField("level",
+                            Integer.toString(stats.getLevel()),
+                            false)
+                    .addField("xp",
+                            Integer.toString(stats.getLevelXP()),
+                            false)
+                    .setColor(Color.ORANGE);
+            return em;
+        }, message.getGuild().getIdLong(), user.getIdLong(), exchanger);
 
+
+        message.getChannel().sendMessage(embed.build()).queue();
+
+        //5 * (lvl ^ 2) + 50 * lvl + 100
+        //((455.0/6)*xp) + (22.5*xp^2) + ((5/3)*xp^3)
     }
 }

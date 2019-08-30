@@ -20,18 +20,17 @@
 package com.solostudios.solobot.commands.utility;
 
 import com.solostudios.solobot.abstracts.AbstractCommand;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import com.solostudios.solobot.framework.main.MongoDBInterface;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.bson.Document;
-import org.json.JSONObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.solostudios.solobot.framework.utility.MongoDBtoJSON.toJSONObject;
 import static com.solostudios.solobot.framework.utility.Sort.sortByValue;
-import static com.solostudios.solobot.main.StatsHandler.getGuild;
 
 public class Rank extends AbstractCommand {
     public Rank() {
@@ -45,14 +44,14 @@ public class Rank extends AbstractCommand {
     }
 
     @Override
-    public void run(MessageReceivedEvent event, Message message, String[] args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, String[] args) throws IllegalArgumentException {
         HashMap<String, Integer> leaderBoard = new HashMap<>();
 
-        for (Map.Entry<String, Object> entry : getGuild(message.getGuild()).toMap().entrySet()) {
+        for (Map.Entry<String, Object> entry : MongoDBInterface.getGuild(message.getGuild()).entrySet()) {
             if (!(entry.getValue() instanceof Document))
                 continue;
-            JSONObject entryValue = toJSONObject((Document) entry.getValue());
-            leaderBoard.put(event.getJDA().getUserById(entryValue.getString("userIDString")).getId(), entryValue.getInt("xp"));
+            Document entryValue = (Document) entry.getValue();
+            leaderBoard.put(event.getJDA().getUserById(entryValue.getString("userIDString")).getId(), entryValue.getInteger("xp"));
         }
 
         leaderBoard = sortByValue(leaderBoard);

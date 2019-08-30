@@ -17,8 +17,9 @@
  *
  */
 
-package com.solostudios.solobot.main;
+package com.solostudios.solobot.framework.main;
 
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -38,6 +39,7 @@ public class Settings {
      *
      * @return returns JSON settings object.
      */
+    @Nullable
     public static JSONObject get() {
         if (!settings.exists()) {
             LogHandler.info("Settings file does not exist.\n" +

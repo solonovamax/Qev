@@ -20,11 +20,10 @@
 package com.solostudios.solobot.commands.utility;
 
 import com.solostudios.solobot.abstracts.AbstractCommand;
-import com.solostudios.solobot.main.StatsHandler;
-import com.solostudios.solobot.main.UserStats;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class FirstMessage extends AbstractCommand {
 
@@ -34,14 +33,13 @@ public class FirstMessage extends AbstractCommand {
                 "Returns the first message of a given user",
                 "firstmessage \n" +
                         "firstmessage {user}",
-                true);
+                false);
     }
 
     @Override
-    public void run(MessageReceivedEvent event, Message message, String[] args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, @NotNull String[] args) throws IllegalArgumentException {
         User author = event.getAuthor();
 
-        UserStats stats;
         User user;
         if (args.length > 1) {
             try {
@@ -53,7 +51,6 @@ public class FirstMessage extends AbstractCommand {
             user = author;
         }
 
-        stats = StatsHandler.getUserStats(user, message.getGuild());
-        message.getChannel().sendMessage(user.getAsMention() + "'s first message was " + stats.getUserData().getString("firstMessage")).queue();
+        message.getChannel().sendMessage(user.getAsMention() + "**'s first message was** " + message.getGuild()).queue();
     }
 }

@@ -20,12 +20,14 @@
 package com.solostudios.solobot.framework.utility;
 
 import org.bson.Document;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.util.Map;
 
 public final class JSONtoMongoDB {
-    public static final Document toDocument(JSONObject jsonObject) {
+    @NotNull
+    public static final Document toDocument(@NotNull JSONObject jsonObject) {
 
         Document result = new Document();
 

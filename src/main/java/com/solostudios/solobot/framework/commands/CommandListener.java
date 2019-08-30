@@ -19,16 +19,20 @@
 
 package com.solostudios.solobot.framework.commands;
 
+import com.solostudios.solobot.framework.main.LogHandler;
 import com.solostudios.solobot.soloBOT;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 
 public class CommandListener extends ListenerAdapter {
 
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.getGuild() == null) {
             return;
         }
@@ -37,6 +41,34 @@ public class CommandListener extends ListenerAdapter {
         if (!message.getContentDisplay().startsWith(soloBOT.PREFIX) || message.getAuthor().isBot())
             return;
 
-        CommandHandler.parseMessage(event, message);
+        if (!event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).hasPermission(Permission.MESSAGE_WRITE)) {
+            event.getAuthor().openPrivateChannel().queue(pms -> {
+                pms.sendMessage("I do not have permission to post messages in chat.\n" +
+                        "Please contact the server owner, and request them to give me this permission, if you wish to use any of the functionality of this bot.").queue();
+            });
+            return;
+        }
+
+
+        JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
+
+        LogHandler.debug("Received message from shard " + (shardInfo.getShardId() + 1) + "/" + shardInfo.getShardTotal() + ". Attempting to parse.");
+
+        String[] args = message.getContentRaw().toLowerCase().split(" ");
+        args[0] = args[0].replace(soloBOT.PREFIX, "");
+
+
+        CommandHandler.parseMessage(event, message, args);
+
+        if (args[args.length - 1].equals("-hide")) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            message.getTextChannel().retrieveMessageById(message.getId()).queue(msg -> msg.delete().queue(), error -> {
+            });
+        }
     }
 }

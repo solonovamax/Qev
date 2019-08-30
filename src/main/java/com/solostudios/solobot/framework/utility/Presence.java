@@ -20,34 +20,36 @@
 package com.solostudios.solobot.framework.utility;
 
 import com.solostudios.solobot.soloBOT;
-import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.api.entities.Activity;
 
 public enum Presence {
-    helpI(Game.GameType.DEFAULT, "Type !help for help."),
-    helpII(Game.GameType.DEFAULT, "Type !help for help."),
-    helpIII(Game.GameType.DEFAULT, "Type !help for help."),
-    helpIV(Game.GameType.DEFAULT, "Type !help for help."),
-    writtenI(Game.GameType.DEFAULT, "Written by solonovamax#3163"),
-    writtenII(Game.GameType.DEFAULT, "Written by solonovamax#3163"),
-    infoI(Game.GameType.DEFAULT, "Type !info."),
-    infoII(Game.GameType.DEFAULT, "Type !info."),
-    anime(Game.GameType.WATCHING, "Anime"),
-    serverI(Game.GameType.DEFAULT, soloBOT.SUPPORT_SERVER),
-    serverII(Game.GameType.DEFAULT, soloBOT.SUPPORT_SERVER),
-    videoGames(Game.GameType.DEFAULT, "Video Games"),
-    technoblade(Game.GameType.WATCHING, "Technoblade win minecraft mondays."),
-    minecraft(Game.GameType.DEFAULT, "Minecraft"),
-    urmom(Game.GameType.DEFAULT, "With your mom.");
+    helpI(Activity.ActivityType.DEFAULT, "Type !help for help."),
+    helpII(Activity.ActivityType.DEFAULT, "Type !help for help."),
+    helpIII(Activity.ActivityType.DEFAULT, "Type !help for help."),
+    helpIV(Activity.ActivityType.DEFAULT, "Type !help for help."),
+    writtenI(Activity.ActivityType.DEFAULT, "Written by solonovamax#3163"),
+    writtenII(Activity.ActivityType.DEFAULT, "Written by solonovamax#3163"),
+    infoI(Activity.ActivityType.DEFAULT, "Type !info."),
+    infoII(Activity.ActivityType.DEFAULT, "Type !info."),
+    anime(Activity.ActivityType.WATCHING, "Anime"),
+    serverI(Activity.ActivityType.DEFAULT, soloBOT.SUPPORT_SERVER),
+    serverII(Activity.ActivityType.DEFAULT, soloBOT.SUPPORT_SERVER),
+    videoGames(Activity.ActivityType.DEFAULT, "Video Games"),
+    technoblade(Activity.ActivityType.WATCHING, "Technoblade win minecraft mondays."),
+    minecraft(Activity.ActivityType.DEFAULT, "Minecraft"),
+    urmom(Activity.ActivityType.DEFAULT, "With your mom."),
+    codeI(Activity.ActivityType.DEFAULT, "With some lines of code"),
+    codeII(Activity.ActivityType.DEFAULT, "With some code");
 
-    private final Game.GameType gameType;   // in kilograms
+    private final Activity.ActivityType gameType;   // in kilograms
     private final String action; // in meters
 
-    Presence(Game.GameType gameType, String action) {
+    Presence(Activity.ActivityType gameType, String action) {
         this.gameType = gameType;
         this.action = action;
     }
 
-    public Game.GameType getGameType() {
+    public Activity.ActivityType getGameType() {
         return gameType;
     }
 

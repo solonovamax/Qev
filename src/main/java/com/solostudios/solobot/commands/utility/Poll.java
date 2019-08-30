@@ -20,10 +20,11 @@
 package com.solostudios.solobot.commands.utility;
 
 import com.solostudios.solobot.abstracts.AbstractCommand;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.OffsetDateTime;
 import java.util.regex.MatchResult;
@@ -50,7 +51,7 @@ public class Poll extends AbstractCommand {
                 "Utility",
                 "Generates a poll.\n" +
                         "You may have up to 10 answers.",
-                "poll \"{question}\" {[\"answer\"] [\"answer\"] . . .}",
+                "poll \"{question}\" [\"{answer}\" \"{answer}\" . . .]",
                 true);
     }
 
@@ -60,7 +61,7 @@ public class Poll extends AbstractCommand {
     }
 
     @Override
-    public void run(MessageReceivedEvent messageReceivedEvent, Message message, String[] args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent messageReceivedEvent, @NotNull Message message, String[] args) throws IllegalArgumentException {
 
         String[] items = Pattern.compile("\"(.*?)\"")
                 .matcher(message.getContentRaw())
@@ -68,6 +69,8 @@ public class Poll extends AbstractCommand {
                 .map(MatchResult::group)
                 .toArray(String[]::new);
 
+        for (int i = 0; i < items.length; i++)
+            items[i] = items[i].replace("\"", "");
 
         if (items.length < 3 || items.length > 10)
             throw new IllegalArgumentException();

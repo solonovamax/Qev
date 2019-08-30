@@ -20,20 +20,18 @@
 package com.solostudios.solobot.commands.utility;
 
 import com.solostudios.solobot.abstracts.AbstractCommand;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import com.solostudios.solobot.framework.main.MongoDBInterface;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.bson.Document;
-import org.json.JSONObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.solostudios.solobot.framework.utility.MongoDBtoJSON.toJSONObject;
 import static com.solostudios.solobot.framework.utility.Sort.sortByValue;
-import static com.solostudios.solobot.main.StatsHandler.getGuild;
 
 public class Leaderboards extends AbstractCommand {
     public Leaderboards() {
@@ -46,27 +44,28 @@ public class Leaderboards extends AbstractCommand {
     }
 
     @Override
-    public void run(MessageReceivedEvent event, Message message, String[] args) throws IllegalArgumentException {
-        HashMap<String, Integer> leaderBoard = new HashMap<>();
+    public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, String[] args) throws IllegalArgumentException {
+        LinkedHashMap<String, Integer> leaderboard = (LinkedHashMap) MongoDBInterface.get((guild, ignore, ex) -> {
+            LinkedHashMap<String, Integer> leaderBoard = new LinkedHashMap<>();
+            for (Map.Entry<String, Object> entry : guild.entrySet()) {
+                if (!(entry.getValue() instanceof Document))
+                    continue;
 
-        Map<String, Object> guildMap = getGuild(message.getGuild()).toMap();
-        for (Map.Entry<String, Object> entry : guildMap.entrySet()) {
-            if (!(entry.getValue() instanceof Document))
-                continue;
+                Document entryValue = (Document) entry.getValue();
 
-            JSONObject entryValue = toJSONObject((Document) entry.getValue());
-            User user = event.getJDA().getUserById(entryValue.getString("userIDString"));
+                leaderBoard.put(event.getJDA().getUserById(entryValue.getString("userIDString")).getAsTag(), entryValue.getInteger("xp"));
+            }
 
-            leaderBoard.put(user.getId(), entryValue.getInt("xp"));
-        }
+            return sortByValue(leaderBoard);
 
-        leaderBoard = sortByValue(leaderBoard);
+        }, message.getGuild().getIdLong(), 0L);
 
+        assert leaderboard != null;
         EmbedBuilder topTen = new EmbedBuilder()
                 .setColor(Color.YELLOW)
                 .setTitle("Top 10 Users");
         int nOfUsers = 0;
-        for (Map.Entry<String, Integer> entry : leaderBoard.entrySet()) {
+        for (Map.Entry<String, Integer> entry : leaderboard.entrySet()) {
             nOfUsers++;
 
             if (nOfUsers <= 10) {

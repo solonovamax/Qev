@@ -17,25 +17,24 @@
  *
  */
 
-package com.solostudios.solobot.framework.utility;
+package com.solostudios.solobot.commands.administrative;
 
-import org.bson.Document;
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
+import com.solostudios.solobot.abstracts.AbstractCommand;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import java.util.Map;
+public class Mute extends AbstractCommand {
+    public Mute() {
+        super("",
+                "",
+                "",
+                "",
+                false,
+                "");
+    }
 
-public final class MongoDBtoJSON {
-    @NotNull
-    public static final JSONObject toJSONObject(@NotNull Document document) {
-
-        JSONObject result = new JSONObject();
-
-        for (Map.Entry<String, Object> item : document.entrySet()) {
-            result.put(item.getKey(), item.getValue());
-        }
-
-        return result;
+    @Override
+    public void run(MessageReceivedEvent messageReceivedEvent, Message message, String[] args) throws IllegalArgumentException {
 
     }
 }
