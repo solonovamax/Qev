@@ -17,24 +17,65 @@
  *
  */
 
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Random;
+
 public class Main {
+    static String[] words = new String[]{
+            "game",
+            "sword",
+            "online",
+            "girls",
+            "fairy",
+            "magician",
+            "isekai",
+            "black"
+    };
+
     public static void main(String[] args) {
-        InterfaceUse.useInterface((x, y) -> {
-            for (int i = 0; i < x; i++) {
-                String[] arr = new String[10000];
-                for (int j = 0; j < 10000; j++) {
-                    arr[j] = new Object().toString();
-                }
-                if (i % 10 == 0) {
-                    System.out.println("[2:] " + Math.sin(i) + " " + Math.signum(i) + " " + Math.sqrt(i));
-                }
+        Long startTime = System.currentTimeMillis();
+        int item = 0;
+        Random r = new Random();
+
+        for (int i = 0; i < 35; i++) {
+            String urlStart = "https://api.jikan.moe/v3/search/anime/?q=";
+            StringBuilder urlSearch = new StringBuilder();
+            for (int j = 1; j > 0; j--) {
+                urlSearch.append(words[r.nextInt(words.length)]);
             }
-        });
-        for (int i = 0; i < 100000; i++) {
-            if (i % 1000 == 0) {
-                System.out.println("[1:] " + Math.sin(i) + " " + Math.signum(i) + " " + Math.sqrt(i));
+            String urlEnd = "&limit=1";
+
+            String url;
+            url = urlStart + URLEncoder.encode(urlSearch.toString(), StandardCharsets.UTF_8) + urlEnd;
+
+            try {
+                URL jikan = new URL(url);
+                URLConnection connection = jikan.openConnection();
+
+
+                DataInputStream dis = new DataInputStream(connection.getInputStream());
+                String inputLine;
+
+                System.out.print(++item + " - " + Math.round((System.currentTimeMillis() - startTime) / 1000) + " - ");
+
+                while ((inputLine = dis.readLine()) != null) {
+                    System.out.println(inputLine);
+                }
+                dis.close();
+            } catch (IOException ignored) {
             }
+
+
+            // JSONObject malJSON = WebUtils.readJSONObjectFromUrl(url);
+            // System.out.println(malJSON != null ? malJSON.toString(11) : null);
         }
+
+
     }
 
 }

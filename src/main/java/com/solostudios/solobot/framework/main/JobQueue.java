@@ -21,30 +21,34 @@ package com.solostudios.solobot.framework.main;
 
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.Exchanger;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class JobQueue {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private static Queue<Job<MongoSetOperation>> jobQueue = new PriorityQueue<>(20);
 
     public JobQueue() {
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
+        Runnable task = () -> {
+            try {
                 if (jobQueue.size() > 0) {
                     Job<MongoSetOperation> job = JobQueue.getNext();
                     job.getPayload().run(job.getuserData(), job.getGuildID(), job.getUserID(), job.getExchanger());
                 }
+            } catch (Exception e) {
+                logger.error("Error fuck you you little peice of shit", e);
             }
         };
 
-        Timer timer = new Timer();
-
-        timer.schedule(timerTask, 0L, 100L); //call the run() method at 1 second intervals
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        executor.scheduleAtFixedRate(task, 0, 10, TimeUnit.MILLISECONDS);
     }
 
     public static void add(MongoSetOperation op, MongoCollection<Document> userData, Long guildID, Long userID, Exchanger exchanger) {

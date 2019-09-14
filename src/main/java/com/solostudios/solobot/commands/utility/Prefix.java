@@ -20,37 +20,25 @@
 package com.solostudios.solobot.commands.utility;
 
 import com.solostudios.solobot.abstracts.AbstractCommand;
+import com.solostudios.solobot.framework.main.MongoDBInterface;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
-public class FirstMessage extends AbstractCommand {
-
-    public FirstMessage() {
-        super("firstmessage",
-                "Statistics",
-                "Returns the first message of a given user",
-                "firstmessage \n" +
-                        "firstmessage {user}",
-                false);
+public class Prefix extends AbstractCommand {
+    public Prefix() {
+        super("prefix",
+                "Utility",
+                "Changes the prefix for the server.\n" +
+                        "The default is !",
+                "prefix {new prefix}",
+                true);
     }
 
     @Override
-    public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, @NotNull String[] args) throws IllegalArgumentException {
-        User author = event.getAuthor();
-
-        User user;
-        if (args.length > 1) {
-            try {
-                user = message.getMentionedMembers().get(0).getUser();
-            } catch (IndexOutOfBoundsException e) {
-                throw new IllegalArgumentException();
-            }
-        } else {
-            user = author;
-        }
-
-        message.getChannel().sendMessage(user.getAsMention() + "**'s first message was** " + message.getGuild()).queue();
+    public void run(MessageReceivedEvent messageReceivedEvent, Message message, String[] args) throws IllegalArgumentException {
+        if (args.length == 2)
+            MongoDBInterface.setPrefix(message.getGuild().getIdLong(), args[1]);
+        else
+            throw new IllegalArgumentException();
     }
 }

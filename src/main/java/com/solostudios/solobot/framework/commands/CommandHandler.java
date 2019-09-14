@@ -21,7 +21,6 @@ package com.solostudios.solobot.framework.commands;
 
 import com.solostudios.solobot.abstracts.AbstractCategory;
 import com.solostudios.solobot.abstracts.AbstractCommand;
-import com.solostudios.solobot.framework.main.LogHandler;
 import com.solostudios.solobot.soloBOT;
 import javassist.bytecode.DuplicateMemberException;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -29,14 +28,18 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class CommandHandler {
+    private static final Logger logger = LoggerFactory.getLogger(CommandHandler.class);
 
     @NotNull
     public static HashMap<String, AbstractCommand> executedCommandList = new HashMap<>();
@@ -47,25 +50,25 @@ public class CommandHandler {
 
     public CommandHandler() {
 
-        LogHandler.info("Adding Categories.");
+        logger.info("Adding Categories.");
 
         Reflections categories = new Reflections("com.solostudios.solobot.categories");
         Set<Class<? extends AbstractCategory>> Categories = categories.getSubTypesOf(AbstractCategory.class);
 
         for (Class<? extends AbstractCategory> category : Categories) {
             try {
-                LogHandler.debug("Attempting to add " + category.getName() + ".");
+                logger.debug("Attempting to add {}.", category.getName());
 
                 if (Modifier.isAbstract(category.getModifiers())) {
-                    LogHandler.debug("Rejecting " + category.getName() + ", as it is an abstract class.");
+                    logger.debug("Rejecting {}, as it is an abstract class.", category.getName());
                     continue;
                 }
 
                 AbstractCategory c = category.getConstructor().newInstance();
 
-                LogHandler.debug("Adding " + category.getName() + ".");
+                logger.debug("Adding {}.", category.getName());
                 categoryList.put(c, new HashMap<>());
-                LogHandler.info("Command " + category.getName() + " successfully added.");
+                logger.info("Command {} successfully added.", category.getName());
 
             } catch (@NotNull InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 e.printStackTrace();
@@ -73,70 +76,70 @@ public class CommandHandler {
         }
 
 
-        LogHandler.info("Adding built in commands.");
+        logger.info("Adding built in commands.");
 
         Reflections builtins = new Reflections("com.solostudios.solobot.framework.commands.builtins");
         Set<Class<? extends AbstractCommand>> builtIns = builtins.getSubTypesOf(AbstractCommand.class);
 
         for (Class<? extends AbstractCommand> command : builtIns) {
             try {
-                LogHandler.debug("Attempting to add " + command.getName() + ".");
+                logger.debug("Attempting to add {}.", command.getName());
 
                 if (Modifier.isAbstract(command.getModifiers())) {
-                    LogHandler.debug("Rejecting " + command.getName() + ", as it is an abstract class.");
+                    logger.debug("Rejecting {}, as it is an abstract class.", command.getName());
                     continue;
                 }
 
                 AbstractCommand c = command.getConstructor().newInstance();
 
                 if (!c.isEnabled()) {
-                    LogHandler.info("Rejecting " + command.getName() + ", as it is not enabled");
+                    logger.info("Rejecting {}, as it is not enabled", command.getName());
                     continue;
                 }
 
-                LogHandler.debug("Adding " + command.getName() + ".");
+                logger.debug("Adding {}.", command.getName());
                 addCommand(c, c.getName(), c.getAliases());
-                LogHandler.info("Command " + command.getName() + " successfully added.");
+                logger.info("Command {} successfully added.", command.getName());
 
             } catch (@NotNull InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 e.printStackTrace();
             } catch (DuplicateMemberException e) {
-                LogHandler.warning("Rejecting " + command.getName() + ", as there is already a command with that name or alias in the command list.\n" +
-                        "Please either change the command name/alias, or change the name/alias of the other command.");
+                logger.warn("Rejecting {}, as there is already a command with that name or alias in the command list.\n" +
+                        "Please either change the command name/alias, or change the name/alias of the other command.", command.getName());
             }
         }
 
 
-        LogHandler.info("Adding user commands");
+        logger.info("Adding user commands");
 
         Reflections reflections = new Reflections("com.solostudios.solobot.commands");
         Set<Class<? extends AbstractCommand>> commandClasses = reflections.getSubTypesOf(AbstractCommand.class);
 
         for (Class<? extends AbstractCommand> command : commandClasses) {
             try {
-                LogHandler.debug("Attempting to add " + command.getName() + ".");
+                logger.debug("Attempting to add {}.", command.getName());
 
                 if (Modifier.isAbstract(command.getModifiers())) {
-                    LogHandler.debug("Rejecting " + command.getName() + ", as it is an abstract class.");
+                    logger.debug("Rejecting {}, as it is an abstract class.", command.getName());
                     continue;
                 }
 
                 AbstractCommand c = command.getConstructor().newInstance();
 
                 if (!c.isEnabled()) {
-                    LogHandler.info("Rejecting " + command.getName() + ", as it is not enabled");
+                    logger.info("Rejecting {}, as it is not enabled", command.getName());
                     continue;
                 }
 
-                LogHandler.debug("Adding " + command.getName() + ".");
+                logger.debug("Adding {}.", command.getName());
                 addCommand(c, c.getName(), c.getAliases());
-                LogHandler.info("Command " + command.getName() + " successfully added.");
+                logger.info("Command {} successfully added.", command.getName());
 
             } catch (@NotNull InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 e.printStackTrace();
             } catch (DuplicateMemberException e) {
-                LogHandler.warning("Rejecting " + command.getName() + ", as there is already a command with that name or alias in the command list.\n" +
-                        "Please either change the command name/alias, or change the name/alias of the other command.");
+                logger.warn("Rejecting {}, as there is already a command with that name or alias in the command list.\n" +
+                        "Please either change the command name/alias, or change the name/alias of the other command.", command.getName());
             }
         }
 
@@ -151,17 +154,17 @@ public class CommandHandler {
 
         Thread commandThread = new Thread(() -> {
             if (command != null) {
-                LogHandler.debug("Message contains valid command. Attempting to run " + command.getName());
+                logger.debug("Message contains valid command. Attempting to run {}", command.getName());
                 try {
-                    if (event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).hasPermission(event.getTextChannel(), command.getPermissions())) {
+                    if (Objects.requireNonNull(event.getGuild().getMemberById(event.getJDA().getSelfUser().getId())).hasPermission(event.getTextChannel(), command.getPermissions())) {
                         command.run(event, msg, args);
-                        LogHandler.debug(command.getName() + " command run properly.");
+                        logger.debug("{} command run properly.", command.getName());
                     } else {
                         event.getChannel().sendMessage("Insufficient permissions.\n" +
                                 "I require the " + command.getPermissions().getName() + " permission to run this command.").queue();
                     }
                 } catch (IllegalArgumentException e) {
-                    LogHandler.debug("Command syntax is illegal! Returning usage message.");
+                    logger.debug("Command syntax is illegal! Returning usage message.");
                     StringBuilder aliases = new StringBuilder();
                     for (String alias : command.getAliases()) {
                         aliases.append("\n `").append(alias).append("`");

@@ -22,16 +22,18 @@ package com.solostudios.solobot.framework.commands.builtins;
 import com.solostudios.solobot.abstracts.AbstractCategory;
 import com.solostudios.solobot.abstracts.AbstractCommand;
 import com.solostudios.solobot.framework.commands.CommandHandler;
-import com.solostudios.solobot.framework.main.LogHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.TreeMap;
 
 public class CommandHelp extends AbstractCommand {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public CommandHelp() {
         super("help",
@@ -48,27 +50,24 @@ public class CommandHelp extends AbstractCommand {
     public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, @NotNull String[] args) throws IllegalArgumentException {
 
         if (args.length < 2) {
-            LogHandler.debug("Retrieving category list.");
+            logger.debug("Retrieving category list.");
 
             TreeMap<AbstractCategory, HashMap<String, AbstractCommand>> categoryList = new TreeMap<>(CommandHandler.getCategoryList());
 
-            LogHandler.debug("Generating categories.");
+            logger.debug("Generating categories.");
             categoryList.forEach((AbstractCategory abstractCategory, HashMap<String, AbstractCommand> commandList) -> {
                 EmbedBuilder category = new EmbedBuilder();
                 category.setTitle(abstractCategory.getName())
                         .setColor(abstractCategory.getColor());
-                LogHandler.debug("Generating category " + abstractCategory.getName() + ".");
+                logger.debug("Generating category {}.", abstractCategory.getName());
 
                 StringBuilder cList = new StringBuilder();
 
                 commandList.forEach((String name, AbstractCommand command) -> {
 
-                    LogHandler.debug("Adding command " + name + ".");
+                    logger.debug("Adding command {}.", name);
 
                     StringBuilder cmd = new StringBuilder();
-
-                    StringBuilder description = new StringBuilder()
-                            .append(command.getDescription());
 
                     StringBuilder commandName = new StringBuilder()
                             .append(name);
@@ -76,7 +75,7 @@ public class CommandHelp extends AbstractCommand {
                         commandName.append("/").append(alias);
                     }
 
-                    cmd.append("**`").append(commandName).append("`** ").append(description).append("\n");
+                    cmd.append("**`").append(commandName).append("`** ").append(command.getDescription()).append("\n");
 
                     cList.append(cmd);
 

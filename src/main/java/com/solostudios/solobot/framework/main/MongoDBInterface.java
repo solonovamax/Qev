@@ -30,16 +30,15 @@ import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.UnknownFormatConversionException;
 import java.util.concurrent.Exchanger;
 
-import static com.solostudios.solobot.framework.utility.JSONtoMongoDB.toDocument;
-
 public class MongoDBInterface {
+    private static final Logger logger = LoggerFactory.getLogger(MongoDBInterface.class);
     public static final String userDataVersion = "1.1.1";
     public static final Document newUserData = new Document()
             .append("version", userDataVersion)
@@ -62,30 +61,58 @@ public class MongoDBInterface {
             .append("prefix", "!")
             .append("updateTime", 0L);
     @NotNull
-    private static final String uriString = "mongodb://bot:tob@localhost:27017/GuildXP?authSource=admin";
+    private static final String uriString = "mongodb://bot:tob@solo-serv.local:27017/soloBOT?authSource=admin";
     @NotNull
-    private static MongoClient mongoClient;
+    private static MongoClient mongoClient = MongoClients.create(uriString);
     @NotNull
-    private static MongoDatabase botData;
+    private static MongoDatabase botData = mongoClient.getDatabase("soloBOT");
     @NotNull
-    private static MongoCollection<Document> userData;
+    private static MongoCollection<Document> userData = botData.getCollection("UserData");
 
     public MongoDBInterface() {
         initialize();
     }
 
     public static Object get(MongoGetOperation op, Long guildID, Long userID) {
+        logger.info("fuck you8");
         try {
+            logger.info("running");
             return op.run(getGuildDocument(guildID), userID, new Exchanger());
-        } catch (InterruptedException ignored) {
+        } catch (InterruptedException e) {
+            logger.warn("FUCK YOU", e);
+            return null;
+        }
+    }
+
+    public static <T> T get(MongoGetOperation op, Long guildID, Long userID, Class<T> clazz) {
+        logger.info("fuck you8");
+        try {
+            logger.info("running");
+            return (T) op.run(getGuildDocument(guildID), userID, new Exchanger());
+        } catch (InterruptedException e) {
+            logger.warn("FUCK YOU", e);
             return null;
         }
     }
 
     public static Object get(MongoGetOperation op, Long guildID, Long userID, Exchanger ex) {
+        logger.info("fuck you8");
         try {
+            logger.info("running");
             return op.run(getGuildDocument(guildID), userID, ex);
-        } catch (InterruptedException ignored) {
+        } catch (InterruptedException e) {
+            logger.warn("FUCK YOU", e);
+            return null;
+        }
+    }
+
+    public static <T> T get(MongoGetOperation op, Long guildID, Long userID, Exchanger ex, Class<T> clazz) {
+        logger.info("fuck you8");
+        try {
+            logger.info("running");
+            return (T) op.run(getGuildDocument(guildID), userID, ex);
+        } catch (InterruptedException e) {
+            logger.warn("FUCK YOU", e);
             return null;
         }
     }
@@ -98,10 +125,6 @@ public class MongoDBInterface {
         JobQueue.add(op, userData, guildID, userID, ex);
     }
 
-    private static boolean guildExists(@NotNull Guild guild) {
-        return userData.find(new Document("guild", guild.getIdLong())).first() != null;
-    }
-
     private static Document updateGuild(Long guildID) throws InterruptedException {
         Exchanger<? extends Document> exchanger = new Exchanger<>();
         JobQueue.update((userData, gID, uID, ex) -> {
@@ -110,9 +133,7 @@ public class MongoDBInterface {
 
             if (gData != null && gData.getString("version").equals(guildDataVersion)) {
                 try {
-                    LogHandler.debug("Testeadeaew");
                     ex.exchange(gData);
-                    LogHandler.debug("iwandwaiewad\n\n\n\neawdwae");
                 } catch (InterruptedException ignored) {
                 }
                 return;
@@ -133,7 +154,6 @@ public class MongoDBInterface {
                 nGData.put("guild", gID);
             }
             userData.replaceOne(new Document("guild", guildID), nGData, new UpdateOptions().upsert(true));
-            LogHandler.debug("Test");
             try {
                 ex.exchange(nGData);
             } catch (InterruptedException ignored) {
@@ -150,14 +170,8 @@ public class MongoDBInterface {
         return userData.find(new Document("guild", guildID)).first() != null;
     }
 
-    private static Document getGuildDocument(Guild guild) {
-        if (!guildExists(guild)) {
-            addGuild(guild);
-        }
-        return userData.find(new Document("guild", guild.getIdLong())).first();
-    }
 
-    private static Document getGuildDocument(Long guildID) {
+    public static Document getGuildDocument(Long guildID) {
         if (!guildExists(guildID)) {
             addGuild(guildID);
         }
@@ -171,95 +185,45 @@ public class MongoDBInterface {
 
         Guild guild = messageReceivedEvent.getGuild();
         User author = messageReceivedEvent.getAuthor();
-        JobQueue.update((collection, guildID, userID, ex) -> {
-            LogHandler.debug("xp");
-            UserStats userStats = new UserStats(collection.find(new Document("guild", guildID)).first(), userID);
+        UserStats userStats = new UserStats(getGuildDocument(guild.getIdLong()), author.getIdLong());
 
-            if (System.currentTimeMillis() > userStats.getLastMessageTime() + 1000 * 60) {
-                LogHandler.debug("Adding random amount of xp to user " + author.getAsTag());
-                userStats.addXP((int) (Math.random() * 10 + 15));
-                LogHandler.debug("User now has " + userStats.getXP() + " xp.");
-                userStats.updateTime();
-
-                userData.replaceOne(new Document("guild", guildID), collection.find(new Document("guild", guildID)).first(), new UpdateOptions().upsert(true));
-                saveUserStats(guild, userStats);
-            }
-        }, userData, guild.getIdLong(), author.getIdLong(), null);
+        if (System.currentTimeMillis() > (userStats.getLastMessageTime() + 1000 * 60)) {
+            logger.debug("Adding random amount of xp to user {}", author.getAsTag());
+            userStats.addXP((int) (Math.random() * 10 + 15));
+            logger.debug("User now has {} xp.", userStats.getXP());
+            userStats.updateTime();
+            userStats.close();
+        }
     }
 
     public static void guildJoinEvent(@NotNull GuildJoinEvent guildJoinEvent) {
-        if (!guildExists(guildJoinEvent.getGuild())) {
-            addGuild(guildJoinEvent.getGuild());
+        if (!guildExists(guildJoinEvent.getGuild().getIdLong())) {
+            addGuild(guildJoinEvent.getGuild().getIdLong());
         }
     }
 
     public static String getPrefix(Long guild) {
-        return getGuild(guild).getString("prefix");
+        return getGuildDocument(guild).getString("prefix");
     }
 
-    public static String getPrefix(@NotNull Guild guild) {
-        return getGuild(guild).getString("prefix");
-    }
-
-    @Nullable
-    public static Document getGuild(@NotNull Guild guild) {
-        if (!guildExists(guild)) {
-            addGuild(guild);
-        }
-        return userData.find(new Document("guild", guild.getIdLong())).first();
-    }
-
-    @Nullable
-    public static Document getGuild(Long guild) {
-        if (!guildExists(guild)) {
-            addGuild(guild);
-        }
-        return userData.find(new Document("guild", guild)).first();
-    }
-
-    private static void addGuild(@NotNull Guild guild) {
-        Document futureGuild = new Document(newGuildData);
-        futureGuild.remove("guild");
-        futureGuild.put("guild", guild.getIdLong());
-
-        saveGuildList(futureGuild);
+    public static void setPrefix(Long guild, String prefix) {
+        MongoDBInterface.set((userData, guildID, userID, ex) -> {
+            Document newGuildData = userData.find(new Document("guild", guildID)).first();
+            newGuildData.put("prefix", prefix);
+            userData.replaceOne(new Document("guild", guildID), newGuildData, new UpdateOptions().upsert(true));
+        }, guild, 0L);
     }
 
     private static void addGuild(Long guild) {
-        Document futureGuild = new Document(newGuildData);
-        futureGuild.replace("guild", guild);
-
-        saveGuildList(futureGuild);
-    }
-
-    static void saveUserStats(@NotNull Guild guild, @NotNull Document userStats) {
-        Document guildList = getGuild(guild);
-        guildList.put(userStats.getString("userIDString"), userStats);
-        saveGuildList(guildList);
-    }
-
-    static boolean saveUserStats(@NotNull Guild guild, @NotNull UserStats userStats) {
-        return saveGuildList(getGuild(guild)
-                .append(userStats.getUser().toString(), userStats.getUserData()));
-    }
-
-    private static boolean saveGuildList(@NotNull JSONObject guildList) {
-        Document replaceDocument = toDocument(guildList);
-        return saveGuildList(replaceDocument);
-    }
-
-    private synchronized static boolean saveGuildList(@NotNull Document guildList) {
-        LogHandler.debug("Saving");
-
-        userData.replaceOne(new Document("guild", guildList.getLong("guild")), guildList, new UpdateOptions().upsert(true));
-        return false;
+        MongoDBInterface.set((collection, guildID, ignore, ex) -> {
+            Document futureGuild = new Document(MongoDBInterface.newGuildData);
+            futureGuild.replace("guild", guild);
+            collection.insertOne(futureGuild);
+        }, guild, 0L);
     }
 
     private void initialize() {
         new JobQueue();
-        mongoClient = MongoClients.create(uriString);
-        botData = mongoClient.getDatabase("soloBOT");
-        userData = botData.getCollection("UserData");
         try {
             updateGuild(0L);
         } catch (InterruptedException ignored) {

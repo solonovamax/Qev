@@ -17,25 +17,15 @@
  *
  */
 
-package com.solostudios.solobot.framework.utility;
+package com.solostudios.solobot.categories;
 
-import org.bson.Document;
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
+import com.solostudios.solobot.abstracts.AbstractCategory;
 
-import java.util.Map;
+import java.awt.*;
 
-public final class MongoDBtoJSON {
-    @NotNull
-    public static final JSONObject toJSONObject(@NotNull Document document) {
-
-        JSONObject result = new JSONObject();
-
-        for (Map.Entry<String, Object> item : document.entrySet()) {
-            result.put(item.getKey(), item.getValue());
-        }
-
-        return result;
-
+public class Search extends AbstractCategory {
+    public Search() {
+        super("Search",
+                Color.BLUE);
     }
 }

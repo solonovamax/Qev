@@ -19,15 +19,18 @@
 
 package com.solostudios.solobot.framework.main;
 
+import com.mongodb.client.model.UpdateOptions;
 import net.dv8tion.jda.api.entities.User;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
-import java.util.UnknownFormatConversionException;
 import java.util.concurrent.Exchanger;
 
 public class UserStats {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private Long user;
     private Long guild;
     private Document userData;
@@ -36,55 +39,50 @@ public class UserStats {
     public UserStats(Document guildData, User user) {
         this.user = user.getIdLong();
         this.guild = guildData.getLong("guild");
-        userData = pullUserData(guildData);
+        pullUserData(guildData);
+        updateXp();
     }
 
     public UserStats(Document guildData, Long userID) {
         this.user = userID;
         this.guild = guildData.getLong("guild");
-        userData = pullUserData(guildData);
+        pullUserData(guildData);
     }
 
-    private Document pullUserData(@NotNull Document gData) {
-        Document uData;
-
-        if (gData.containsKey(user)) {
-            uData = (Document) gData.get(user);
+    private void pullUserData(@NotNull Document gData) {
+        if (gData.containsKey(Long.toString(user))) {
+            userData = (Document) gData.get(Long.toString(user));
         } else {
-            uData = MongoDBInterface.newUserData
+            userData = MongoDBInterface.newUserData
                     .append("userIDString", user.toString())
                     .append("userIDLong", user);
         }
 
 
-        if (!uData.getString("version").equals(MongoDBInterface.userDataVersion)) {
-            uData = updateData(uData);
+        if (!userData.getString("version").equals(MongoDBInterface.userDataVersion)) {
+            updateData();
         }
-        return uData;
+
     }
 
 
-    private Document updateData(@NotNull Document uData) {
-        Document nUData = MongoDBInterface.newUserData;
+    private void updateData() {
+        Document nUserData = MongoDBInterface.newUserData;
 
-        if (uData.getString("version").equals("1.0.0")
-                || uData.getString("version").equals("1.0.1")
-                || uData.getString("version").equals("1.0.2")
-                || uData.getString("version").equals("1.1.0")) {
-            for (String i : uData.keySet()) {
-                if (Objects.equals(i, "version"))
+        if (userData.getString("version").equals("1.0.0")
+                || userData.getString("version").equals("1.0.1")
+                || userData.getString("version").equals("1.0.2")
+                || userData.getString("version").equals("1.1.0")) {
+            for (String i : userData.keySet()) {
+                if (Objects.equals(i, "version")) {
                     continue;
-                nUData.put(i, uData.get(i));
+                }
+                nUserData.put(i, userData.get(i));
             }
         } else {
-            throw new UnknownFormatConversionException("");
+            logger.warn("Unknown format in user database!");
         }
-
-        uData.put("levelXp", uData.getInteger("xp"));
-
-        uData.remove("firstMessage");
-
-        return nUData;
+        userData = nUserData;
     }
 
     public void updateTime() {
@@ -115,6 +113,14 @@ public class UserStats {
         userData.put("xp", getXP() + xp);
         userData.put("levelXp", getLevelXP() + xp);
         updateXp();
+        MongoDBInterface.set((collection, guildID, userID, ex) -> {
+
+            Document guildData = collection.find(new Document("guild", guildID)).first();
+
+            guildData.put(Long.toString(userID), userData);
+
+            collection.replaceOne(new Document("guild", guildID), guildData, new UpdateOptions().upsert(true));
+        }, guild, user);
     }
 
     public long getLastMessageTime() {
@@ -135,26 +141,42 @@ public class UserStats {
     }
 
     private void updateXp() {
-        Exchanger waiter = new Exchanger();
-        MongoDBInterface.set((collection, guildID, userID, ex) -> {
-            Document uData = collection.find(new Document("userIDLong", userID)).first();
-            int lvl = uData.getInteger("level");
+        int lvl = this.getLevel();
 
-            while (uData.getInteger("levelXp") > (5 * (lvl ^ 2) + 50 * lvl + 100)) {
-                lvl = uData.getInteger("level");
+        while (this.getLevelXP() > (5 * (lvl ^ 2) + 50 * lvl + 100)) {
+            lvl = this.getLevel();
 
-                userData.put("levelXp", (uData.getInteger("levelXp") - (5 * (lvl ^ 2) + 50 * lvl + 100)));
-                userData.put("level", (lvl + 1));
-            }
+            userData.put("levelXp", (this.getLevelXP() - (5 * (lvl ^ 2) + 50 * lvl + 100)));
+            userData.put("level", (lvl + 1));
+        }
+        save();
+    }
+
+    private void save() {
+        Exchanger e = new Exchanger();
+        MongoDBInterface.set((userData, guildID, userID, ex) -> {
             try {
-                ex.exchange(null);
+                Document newData = (Document) ex.exchange(null);
+                Document guildData = userData.find(new Document("guild", guildID)).first();
+                if (guildData != null) {
+                    guildData.put(Long.toString(userID), newData);
+                } else {
+                    guildData = MongoDBInterface.newGuildData;
+                    guildData.append(Long.toString(userID), newData);
+                }
+
+                userData.replaceOne(new Document("guild", guildID), guildData, new UpdateOptions().upsert(true));
             } catch (InterruptedException ignored) {
             }
-        }, guild, user, waiter);
+        }, guild, user, e);
         try {
-            waiter.exchange(null);
-        } catch (InterruptedException ignored) {
+            e.exchange(userData);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
         }
-        LogHandler.debug("pppppppp");
+    }
+
+    public void close() {
+        save();
     }
 }

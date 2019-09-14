@@ -19,26 +19,29 @@
 
 package com.solostudios.solobot.framework.commands;
 
-import com.solostudios.solobot.framework.main.LogHandler;
-import com.solostudios.solobot.soloBOT;
+import com.solostudios.solobot.framework.main.MongoDBInterface;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CommandListener extends ListenerAdapter {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (event.getGuild() == null) {
+        if (!event.isFromGuild()) {
             return;
         }
         Message message = event.getMessage();
 
-        if (!message.getContentDisplay().startsWith(soloBOT.PREFIX) || message.getAuthor().isBot())
+
+        if (!message.getContentDisplay().startsWith(MongoDBInterface.getPrefix(event.getGuild().getIdLong())) || message.getAuthor().isBot())
             return;
 
         if (!event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).hasPermission(Permission.MESSAGE_WRITE)) {
@@ -52,10 +55,10 @@ public class CommandListener extends ListenerAdapter {
 
         JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
 
-        LogHandler.debug("Received message from shard " + (shardInfo.getShardId() + 1) + "/" + shardInfo.getShardTotal() + ". Attempting to parse.");
+        logger.debug("Received message from shard {}/{}. Attempting to parse.", (shardInfo.getShardId() + 1), shardInfo.getShardTotal());
 
         String[] args = message.getContentRaw().toLowerCase().split(" ");
-        args[0] = args[0].replace(soloBOT.PREFIX, "");
+        args[0] = args[0].replace(MongoDBInterface.getPrefix(event.getGuild().getIdLong()), "");
 
 
         CommandHandler.parseMessage(event, message, args);

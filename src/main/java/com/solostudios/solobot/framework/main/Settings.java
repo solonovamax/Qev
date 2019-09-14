@@ -21,6 +21,8 @@ package com.solostudios.solobot.framework.main;
 
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Settings {
+    private static final Logger logger = LoggerFactory.getLogger(Settings.class);
 
     private static final File settings = new File("settings.json");
     private static JSONObject jsettings;
@@ -42,22 +45,22 @@ public class Settings {
     @Nullable
     public static JSONObject get() {
         if (!settings.exists()) {
-            LogHandler.info("Settings file does not exist.\n" +
+            logger.info("Settings file does not exist.\n" +
                     "Creating a new one.");
             try {
                 Settings.create();
             } catch (IOException e) {
-                LogHandler.error("Could not create settings file.");
+                logger.error("Could not create settings file.", e);
                 e.printStackTrace();
             }
 
-            LogHandler.info("Created your config file. Now running the bot.\n" +
+            logger.info("Created your config file. Now running the bot.\n" +
                     "Terminating the process now. Please provide a token for your discord bot.");
             System.exit(0);
         }
 
         JSONObject jsettings = null;
-        LogHandler.info("Loading settings from file.");
+        logger.info("Loading settings from file.");
         try {
             jsettings = Settings.load();
         } catch (IOException e) {
@@ -76,6 +79,8 @@ public class Settings {
                         .put("prefix", "!")
                         .put("token", "YOUR-TOKEN-HERE")
                         .put("botOwner", "YOUR-ID-HERE")
+                        .put("youtube", "YOUR-TOKEN-HERE")
+                        .put("imgur", "YOUR-TOKEN-HERE")
                         .put("debug", false)
                         .toString(11).getBytes()
         );

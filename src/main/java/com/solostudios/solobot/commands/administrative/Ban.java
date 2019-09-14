@@ -21,16 +21,23 @@ package com.solostudios.solobot.commands.administrative;
 
 import com.solostudios.solobot.abstracts.AbstractCommand;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.EnumSet;
 import java.util.List;
+import java.util.concurrent.Exchanger;
 
 public class Ban extends AbstractCommand {
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private Permission BAN_MEMBERS = Permission.BAN_MEMBERS;
+
     public Ban() {
         super("ban",
                 "Moderation",
@@ -47,50 +54,66 @@ public class Ban extends AbstractCommand {
 
     @Override
     public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, @NotNull String[] args) throws IllegalArgumentException {
+        String response;
         User author = event.getAuthor();
-        List<Member> mentionedMembers = message.getMentionedMembers();
-        Member mentionedMember = mentionedMembers.get(0);
 
-        EnumSet<Permission> permissions = event.getGuild().getMember(event.getJDA().getSelfUser()).getPermissions();
-        if (!(permissions.contains(Permission.KICK_MEMBERS) && permissions.contains(Permission.BAN_MEMBERS))) {
-            message.getChannel().sendMessage("You must give me ban & kick permissions!").queue();
-            return;
-        }
+        User userToBan = null;
 
-        if (mentionedMembers.isEmpty()) { //Check if user has mention a user.
-            message.getChannel().sendMessage("You must mention a user!\n" + author.getAsMention()).queue();
-        }
-
-        if (author == mentionedMember.getUser()) { //Check if user mentioned user is the same as themselves.
-            message.getChannel().sendMessage("You cannot ban yourself!\n" + author.getAsMention()).queue();
-            return;
-        }
-
-        if (!event.getGuild().getMember(author).getPermissions().contains(Permission.BAN_MEMBERS)) { //Check if the user can ban members.
-            message.getChannel().sendMessage("You have insufficient permissions\n" + author.getAsMention()).queue();
-            return;
-        }
-
-        if (mentionedMember.getUser() == event.getJDA().getSelfUser()) { //Check if mentioned user is equal to the bot
-            message.getChannel().sendMessage("You cannot ban me!\n" + author.getAsMention()).queue();
-            return;
-        }
-
-        if (args.length > 2) { //If there is a reason provided (more than 2 arguments.) then provide reason in ban.
-            StringBuilder reason = new StringBuilder();
-            for (int x = 0; x < args.length; x++) {
-                if (x < 2)
-                    continue;
-
-                reason.append(args[x]);
-            }
-            message.getChannel().sendMessage("Banned user " + mentionedMember.getAsMention() + "!\n" +
-                    "For reason: `" + reason.toString() + "`").queue(); //Queue ban message
-            message.getGuild().ban(mentionedMember, 7, reason.toString()).queue(); //Ban member.
+        if (message.getMentionedMembers().size() > 0) {
+            userToBan = message.getMentionedMembers().get(0).getUser();
         } else {
-            message.getChannel().sendMessage("Banned user " + mentionedMember.getAsMention() + "!").queue(); //Queue ban message
-            message.getGuild().ban(mentionedMember, 7).queue(); //Ban member.
+            if (args.length == 0) {
+                message.getChannel().sendMessage("Please mention a user, or say that user's name (one word only)").queue();
+                return;
+            }
+            String suserToBan = args[1];
+            Guild guild = message.getGuild();
+
+            List<Member> memberList = guild.getMembers();
+            Exchanger<List<Guild.Ban>> ex = new Exchanger<>();
+            boolean selectedUser = false;
+            for (Member member : memberList) {
+                String name = member.getUser().getName().toLowerCase();
+                String effectiveName = member.getEffectiveName().toLowerCase();
+                if (((effectiveName.contains(suserToBan.toLowerCase())) || name.contains(suserToBan.toLowerCase())) && !selectedUser) {
+                    userToBan = member.getUser();
+                    selectedUser = true;
+                }
+            }
+            if (userToBan == null) {
+                message.getChannel().sendMessage("Could not find user " + suserToBan).queue();
+                return;
+            }
         }
 
+        if (event.getGuild().getMember(author).getPermissions().contains(BAN_MEMBERS)) { //Check if the user can ban members.
+
+            if (!(author == userToBan)) { //Check if user mentioned user is the same as themselves.
+
+                if (!(userToBan == event.getJDA().getSelfUser())) { //Check if mentioned user is equal to the bot
+
+                    if ((args.length > 2)) { //If there is a reason provided (more than 2 arguments.) then provide reason in ban.
+
+                        StringBuilder reason = new StringBuilder();
+                        for (int x = 2; x < args.length; x++) {
+                            reason.append(args[x]).append(" ");
+                        }
+
+                        message.getGuild().ban(userToBan, 7, reason.toString()).queue(); //Ban member.
+                        response = "Banned user " + userToBan.getAsMention() + "!\n" + "For reason: `" + reason.toString() + "`";
+                    } else {
+                        message.getGuild().ban(userToBan, 7).queue(); //Ban member.
+                        response = "Banned user " + userToBan.getAsMention() + "!"; //Ban message
+                    }
+                } else {
+                    response = "You cannot ban me! " + author.getAsMention();
+                }
+            } else {
+                response = "You cannon ban yourself! " + author.getAsMention();
+            }
+        } else {
+            response = "You have insufficient permissions! " + author.getAsMention();
+        }
+        message.getChannel().sendMessage(response).queue();
     }
 }

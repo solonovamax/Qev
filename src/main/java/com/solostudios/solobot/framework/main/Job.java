@@ -20,10 +20,13 @@
 package com.solostudios.solobot.framework.main;
 
 import com.mongodb.client.MongoCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Exchanger;
 
 public class Job<T> implements Comparable<Job<T>> {
+    final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private Exchanger exchanger;
     private MongoCollection<org.bson.Document> userData;
@@ -42,7 +45,6 @@ public class Job<T> implements Comparable<Job<T>> {
     }
 
     public T getPayload() {
-        LogHandler.debug("Payload");
         return payload;
     }
 
@@ -55,7 +57,6 @@ public class Job<T> implements Comparable<Job<T>> {
     }
 
     public Exchanger getExchanger() {
-        LogHandler.debug("Exchanger");
         return exchanger;
     }
 
@@ -64,12 +65,10 @@ public class Job<T> implements Comparable<Job<T>> {
     }
 
     public Long getGuildID() {
-        LogHandler.debug("Guild");
         return guildID;
     }
 
     public Long getUserID() {
-        LogHandler.debug("User");
         return userID;
     }
 

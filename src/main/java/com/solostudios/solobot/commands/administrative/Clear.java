@@ -45,7 +45,7 @@ public class Clear extends AbstractCommand {
 
     @Override
     public void run(MessageReceivedEvent event, @NotNull Message message, String[] args) throws IllegalArgumentException {
-        message.delete().complete();
+        message.delete().queue();
 
         if (!event.getGuild().getMember(message.getAuthor()).getPermissions().contains(Permission.MESSAGE_MANAGE)) { //Check if the user can ban members.
             message.getChannel().sendMessage("You have insufficient permissions\n" + message.getAuthor().getAsMention()).queue();
@@ -59,8 +59,16 @@ public class Clear extends AbstractCommand {
             throw new IllegalArgumentException();
         }
 
+        if (len > 100) {
+            for (int i = 0; i < Math.floorDiv(len, 100); i++) {
+                MessageHistory history = new MessageHistory(message.getChannel());
+                List<Message> msgs = history.retrievePast(100).complete();
+                message.getChannel().purgeMessages(msgs);
+            }
+        }
+
         MessageHistory history = new MessageHistory(message.getChannel());
-        List<Message> msgs = history.retrievePast(len).complete();
+        List<Message> msgs = history.retrievePast(len % 100).complete();
 
         message.getChannel().purgeMessages(msgs);
     }

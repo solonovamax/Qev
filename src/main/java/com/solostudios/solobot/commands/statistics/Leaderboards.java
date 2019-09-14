@@ -17,7 +17,7 @@
  *
  */
 
-package com.solostudios.solobot.commands.utility;
+package com.solostudios.solobot.commands.statistics;
 
 import com.solostudios.solobot.abstracts.AbstractCommand;
 import com.solostudios.solobot.framework.main.MongoDBInterface;
@@ -26,6 +26,9 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.util.LinkedHashMap;
@@ -34,26 +37,29 @@ import java.util.Map;
 import static com.solostudios.solobot.framework.utility.Sort.sortByValue;
 
 public class Leaderboards extends AbstractCommand {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     public Leaderboards() {
         super("leaderboard",
                 "Statistics",
                 "Gets the top 10 people with the most xp on the server.",
                 "leaderboard",
                 true,
-                "leaderboards");
+                "leaderboards", "levels");
     }
 
     @Override
     public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, String[] args) throws IllegalArgumentException {
-        LinkedHashMap<String, Integer> leaderboard = (LinkedHashMap) MongoDBInterface.get((guild, ignore, ex) -> {
+
+        LinkedHashMap<String, Integer> leaderboard = (LinkedHashMap<String, Integer>) MongoDBInterface.get((guild, ignore, ex) -> {
             LinkedHashMap<String, Integer> leaderBoard = new LinkedHashMap<>();
+            logger.info("1");
             for (Map.Entry<String, Object> entry : guild.entrySet()) {
                 if (!(entry.getValue() instanceof Document))
                     continue;
-
+                logger.info(new JSONObject(((Document) entry.getValue()).toJson()).toString(11));
                 Document entryValue = (Document) entry.getValue();
 
-                leaderBoard.put(event.getJDA().getUserById(entryValue.getString("userIDString")).getAsTag(), entryValue.getInteger("xp"));
+                leaderBoard.put(entryValue.getString("userIDString"), entryValue.getInteger("xp"));
             }
 
             return sortByValue(leaderBoard);
@@ -69,7 +75,7 @@ public class Leaderboards extends AbstractCommand {
             nOfUsers++;
 
             if (nOfUsers <= 10) {
-                topTen.addField("Number " + nOfUsers + ": " + entry.getKey(), "XP:" + entry.getValue().toString(), false);
+                topTen.addField("Number " + nOfUsers + ": " + message.getGuild().getJDA().getUserById(entry.getKey()).getName(), "XP:" + entry.getValue().toString(), false);
             }
         }
 

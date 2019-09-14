@@ -22,7 +22,6 @@ package com.solostudios.solobot;
 import com.solostudios.solobot.framework.commands.CommandHandler;
 import com.solostudios.solobot.framework.commands.CommandListener;
 import com.solostudios.solobot.framework.events.EventHandler;
-import com.solostudios.solobot.framework.main.LogHandler;
 import com.solostudios.solobot.framework.main.MongoDBInterface;
 import com.solostudios.solobot.framework.main.Settings;
 import com.solostudios.solobot.framework.utility.GameSwitcher;
@@ -31,6 +30,8 @@ import net.dv8tion.jda.api.JDABuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.util.concurrent.ExecutorService;
@@ -39,6 +40,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class soloBOT {
+
+    private final static Logger logger = LoggerFactory.getLogger(soloBOT.class);
 
     @Nullable
     public static final JSONObject settings = Settings.get(); //Can be accessed by other classes to allow for global settings check, Cannot be changed though.
@@ -58,7 +61,7 @@ public class soloBOT {
 
     public static void main(String[] args) {
 
-        LogHandler.info("Initializing level handler.");
+        logger.info("Initializing level handler.");
         new MongoDBInterface();
 
         //Loads settings from the file.
@@ -67,7 +70,7 @@ public class soloBOT {
         DEBUG = settings.getBoolean("debug");
         SUPPORT_SERVER = settings.getString("supportServer");
 
-        //LogHandler.info("Registering on DiscordBotList");
+        //logger.info("Registering on DiscordBotList");
 
         /*
         dblapi = new DiscordBotListAPI.Builder()
@@ -77,50 +80,42 @@ public class soloBOT {
 
          */
 
-        LogHandler.debug("Validating Token.");
+        logger.debug("Validating Token.");
         //Check if token exists.
         if (settings.getString("token").equals("YOUR-TOKEN-HERE")) {
-            LogHandler.fatal("Please input a valid token!");
+            logger.error("Please input a valid token!", new IllegalArgumentException());
             return;
         }
 
-        LogHandler.info("--- Initializing Bot ---");
-        LogHandler.info("--- Constructing JDABuilder ---");
+        logger.info("Initializing Bot");
+        logger.info("Constructing JDABuilder");
         //Build bot using token.
-        try {
-            shardBuilder = new JDABuilder(settings.getString("token"));
-        } catch (Exception e) {
-            LogHandler.fatal("Your token is not valid!");
-        }
+        shardBuilder = new JDABuilder(settings.getString("token"));
+
 
         //Initialize Command Handler.
-        LogHandler.info("--- Initializing Command Handler ---");
+        logger.info("Initializing Command Handler");
         new CommandHandler();
 
         //Add listeners for commands and assorted events, respectively.
-        LogHandler.info("--- Attaching Listeners ---");
+        logger.info("Attaching Listeners");
         shardBuilder.addEventListeners(new CommandListener(), new EventHandler());
 
-        LogHandler.info("--- Sharding Bot ---");
+        logger.info("--- Sharding Bot ---");
         for (int i = 0; i < shardCount; i++) {
             try {
-                LogHandler.info("Constructing Shard " + (i + 1) + "/" + shardCount);
+                logger.info("Constructing Shard " + (i + 1) + "/" + shardCount);
                 JDA shard = shardBuilder.useSharding(i, shardCount)
                         .build();
                 executor.scheduleAtFixedRate(new GameSwitcher(shard), 0L, 60L, TimeUnit.SECONDS);
-                LogHandler.info("Constructed Shard " + (i + 1) + "/" + shardCount);
+                logger.info("Constructed Shard " + (i + 1) + "/" + shardCount);
             } catch (LoginException e) {
-                LogHandler.error("Error while constructing shard " + (i + 1) + "/" + shardCount);
-                LogHandler.fatal("You token is not valid!");
+                logger.warn("Error while constructing shard {}/{}", i, shardCount);
+                logger.error("You token is not valid!", e);
             }
         }
 
-        executor.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                System.gc();
-            }
-        }, 10L, 10L, TimeUnit.MINUTES);
+        executor.scheduleAtFixedRate(System::gc, 10L, 10L, TimeUnit.MINUTES);
 
 
     }
