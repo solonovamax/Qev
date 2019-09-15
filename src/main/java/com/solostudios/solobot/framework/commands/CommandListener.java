@@ -41,8 +41,12 @@ public class CommandListener extends ListenerAdapter {
         Message message = event.getMessage();
 
 
-        if (!message.getContentDisplay().startsWith(MongoDBInterface.getPrefix(event.getGuild().getIdLong())) || message.getAuthor().isBot())
+        if (message.getAuthor().isBot())
             return;
+        if ((!message.getContentRaw().startsWith("<@" + message.getGuild().getSelfMember().getId() + ">") &&
+                !message.getContentDisplay().startsWith(MongoDBInterface.getPrefix(event.getGuild().getIdLong()))))
+            return;
+
 
         if (!event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).hasPermission(Permission.MESSAGE_WRITE)) {
             event.getAuthor().openPrivateChannel().queue(pms -> {
@@ -57,8 +61,13 @@ public class CommandListener extends ListenerAdapter {
 
         logger.debug("Received message from shard {}/{}. Attempting to parse.", (shardInfo.getShardId() + 1), shardInfo.getShardTotal());
 
-        String[] args = message.getContentRaw().toLowerCase().split(" ");
+        String[] args;
+        if (message.getContentRaw().startsWith("<@" + message.getGuild().getSelfMember().getId() + "> "))
+            args = message.getContentRaw().toLowerCase().replace("<@" + message.getGuild().getSelfMember().getId() + "> ", "").split(" ");
+        else
+            args = message.getContentRaw().toLowerCase().split(" ");
         args[0] = args[0].replace(MongoDBInterface.getPrefix(event.getGuild().getIdLong()), "");
+        args[0] = args[0].replace("<@" + message.getGuild().getSelfMember().getId() + ">", "");
 
 
         CommandHandler.parseMessage(event, message, args);

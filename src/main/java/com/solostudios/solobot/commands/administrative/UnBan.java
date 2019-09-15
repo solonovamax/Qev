@@ -20,17 +20,19 @@
 package com.solostudios.solobot.commands.administrative;
 
 import com.solostudios.solobot.abstracts.AbstractCommand;
-import net.dv8tion.jda.api.entities.Guild;
+import com.solostudios.solobot.framework.events.UserMessageStateMachine;
+import com.solostudios.solobot.framework.utility.MessageUtils;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.concurrent.Exchanger;
-
 public class UnBan extends AbstractCommand {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private Permission BAN_MEMBERS = Permission.BAN_MEMBERS;
 
     public UnBan() {
         super("unban",
@@ -42,51 +44,32 @@ public class UnBan extends AbstractCommand {
 
     @Override
     public void run(MessageReceivedEvent messageReceivedEvent, Message message, String[] args) throws IllegalArgumentException {
-        if (args.length > 1) {
-            StringBuilder userToUnban = new StringBuilder();
-            userToUnban.append(args[1]);
-            for (int x = 2; x < args.length; x++) {
-                userToUnban.append(" ").append(args[x]);
-            }
-            Guild guild = messageReceivedEvent.getGuild();
-
-            List<Guild.Ban> banList;
-            Exchanger<List<Guild.Ban>> ex = new Exchanger<>();
-            guild.retrieveBanList().queue((bList) -> {
-                try {
-                    ex.exchange(bList);
-                } catch (InterruptedException ignored) {
-                }
-            }, (e) -> {
-                try {
-                    ex.exchange(null);
-                } catch (InterruptedException ignored) {
-                }
-            });
-
-            try {
-                banList = ex.exchange(null);
-            } catch (InterruptedException ignored) {
-                banList = null;
-            }
-
-            if (!(banList == null)) {
-                boolean alreadyUnbanned = false;
-                for (Guild.Ban bannedUser : banList) {
-                    if ((bannedUser.getUser().getName().contains(userToUnban.toString())) && !alreadyUnbanned) {
-                        guild.unban(bannedUser.getUser()).queue();
-                        message.getChannel().sendMessage("Unbanned user " + bannedUser.getUser().getName()).queue();
-                        alreadyUnbanned = true;
-                    }
-                }
-                if (!alreadyUnbanned) {
-                    message.getChannel().sendMessage("Could not find user " + userToUnban).queue();
+        User author = messageReceivedEvent.getAuthor();
+        if (messageReceivedEvent.getGuild().getMember(author).getPermissions().contains(BAN_MEMBERS)) {
+            if (args.length > 1) {
+                User bannedUser = MessageUtils.getBannedUserFromMessage(messageReceivedEvent, args[0]);
+                if (bannedUser != null) {
+                    messageReceivedEvent.getGuild().unban(bannedUser).queue();
+                } else {
+                    message.getChannel().sendMessage("Could not find specified user").queue();
                 }
             } else {
-                message.getChannel().sendMessage("Error retrieving ban list! Please contact the author if this persists.").queue();
+                message.getChannel().sendMessage("Which user would you like to unban?").queue((m) -> {
+                    UserMessageStateMachine stateMachine = new UserMessageStateMachine(message.getChannel().getIdLong(), message.getAuthor().getIdLong(), messageReceivedEvent.getJDA(), null);
+                    messageReceivedEvent.getJDA().addEventListener(stateMachine);
+                    stateMachine.setAction((event, argList) -> {
+                        User user = MessageUtils.getBannedUserFromMessage(event, "");
+                        if (user != null) {
+                            message.getChannel().sendMessage("Unbanning user " + user.getAsTag()).queue();
+                            messageReceivedEvent.getGuild().unban(user).queue();
+                            stateMachine.destroyStateMaching();
+                        } else
+                            message.getChannel().sendMessage("Please say a valid user.").queue();
+                    });
+                });
             }
         } else {
-            message.getChannel().sendMessage("Please say which user to unban. (it must be text, not a mention.)").queue();
+            message.getChannel().sendMessage("Insufficient permissions!").queue();
         }
     }
 }

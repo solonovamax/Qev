@@ -20,18 +20,15 @@
 package com.solostudios.solobot.commands.administrative;
 
 import com.solostudios.solobot.abstracts.AbstractCommand;
+import com.solostudios.solobot.framework.events.UserMessageStateMachine;
+import com.solostudios.solobot.framework.utility.MessageUtils;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.concurrent.Exchanger;
 
 public class Ban extends AbstractCommand {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -62,43 +59,47 @@ public class Ban extends AbstractCommand {
         if (message.getMentionedMembers().size() > 0) {
             userToBan = message.getMentionedMembers().get(0).getUser();
         } else {
-            if (args.length == 0) {
-                message.getChannel().sendMessage("Please mention a user, or say that user's name (one word only)").queue();
-                return;
-            }
-            String suserToBan = args[1];
-            Guild guild = message.getGuild();
-
-            List<Member> memberList = guild.getMembers();
-            Exchanger<List<Guild.Ban>> ex = new Exchanger<>();
-            boolean selectedUser = false;
-            for (Member member : memberList) {
-                String name = member.getUser().getName().toLowerCase();
-                String effectiveName = member.getEffectiveName().toLowerCase();
-                if (((effectiveName.contains(suserToBan.toLowerCase())) || name.contains(suserToBan.toLowerCase())) && !selectedUser) {
-                    userToBan = member.getUser();
-                    selectedUser = true;
+            if (args.length > 1) {
+                userToBan = MessageUtils.getUserFromMessage(event, args[0]);
+                if (userToBan == null) {
+                    message.getChannel().sendMessage("Could not find specified user").queue();
+                    return;
                 }
-            }
-            if (userToBan == null) {
-                message.getChannel().sendMessage("Could not find user " + suserToBan).queue();
+            } else {
+                message.getChannel().sendMessage("Which user would you like to ban?").queue((m) -> {
+                    UserMessageStateMachine stateMachine = new UserMessageStateMachine(message.getChannel().getIdLong(), message.getAuthor().getIdLong(), event.getJDA(), null);
+                    event.getJDA().addEventListener(stateMachine);
+                    stateMachine.setAction((e, argList) -> {
+                        User user = MessageUtils.getUserFromMessage(e, "");
+                        if (user != null) {
+                            if (!(author == user)) { //Check if user mentioned user is the same as themselves.
+                                if (!(user == event.getJDA().getSelfUser())) { //Check if mentioned user is equal to the bot
+                                    message.getChannel().sendMessage("Banning user " + user.getAsTag()).queue();
+                                    event.getGuild().ban(user, 7).queue();
+                                    stateMachine.destroyStateMaching();
+                                } else {
+                                    message.getChannel().sendMessage("You cannot ban me! " + author.getAsMention()).queue();
+                                }
+                            } else {
+                                message.getChannel().sendMessage("You cannon ban yourself! " + author.getAsMention()).queue();
+                            }
+                        } else {
+                            message.getChannel().sendMessage("Please say a valid user.").queue();
+                        }
+                    });
+                });
                 return;
             }
         }
 
         if (event.getGuild().getMember(author).getPermissions().contains(BAN_MEMBERS)) { //Check if the user can ban members.
-
             if (!(author == userToBan)) { //Check if user mentioned user is the same as themselves.
-
                 if (!(userToBan == event.getJDA().getSelfUser())) { //Check if mentioned user is equal to the bot
-
                     if ((args.length > 2)) { //If there is a reason provided (more than 2 arguments.) then provide reason in ban.
-
                         StringBuilder reason = new StringBuilder();
                         for (int x = 2; x < args.length; x++) {
                             reason.append(args[x]).append(" ");
                         }
-
                         message.getGuild().ban(userToBan, 7, reason.toString()).queue(); //Ban member.
                         response = "Banned user " + userToBan.getAsMention() + "!\n" + "For reason: `" + reason.toString() + "`";
                     } else {
