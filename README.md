@@ -6,3 +6,6 @@ OR I could spend 10 hours making a overly complex, time consuming, system to add
 And now we have this modular bot which allows you to add commands by putting them in the commands package.
 
 (It actually wasn't 10 hours. I managed to do it in like 3, but still.)
+
+
+Credit to pikisuperstar for the background used for the !level command.
