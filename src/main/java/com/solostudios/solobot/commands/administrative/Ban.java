@@ -54,45 +54,45 @@ public class Ban extends AbstractCommand {
         String response;
         User author = event.getAuthor();
 
-        User userToBan = null;
+        if (event.getGuild().getMember(author).getPermissions().contains(BAN_MEMBERS)) { //Check if the user can ban members.
+            User userToBan = null;
 
-        if (message.getMentionedMembers().size() > 0) {
-            userToBan = message.getMentionedMembers().get(0).getUser();
-        } else {
-            if (args.length > 1) {
-                userToBan = MessageUtils.getUserFromMessage(event, args[0]);
-                if (userToBan == null) {
-                    message.getChannel().sendMessage("Could not find specified user").queue();
-                    return;
-                }
+            if (message.getMentionedMembers().size() > 0) {
+                userToBan = message.getMentionedMembers().get(0).getUser();
             } else {
-                message.getChannel().sendMessage("Which user would you like to ban?").queue((m) -> {
-                    UserMessageStateMachine stateMachine = new UserMessageStateMachine(message.getChannel().getIdLong(), message.getAuthor().getIdLong(), event.getJDA(), null);
-                    event.getJDA().addEventListener(stateMachine);
-                    stateMachine.setAction((e, argList) -> {
-                        User user = MessageUtils.getUserFromMessage(e, "");
-                        if (user != null) {
-                            if (!(author == user)) { //Check if user mentioned user is the same as themselves.
-                                if (!(user == event.getJDA().getSelfUser())) { //Check if mentioned user is equal to the bot
-                                    message.getChannel().sendMessage("Banning user " + user.getAsTag()).queue();
-                                    event.getGuild().ban(user, 7).queue();
-                                    stateMachine.destroyStateMaching();
+                if (args.length > 1) {
+                    userToBan = MessageUtils.getUserFromMessage(event, args[0]);
+                    if (userToBan == null) {
+                        message.getChannel().sendMessage("Could not find specified user").queue();
+                        return;
+                    }
+                } else {
+                    message.getChannel().sendMessage("Which user would you like to ban?").queue((m) -> {
+                        UserMessageStateMachine stateMachine = new UserMessageStateMachine(message.getChannel().getIdLong(), message.getAuthor().getIdLong(), event.getJDA(), null);
+                        event.getJDA().addEventListener(stateMachine);
+                        stateMachine.setAction((e, argList) -> {
+                            User user = MessageUtils.getUserFromMessage(e, "");
+                            if (user != null) {
+                                if (!(author == user)) { //Check if user mentioned user is the same as themselves.
+                                    if (!(user == event.getJDA().getSelfUser())) { //Check if mentioned user is equal to the bot
+                                        message.getChannel().sendMessage("Banning user " + user.getAsTag()).queue();
+                                        event.getGuild().ban(user, 7).queue();
+                                        stateMachine.destroyStateMaching();
+                                    } else {
+                                        message.getChannel().sendMessage("You cannot ban me! " + author.getAsMention()).queue();
+                                    }
                                 } else {
-                                    message.getChannel().sendMessage("You cannot ban me! " + author.getAsMention()).queue();
+                                    message.getChannel().sendMessage("You cannon ban yourself! " + author.getAsMention()).queue();
                                 }
                             } else {
-                                message.getChannel().sendMessage("You cannon ban yourself! " + author.getAsMention()).queue();
+                                message.getChannel().sendMessage("Please say a valid user.").queue();
                             }
-                        } else {
-                            message.getChannel().sendMessage("Please say a valid user.").queue();
-                        }
+                        });
                     });
-                });
-                return;
+                    return;
+                }
             }
-        }
 
-        if (event.getGuild().getMember(author).getPermissions().contains(BAN_MEMBERS)) { //Check if the user can ban members.
             if (!(author == userToBan)) { //Check if user mentioned user is the same as themselves.
                 if (!(userToBan == event.getJDA().getSelfUser())) { //Check if mentioned user is equal to the bot
                     if ((args.length > 2)) { //If there is a reason provided (more than 2 arguments.) then provide reason in ban.

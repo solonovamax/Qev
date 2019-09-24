@@ -62,9 +62,9 @@ public class UserInfo extends AbstractCommand {
 
         EmbedBuilder info = new EmbedBuilder()
                 .setTitle(user.getName())
-                .setThumbnail(user.getAvatarUrl())
+                .setThumbnail(user.getAvatarUrl().replace(".png", ".webp?size=256"))
                 .addField("ID", user.getId(), true)
-                .addField("Link", "[Link](" + user.getAvatarUrl() + ")", true)
+                .addField("Link", "[Link](" + user.getAvatarUrl().replace(".png", ".webp?size=256") + ")", true)
                 .addField("Account Created Date", discJoinDate + " UTC", true)
                 .addField("Server Joined Date", servJoinDate + " UTC", true);
 

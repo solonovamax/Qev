@@ -105,6 +105,10 @@ public class UserStats {
         return userData.getInteger("levelXp");
     }
 
+    public int getXpToNextLevel() {
+        return (5 * (getLevel() ^ 2) + 50 * getLevel() + 100);
+    }
+
     public int getLevel() {
         return userData.getInteger("level");
     }

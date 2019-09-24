@@ -21,6 +21,7 @@ package com.solostudios.solobot.commands.search;
 
 import com.solostudios.solobot.abstracts.AbstractCommand;
 import com.solostudios.solobot.framework.utility.WebUtils;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONArray;
@@ -59,7 +60,7 @@ public class Hentai extends AbstractCommand {
             message.getChannel().sendMessage("Sorry, an error occurred while trying to get the image. \n" +
                     "Please try again or contact @solonovamax#3163 if this is a recurring problem.").queue();
         } else {
-            message.getChannel().sendMessage(hentaiJSON.getJSONObject(0).getString("file_url")).queue();
+            message.getChannel().sendMessage(new EmbedBuilder().setImage(hentaiJSON.getJSONObject(0).getString("file_url")).build()).queue();
         }
 
     }

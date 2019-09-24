@@ -47,8 +47,14 @@ public class Kick extends AbstractCommand {
 
     @Override
     public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, String[] args) throws IllegalArgumentException {
+
         String response;
         User author = event.getAuthor();
+
+        if (!event.getGuild().getMember(author).getPermissions().contains(KICK_MEMBERS)) { //Check if the user can ban members.
+            message.getChannel().sendMessage("You have insufficient permissions! " + author.getAsMention()).queue();
+            return;
+        }
 
         Member memberToKick = null;
 
@@ -88,8 +94,8 @@ public class Kick extends AbstractCommand {
             }
         }
 
-        if (event.getGuild().getMember(author).getPermissions().contains(KICK_MEMBERS)) { //Check if the user can ban members.
-            if (!(author == memberToKick.getUser())) { //Check if user mentioned user is the same as themselves.
+
+        if (!(author == memberToKick.getUser())) { //Check if user mentioned user is the same as themselves.
                 if (!(memberToKick.getUser() == event.getJDA().getSelfUser())) { //Check if mentioned user is equal to the bot
                     if ((args.length > 2)) { //If there is a reason provided (more than 2 arguments.) then provide reason in ban.
                         StringBuilder reason = new StringBuilder();
@@ -108,9 +114,6 @@ public class Kick extends AbstractCommand {
             } else {
                 response = "You cannon ban yourself! " + author.getAsMention();
             }
-        } else {
-            response = "You have insufficient permissions! " + author.getAsMention();
-        }
         message.getChannel().sendMessage(response).queue();
     }
 }

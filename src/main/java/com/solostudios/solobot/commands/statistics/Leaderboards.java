@@ -73,9 +73,12 @@ public class Leaderboards extends AbstractCommand {
         int nOfUsers = 0;
         for (Map.Entry<String, Integer> entry : leaderboard.entrySet()) {
             nOfUsers++;
-
-            if (nOfUsers <= 10) {
-                topTen.addField("Number " + nOfUsers + ": " + message.getGuild().getJDA().getUserById(entry.getKey()).getName(), "XP:" + entry.getValue().toString(), false);
+            try {
+                if (nOfUsers <= 10) {
+                    topTen.addField("Number " + nOfUsers + ": " + message.getGuild().getJDA().getUserById(entry.getKey()).getName(), "XP:" + entry.getValue().toString(), false);
+                }
+            } catch (NullPointerException ignored) {
+                nOfUsers--;
             }
         }
 

@@ -20,6 +20,7 @@
 package com.solostudios.solobot.commands.utility;
 
 import com.solostudios.solobot.abstracts.AbstractCommand;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -43,9 +44,10 @@ public class Avatar extends AbstractCommand {
                 message.getChannel().sendMessage("You must mention someone.").queue();
                 return;
             }
-            message.getChannel().sendMessage(message.getMentionedMembers().get(0).getUser().getAvatarUrl()).queue();
+            message.getChannel().sendMessage(message.getMentionedMembers().get(0).getUser().getAvatarUrl().replace(".png", ".webp?size=256")).queue();
         } else {
-            message.getChannel().sendMessage(author.getAvatarUrl()).queue();
+            message.getChannel().sendMessage(new EmbedBuilder().setImage(author.getAvatarUrl().replace(".png", ".webp?size=256")).build()).queue();
+            //message.getChannel().sendMessage(author.getAvatarUrl().replace(".png", ".webp?size=256")).queue();
         }
     }
 }

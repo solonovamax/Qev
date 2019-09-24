@@ -22,6 +22,7 @@ package com.solostudios.solobot.commands.search;
 import com.solostudios.solobot.abstracts.AbstractCommand;
 import com.solostudios.solobot.framework.utility.WebUtils;
 import com.solostudios.solobot.soloBOT;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONObject;
@@ -65,13 +66,10 @@ public class Imgur extends AbstractCommand {
 
         JSONObject imgurJSON = WebUtils.readJSONObjectFromUrl(url, soloBOT.settings != null ? soloBOT.settings.getString("imgur") : null);
 
-        logger.info(imgurJSON.toString(11));
-
-        logger.debug(imgurJSON != null ? imgurJSON.toString(11) : null);
         if ((imgurJSON != null ? imgurJSON.getJSONArray("data").length() : 0) == 0)
             message.getChannel().sendMessage("No results found for search " + search.toString()).queue();
         else
-            message.getChannel().sendMessage(imgurJSON.getJSONArray("data").getJSONObject(0).getString("link")).queue();
+            message.getChannel().sendMessage(new EmbedBuilder().setImage(imgurJSON.getJSONArray("data").getJSONObject(0).getJSONArray("images").getJSONObject(0).getString("link")).build()).queue();
 
     }
 }

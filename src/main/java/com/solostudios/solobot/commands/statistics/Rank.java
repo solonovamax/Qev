@@ -20,6 +20,7 @@
 package com.solostudios.solobot.commands.statistics;
 
 import com.solostudios.solobot.abstracts.AbstractCommand;
+import com.solostudios.solobot.framework.main.LevelCard;
 import com.solostudios.solobot.framework.main.MongoDBInterface;
 import com.solostudios.solobot.framework.main.UserStats;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -31,7 +32,11 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -85,21 +90,32 @@ public class Rank extends AbstractCommand {
 
         logger.debug(leaderboard.size() + "");
 
+        BufferedImage levelCard;
+
         int nOfUsers = 0;
         for (Map.Entry<String, Integer> entry : leaderboard.entrySet()) {
             nOfUsers++;
             logger.debug(entry.getKey() + " + " + entry.getValue());
-            if (!entry.getKey().equals(user.getId()))
+            if (!entry.getKey().equals(user.getId())) {
                 continue;
+            }
+
 
             UserStats u = new UserStats(MongoDBInterface.getGuildDocument(message.getGuild().getIdLong()), user);
-            pos = new EmbedBuilder()
-                    .setColor(Color.YELLOW)
-                    .setTitle("User: " + user.getName() + "(" + nOfUsers + "/" + leaderboard.size() + ")")
-                    .addField("level", Integer.toString(u.getLevel()), false)
-                    .addField("xp", Integer.toString(u.getLevelXP()), false);
+
+            try {
+                levelCard = LevelCard.makeLevelCard(user, u.getLevelXP(), u.getXpToNextLevel(), u.getLevel(), nOfUsers, leaderboard.size());
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                ImageIO.write(levelCard, "png", bytes);
+                bytes.flush();
+                message.getChannel().sendFile(bytes.toByteArray(), "src/levelCard.png").queue();
+                return;
+            } catch (IOException ignored) {
+            }
+
         }
 
-        message.getChannel().sendMessage(pos.build()).queue();
+
+        message.getChannel().sendMessage("Could not find specified user.").queue();
     }
 }

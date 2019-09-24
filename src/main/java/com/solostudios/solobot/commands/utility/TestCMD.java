@@ -20,9 +20,6 @@
 package com.solostudios.solobot.commands.utility;
 
 import com.solostudios.solobot.abstracts.AbstractCommand;
-import com.solostudios.solobot.framework.events.UserMessageStateMachine;
-import com.solostudios.solobot.framework.utility.MessageUtils;
-import com.solostudios.solobot.soloBOT;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -37,29 +34,13 @@ public class TestCMD extends AbstractCommand {
                 "Utility",
                 "test",
                 "test",
-                false);
+                true);
     }
 
     @Override
     public void run(MessageReceivedEvent messageReceivedEvent, Message message, String[] args) throws IllegalArgumentException {
-        if (!message.getAuthor().getId().equals(soloBOT.BOT_OWNER)) {
-            return;
-        }
-
-        if (args.length == 1) {
-            message.getChannel().sendMessage("Which user would you like to select?").queue((m) -> {
-                logger.info("message sent properly");
-                UserMessageStateMachine stateMachine = new UserMessageStateMachine(message.getChannel().getIdLong(), message.getAuthor().getIdLong(), messageReceivedEvent.getJDA(), null);
-                messageReceivedEvent.getJDA().addEventListener(stateMachine);
-                stateMachine.setAction((event, argList) -> {
-                    User user = MessageUtils.getUserFromMessage(event, "");
-                    if (user != null) {
-                        message.getChannel().sendMessage("Selected user " + user.getAsTag()).queue();
-                        stateMachine.destroyStateMaching();
-                    } else
-                        message.getChannel().sendMessage("Please say a valid user.").queue();
-                });
-            });
-        }
+        User author = message.getAuthor();
+        message.getChannel().sendMessage(author.getAvatarUrl() + "").queue();
+        message.getChannel().sendMessage(author.getDefaultAvatarUrl() + "").queue();
     }
 }

@@ -74,34 +74,25 @@ public class MongoDBInterface {
     }
 
     public static Object get(MongoGetOperation op, Long guildID, Long userID) {
-        logger.info("fuck you8");
         try {
-            logger.info("running");
             return op.run(getGuildDocument(guildID), userID, new Exchanger());
         } catch (InterruptedException e) {
-            logger.warn("FUCK YOU", e);
             return null;
         }
     }
 
     public static <T> T get(MongoGetOperation op, Long guildID, Long userID, Class<T> clazz) {
-        logger.info("fuck you8");
         try {
-            logger.info("running");
             return (T) op.run(getGuildDocument(guildID), userID, new Exchanger());
         } catch (InterruptedException e) {
-            logger.warn("FUCK YOU", e);
             return null;
         }
     }
 
     public static Object get(MongoGetOperation op, Long guildID, Long userID, Exchanger ex) {
-        logger.info("fuck you8");
         try {
-            logger.info("running");
             return op.run(getGuildDocument(guildID), userID, ex);
         } catch (InterruptedException e) {
-            logger.warn("FUCK YOU", e);
             return null;
         }
     }
