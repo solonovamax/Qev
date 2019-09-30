@@ -20,10 +20,10 @@
 package com.solostudios.solobot.framework.commands;
 
 import com.solostudios.solobot.abstracts.AbstractCategory;
-import com.solostudios.solobot.abstracts.AbstractCommand;
 import com.solostudios.solobot.soloBOT;
 import javassist.bytecode.DuplicateMemberException;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 public class CommandHandler {
     private static final Logger logger = LoggerFactory.getLogger(CommandHandler.class);
@@ -156,13 +157,29 @@ public class CommandHandler {
             if (command != null) {
                 logger.debug("Message contains valid command. Attempting to run {}", command.getName());
                 try {
-                    if (Objects.requireNonNull(event.getGuild().getMemberById(event.getJDA().getSelfUser().getId())).hasPermission(event.getTextChannel(), command.getPermissions())) {
-                        command.run(event, msg, args);
-                        logger.debug("{} command run properly.", command.getName());
-                    } else {
-                        event.getChannel().sendMessage("Insufficient permissions.\n" +
-                                "I require the " + command.getPermissions().getName() + " permission to run this command.").queue();
+                    for (Permission permission : command.getClientPermissions()) {
+                        if (!Objects.requireNonNull(event.getGuild().getMemberById(event.getJDA().getSelfUser().getId())).hasPermission(event.getTextChannel(), permission)) {
+                            event.getChannel().sendMessage("Insufficient permissions.\n" +
+                                    "I require the " + permission.getName() + " permission to run this command.").queue();
+                        }
                     }
+
+                    for (Permission permission : command.getUserPermissions()) {
+                        if (!Objects.requireNonNull(event.getGuild().getMemberById(msg.getAuthor().getId())).hasPermission(event.getTextChannel(), permission)) {
+                            event.getChannel().sendMessage("Insufficient permissions.\n" +
+                                    "You must have the " + permission.getName() + " permission to run this command.").queue();
+                        }
+                    }
+
+                    StringBuilder sb = new StringBuilder();
+
+                    BiConsumer getArgs = (messageEvent, strings) -> {
+                        sb.append("test");
+                    };
+
+
+                    command.run(event, msg, args);
+                    logger.debug("{} command run properly.", command.getName());
                 } catch (IllegalArgumentException e) {
                     logger.debug("Command syntax is illegal! Returning usage message.");
                     StringBuilder aliases = new StringBuilder();

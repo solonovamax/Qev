@@ -19,7 +19,7 @@
 
 package com.solostudios.solobot.framework.commands.builtins;
 
-import com.solostudios.solobot.abstracts.AbstractCommand;
+import com.solostudios.solobot.framework.commands.AbstractCommand;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;

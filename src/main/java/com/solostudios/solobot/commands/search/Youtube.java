@@ -19,7 +19,7 @@
 
 package com.solostudios.solobot.commands.search;
 
-import com.solostudios.solobot.abstracts.AbstractCommand;
+import com.solostudios.solobot.framework.commands.AbstractCommand;
 import com.solostudios.solobot.framework.utility.WebUtils;
 import com.solostudios.solobot.soloBOT;
 import net.dv8tion.jda.api.entities.Message;

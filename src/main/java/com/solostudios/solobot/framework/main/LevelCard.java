@@ -91,7 +91,6 @@ public class LevelCard {
                 RenderingHints.VALUE_ANTIALIAS_ON);
         circleBufferGraphics.setClip(new Ellipse2D.Float(0, 0, IMG_SIZE, IMG_SIZE));
     }
-    // The entry main method
 
     static {
         suffixes.put(1_000L, "k");

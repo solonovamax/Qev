@@ -19,7 +19,7 @@
 
 package com.solostudios.solobot.commands.statistics;
 
-import com.solostudios.solobot.abstracts.AbstractCommand;
+import com.solostudios.solobot.framework.commands.AbstractCommand;
 import com.solostudios.solobot.framework.main.MongoDBInterface;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;

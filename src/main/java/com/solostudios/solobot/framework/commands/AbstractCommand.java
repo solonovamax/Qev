@@ -17,63 +17,60 @@
  *
  */
 
-package com.solostudios.solobot.abstracts;
+package com.solostudios.solobot.framework.commands;
 
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.json.JSONObject;
 
 public abstract class AbstractCommand {
 
-    private final String name;
-    private final String[] aliases;
-    private final String usage;
-    private final String description;
-    private final String category;
-    private final boolean enabled;
+    private CommandInfo info;
 
-    public AbstractCommand(String name, String category, String description, String usage, boolean enabled, String... aliases) {
-        this.name = name;
-        this.aliases = aliases;
-        this.category = category;
-        this.description = description;
-        this.usage = usage;
-        this.enabled = enabled;
+
+    private AbstractCommand(CommandInfo info) {
+        this.info = info;
     }
 
+    public abstract AbstractCommand getAbstractCommand();
+
     public final boolean isEnabled() {
-        return enabled;
+        return info.isEnabled();
     }
 
     public final String getName() {
-        return name;
+        return info.getName();
     }
 
     public final String[] getAliases() {
-        return aliases;
+        return info.getAliases();
     }
 
     public final String getCategory() {
-        if (category.equals("")) {
-            return "No Category";
-        } else {
-            return category;
-        }
+        return info.getCategory();
     }
 
     public final String getUsage() {
-        return usage;
+        return info.getUsage();
     }
 
     public final String getDescription() {
-        return description;
+        return info.getDescription();
     }
 
-    public Permission getPermissions() {
-        return Permission.MESSAGE_WRITE;
+    public final CommandInfo getCommandInfo() {
+        return info;
+    }
+
+    public Permission[] getUserPermissions() {
+        return info.getUserPermissions();
+    }
+
+    public Permission[] getClientPermissions() {
+        return info.getClientPermissions();
     }
 
 
-    public abstract void run(MessageReceivedEvent messageReceivedEvent, Message message, String[] args) throws IllegalArgumentException;
+    public abstract void run(MessageReceivedEvent messageReceivedEvent, JSONObject arguments) throws IllegalArgumentException;
 
 }

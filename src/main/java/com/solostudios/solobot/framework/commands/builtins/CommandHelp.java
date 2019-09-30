@@ -19,8 +19,7 @@
 
 package com.solostudios.solobot.framework.commands.builtins;
 
-import com.solostudios.solobot.abstracts.AbstractCategory;
-import com.solostudios.solobot.abstracts.AbstractCommand;
+import com.solostudios.solobot.framework.commands.AbstractCommand;
 import com.solostudios.solobot.framework.commands.CommandHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -28,9 +27,6 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.TreeMap;
 
 public class CommandHelp extends AbstractCommand {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -49,7 +45,13 @@ public class CommandHelp extends AbstractCommand {
     @Override
     public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, @NotNull String[] args) throws IllegalArgumentException {
 
+        //https://solonovamax.github.io/soloBOT/#commands
+
         if (args.length < 2) {
+            message.getChannel().sendMessage(new EmbedBuilder()
+                    .addField("Info", "Please type `!help {string}` with the name of a command to get info on a specific command. Otherwise, click the link below.", false)
+                    .addField("Link to commands", "[commands](https://solonovamax.github.io/soloBOT/#commands)", false).build()).queue();
+            /*
             logger.debug("Retrieving category list.");
 
             TreeMap<AbstractCategory, HashMap<String, AbstractCommand>> categoryList = new TreeMap<>(CommandHandler.getCategoryList());
@@ -86,6 +88,7 @@ public class CommandHelp extends AbstractCommand {
                 message.getChannel().sendMessage(category.build()).queue();
 
             });
+            */
         } else {
             String cmd = args[1];
             AbstractCommand command = CommandHandler.getCommandList().get(cmd);

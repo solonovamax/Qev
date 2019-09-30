@@ -19,7 +19,8 @@
 
 package com.solostudios.solobot.commands.statistics;
 
-import com.solostudios.solobot.abstracts.AbstractCommand;
+import com.solostudios.solobot.framework.commands.AbstractCommand;
+import com.solostudios.solobot.framework.commands.AbstractCommandBuilder;
 import com.solostudios.solobot.framework.main.LevelCard;
 import com.solostudios.solobot.framework.main.MongoDBInterface;
 import com.solostudios.solobot.framework.main.UserStats;
@@ -44,6 +45,8 @@ import static com.solostudios.solobot.framework.utility.Sort.sortByValue;
 
 public class Rank extends AbstractCommand {
     private final Logger logger = LoggerFactory.getLogger(Rank.class);
+
+    /*
     public Rank() {
         super("rank",
                 "Statistics",
@@ -52,6 +55,13 @@ public class Rank extends AbstractCommand {
                         "rank {@user}",
                 true,
                 "r", "level", "l");
+    }
+     */
+
+    @Override
+    public AbstractCommand getAbstractCommand() {
+        return AbstractCommandBuilder.anAbstractCommand(new Rank(), "rank", false)
+                .build();
     }
 
     @Override
@@ -68,6 +78,7 @@ public class Rank extends AbstractCommand {
             user = author;
         }
 
+        @SuppressWarnings("unchecked")
         LinkedHashMap<String, Integer> leaderboard = (LinkedHashMap) MongoDBInterface.get((guild, ignore, ex) -> {
             LinkedHashMap<String, Integer> leaderBoard = new LinkedHashMap<>();
             for (Map.Entry<String, Object> entry : guild.entrySet()) {

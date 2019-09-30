@@ -19,7 +19,7 @@
 
 package com.solostudios.solobot.commands.meta;
 
-import com.solostudios.solobot.abstracts.AbstractCommand;
+import com.solostudios.solobot.framework.commands.AbstractCommand;
 import com.solostudios.solobot.soloBOT;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
