@@ -22,11 +22,11 @@ Credit to pikisuperstar for the background used for the !level command.
     - You can supply the user in the command. If you don't, then it will prompt you for the user. (Does not require @mention. It will search for a string if provided.)
 * Search
   * youtube {string}
-    - Searche [youtube](youtube.com) for a specific string.
+    - Searche [youtube](https://youtube.com) for a specific string.
   * imgur {string}
-    - Searches [imgur](imgur.com) for a string.
+    - Searches [imgur](https://imgur.com) for a string.
   * anime {string}
-    - Searches [MyAnimeList](myanimelist.net) for a string.
+    - Searches [MyAnimeList](https://myanimelist.net) for a string.
   * hentai
     - Retrieves hentai image from danbooru.
     - NSFW channels only.
@@ -75,4 +75,4 @@ Credit to pikisuperstar for the background used for the !level command.
     - Ask the magic 8 ball a question! It will give you an answer.
 
 ## Contact
-Contact @solonovamax#3163 on discord or [@solonovamax](twitter.com/solonovamax) on twitter. Or you can join my [support discord server](https://discord.gg/YFSQ4cF)
+Contact @solonovamax#3163 on discord or [@solonovamax](https://twitter.com/solonovamax) on twitter. Or you can join my [support discord server](https://discord.gg/YFSQ4cF)
