@@ -1,8 +1,8 @@
-# soloBOT
+# Qev
 
 ## Info
 
-soloBOT is a bot I made to replace the 5+ bots that most servers seem to have on them. It is meant to be the only bot that you need for your server. I am still adding commands to the bot, and if you have any ideas, (no matter how niche) feel free to suggest them! Please see [my contact info](#contact)
+Qev is a bot I made to replace the 5+ bots that most servers seem to have on them. It is meant to be the only bot that you need for your server. I am still adding commands to the bot, and if you have any ideas, (no matter how niche) feel free to suggest them! Please see [my contact info](#contact)
 
 Credit to pikisuperstar for the background used for the !level command.
 
