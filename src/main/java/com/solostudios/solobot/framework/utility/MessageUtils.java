@@ -132,7 +132,7 @@ public class MessageUtils {
 
         String roleFetchString = (event.getMessage().getContentRaw().startsWith(prefix) ? event.getMessage().getContentRaw().substring(prefix.length()) : event.getMessage().getContentRaw());
 
-        if (roleFetchString.length() > 1) {
+        if (roleFetchString.length() > 0) {
             Guild guild = event.getGuild();
 
             List<Role> roleList = guild.getRoles();

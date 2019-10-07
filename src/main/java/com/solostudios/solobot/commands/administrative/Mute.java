@@ -20,21 +20,22 @@
 package com.solostudios.solobot.commands.administrative;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
-import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.json.JSONObject;
 
 public class Mute extends AbstractCommand {
     public Mute() {
-        super("",
-                "",
-                "",
-                "",
-                false,
-                "");
+        super("mute");
+        this.withCategory("Moderation");
+        this.withDescription("Mutes a user.");
+        this.withEnabled(false);
+        this.withClientPermissions(Permission.MANAGE_ROLES);
+        this.withUserPermissions(Permission.MANAGE_ROLES);
     }
 
     @Override
-    public void run(MessageReceivedEvent messageReceivedEvent, Message message, String[] args) throws IllegalArgumentException {
+    public void run(MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
 
     }
 }

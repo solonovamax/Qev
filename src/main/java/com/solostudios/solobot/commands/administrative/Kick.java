@@ -20,100 +20,55 @@
 package com.solostudios.solobot.commands.administrative;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
-import com.solostudios.solobot.framework.events.UserMessageStateMachine;
-import com.solostudios.solobot.framework.utility.MessageUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class Kick extends AbstractCommand {
     private Permission KICK_MEMBERS = Permission.KICK_MEMBERS;
+
     public Kick() {
-        super("kick",
-                "Moderation",
-                "kicks a user",
-                "kick {@user}\n" +
-                        "kick {@user} {reason}",
-                true);
+        super("kick");
+        this.withCategory("Moderation");
+        this.withDescription("Kicks a user.");
+        this.withArguments(new JSONArray()
+                .put(new JSONObject()
+                        .put("key", "user")
+                        .put("type", Member.class)
+                        .put("error", "Invalid user!"))
+                .put(new JSONObject()
+                        .put("key", "reason")
+                        .put("type", String.class)
+                        .put("default", "No reason specified")
+                        .put("error", "Invalid reason!")));
+        this.withClientPermissions(Permission.KICK_MEMBERS);
+        this.withUserPermissions(Permission.KICK_MEMBERS);
     }
 
-    @Override
-    public Permission getPermissions() {
-        return Permission.KICK_MEMBERS;
-    }
 
     @Override
-    public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, String[] args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
 
         String response;
         User author = event.getAuthor();
 
-        if (!event.getGuild().getMember(author).getPermissions().contains(KICK_MEMBERS)) { //Check if the user can ban members.
-            message.getChannel().sendMessage("You have insufficient permissions! " + author.getAsMention()).queue();
-            return;
-        }
+        Member memberToKick = ((Member) args.get("user"));
 
-        Member memberToKick = null;
 
-        if (message.getMentionedMembers().size() > 0) {
-            memberToKick = message.getMentionedMembers().get(0);
+        if (!(author.getIdLong() == memberToKick.getUser().getIdLong())) { //Check if user mentioned user is the same as themselves.
+            if (!(memberToKick.getUser().getIdLong() == event.getJDA().getSelfUser().getIdLong())) { //Check if mentioned user is equal to the bot
+                event.getGuild().kick(memberToKick, args.getString("reason")).queue(); //Kick member.
+                response = "Kicked user " + memberToKick.getAsMention() + "!"; //Kick message
+            } else {
+                response = "You cannot kick me! " + author.getAsMention();
+            }
         } else {
-            if (args.length > 1) {
-                memberToKick = MessageUtils.getMemberFromMessage(event, args[0]);
-                if (memberToKick == null) {
-                    message.getChannel().sendMessage("Could not find specified user").queue();
-                    return;
-                }
-            } else {
-                message.getChannel().sendMessage("Which user would you like to kick?").queue((m) -> {
-                    UserMessageStateMachine stateMachine = new UserMessageStateMachine(message.getChannel().getIdLong(), message.getAuthor().getIdLong(), event.getJDA(), null);
-                    event.getJDA().addEventListener(stateMachine);
-                    stateMachine.setAction((e, argList) -> {
-                        Member member = MessageUtils.getMemberFromMessage(e, "");
-                        if (member != null) {
-                            if (!(author == member.getUser())) { //Check if user mentioned user is the same as themselves.
-                                if (!(member.getUser() == event.getJDA().getSelfUser())) { //Check if mentioned user is equal to the bot
-                                    message.getChannel().sendMessage("Kicked user " + member.getEffectiveName()).queue();
-                                    event.getGuild().kick(member).queue();
-                                    stateMachine.destroyStateMaching();
-                                } else {
-                                    message.getChannel().sendMessage("You cannot kick me! " + author.getAsMention()).queue();
-                                }
-                            } else {
-                                message.getChannel().sendMessage("You cannon kick yourself! " + author.getAsMention()).queue();
-                            }
-                        } else {
-                            message.getChannel().sendMessage("Please say a valid user.").queue();
-                        }
-                    });
-                });
-                return;
-            }
+            response = "You cannon ban yourself! " + author.getAsMention();
         }
-
-
-        if (!(author == memberToKick.getUser())) { //Check if user mentioned user is the same as themselves.
-                if (!(memberToKick.getUser() == event.getJDA().getSelfUser())) { //Check if mentioned user is equal to the bot
-                    if ((args.length > 2)) { //If there is a reason provided (more than 2 arguments.) then provide reason in ban.
-                        StringBuilder reason = new StringBuilder();
-                        for (int x = 2; x < args.length; x++) {
-                            reason.append(args[x]).append(" ");
-                        }
-                        message.getGuild().kick(memberToKick, reason.toString()).queue(); //Ban member.
-                        response = "Kicked user " + memberToKick.getAsMention() + "!\n" + "For reason: `" + reason.toString() + "`";
-                    } else {
-                        message.getGuild().kick(memberToKick).queue(); //Ban member.
-                        response = "Kicked user " + memberToKick.getAsMention() + "!"; //Ban message
-                    }
-                } else {
-                    response = "You cannot kick me! " + author.getAsMention();
-                }
-            } else {
-                response = "You cannon ban yourself! " + author.getAsMention();
-            }
-        message.getChannel().sendMessage(response).queue();
+        event.getChannel().sendMessage(response).queue();
     }
 }

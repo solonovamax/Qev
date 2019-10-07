@@ -23,8 +23,8 @@ import com.solostudios.solobot.framework.commands.AbstractCommand;
 import com.solostudios.solobot.framework.utility.WebUtils;
 import com.solostudios.solobot.soloBOT;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,28 +36,24 @@ public class Imgur extends AbstractCommand {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public Imgur() {
-        super("imgur",
-                "Search",
-                "Searches imgur for an image",
-                "imgur {search}",
-                true);
+        super("imgur");
+        this.withCategory("Search");
+        this.withDescription("Searches (imgur)[https://imgur.com] for a specific image.");
+        this.withArguments(new JSONArray()
+                .put(new JSONObject()
+                        .put("key", "search")
+                        .put("type", String.class)
+                        .put("error", "Invalid search!")));
+        this.withUsage("imgur {search}");
     }
 
     @Override
-    public void run(MessageReceivedEvent messageReceivedEvent, Message message, String[] args) throws IllegalArgumentException {
+    public void run(MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
         // https://api.imgur.com/3/
-
-        StringBuilder search = new StringBuilder();
-        for (String arg : args) {
-            if (args[0].equals(arg))
-                continue;
-            search.append(" ").append(arg);
-        }
-
         //https://www.urlencoder.io/learn/
 
         String urlStart = "https://api.imgur.com/3/gallery/search/?perPage=1&q=";
-        String urlSearch = search.toString();
+        String urlSearch = args.getString("search");
         String urlEnd = "";
 
         String url;
@@ -67,9 +63,9 @@ public class Imgur extends AbstractCommand {
         JSONObject imgurJSON = WebUtils.readJSONObjectFromUrl(url, soloBOT.settings != null ? soloBOT.settings.getString("imgur") : null);
 
         if ((imgurJSON != null ? imgurJSON.getJSONArray("data").length() : 0) == 0)
-            message.getChannel().sendMessage("No results found for search " + search.toString()).queue();
+            event.getChannel().sendMessage("No results found for search " + args.getString("search")).queue();
         else
-            message.getChannel().sendMessage(new EmbedBuilder().setImage(imgurJSON.getJSONArray("data").getJSONObject(0).getJSONArray("images").getJSONObject(0).getString("link")).build()).queue();
+            event.getChannel().sendMessage(new EmbedBuilder().setImage(imgurJSON.getJSONArray("data").getJSONObject(0).getJSONArray("images").getJSONObject(0).getString("link")).build()).queue();
 
     }
 }

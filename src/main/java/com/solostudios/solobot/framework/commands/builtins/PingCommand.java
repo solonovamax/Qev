@@ -20,9 +20,8 @@
 package com.solostudios.solobot.framework.commands.builtins;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 public class PingCommand extends AbstractCommand {
 
@@ -35,23 +34,17 @@ public class PingCommand extends AbstractCommand {
 
 
     public PingCommand() {
-        super("ping",
-                "Utility",
-                "Used to ping the bot to test if it is working.\n" +
-                        "Can also be used to see response times of the bot.",
-                "ping",
-                true,
-                "p");
+        super("ping");
+        this.withAliases("p");
+        this.withCategory("Utility");
+        this.withDescription("Used to ping the bot to test if it is working.\n" +
+                "Can also be used to see response times of the bot.");
     }
 
     @Override
-    public void run(MessageReceivedEvent event, @NotNull Message message, @NotNull String[] args) throws IllegalArgumentException {
+    public void run(MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
 
-        if (args.length > 1) {
-            throw new IllegalArgumentException();
-        }
-
-        message.getChannel().sendMessage("Checking Ping...").queue(pingMessage -> {
+        event.getChannel().sendMessage("Checking Ping...").queue(pingMessage -> {
             int pings = 4;
             double t;
             double sum = 0, min = 999, max = 0;

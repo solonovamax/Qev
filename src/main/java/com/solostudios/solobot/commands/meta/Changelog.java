@@ -20,20 +20,18 @@
 package com.solostudios.solobot.commands.meta;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.json.JSONObject;
 
 public class Changelog extends AbstractCommand {
     public Changelog() {
-        super("",
-                "Utility",
-                "",
-                "",
-                false,
-                "");
+        super("changelog");
+        this.withCategory("Utility");
+        this.withDescription("Gets most recent changelog.");
+        this.withEnabled(false);
     }
 
     @Override
-    public void run(MessageReceivedEvent event, Message message, String[] args) throws IllegalArgumentException {
+    public void run(MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
     }
 }

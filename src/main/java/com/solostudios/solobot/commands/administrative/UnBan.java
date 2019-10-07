@@ -20,12 +20,11 @@
 package com.solostudios.solobot.commands.administrative;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
-import com.solostudios.solobot.framework.events.UserMessageStateMachine;
-import com.solostudios.solobot.framework.utility.MessageUtils;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,41 +34,22 @@ public class UnBan extends AbstractCommand {
     private Permission BAN_MEMBERS = Permission.BAN_MEMBERS;
 
     public UnBan() {
-        super("unban",
-                "Moderation",
-                "Unbans a user.",
-                "unban {name of user}",
-                true);
+        super("unban");
+        this.withCategory("Moderation");
+        this.withDescription("Unbans a user.");
+        this.withArguments(new JSONArray()
+                .put(new JSONObject()
+                        .put("key", "user")
+                        .put("type", "BannedUser")
+                        .put("error", "Invalid user!")));
+        this.withUsage("unban {user}");
+        this.withClientPermissions(Permission.BAN_MEMBERS);
+        this.withUserPermissions(Permission.BAN_MEMBERS);
     }
 
     @Override
-    public void run(MessageReceivedEvent messageReceivedEvent, Message message, String[] args) throws IllegalArgumentException {
-        User author = messageReceivedEvent.getAuthor();
-        if (messageReceivedEvent.getGuild().getMember(author).getPermissions().contains(BAN_MEMBERS)) {
-            if (args.length > 1) {
-                User bannedUser = MessageUtils.getBannedUserFromMessage(messageReceivedEvent, args[0]);
-                if (bannedUser != null) {
-                    messageReceivedEvent.getGuild().unban(bannedUser).queue();
-                } else {
-                    message.getChannel().sendMessage("Could not find specified user").queue();
-                }
-            } else {
-                message.getChannel().sendMessage("Which user would you like to unban?").queue((m) -> {
-                    UserMessageStateMachine stateMachine = new UserMessageStateMachine(message.getChannel().getIdLong(), message.getAuthor().getIdLong(), messageReceivedEvent.getJDA(), null);
-                    messageReceivedEvent.getJDA().addEventListener(stateMachine);
-                    stateMachine.setAction((event, argList) -> {
-                        User user = MessageUtils.getBannedUserFromMessage(event, "");
-                        if (user != null) {
-                            message.getChannel().sendMessage("Unbanning user " + user.getAsTag()).queue();
-                            messageReceivedEvent.getGuild().unban(user).queue();
-                            stateMachine.destroyStateMaching();
-                        } else
-                            message.getChannel().sendMessage("Please say a valid user.").queue();
-                    });
-                });
-            }
-        } else {
-            message.getChannel().sendMessage("Insufficient permissions!").queue();
-        }
+    public void run(MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
+        event.getChannel().sendMessage("Unbanning user " + ((User) args.get("user")).getName()).queue();
+        event.getGuild().unban((User) args.get("user")).queue();
     }
 }

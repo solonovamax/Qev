@@ -20,8 +20,9 @@
 package com.solostudios.solobot.commands.search;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,19 +30,22 @@ public class Danbooru extends AbstractCommand {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public Danbooru() {
-        super("danbooru",
-                "Search",
-                "Searches danbooru for a specific tag. [NSFW]",
-                "danbooru {search}",
-                false);
+        super("danbooru");
+        this.withCategory("Search");
+        this.withDescription("Searches (danbooru)[https://danboorudonmai.us] for a specific tag. [NSFW]");
+        this.withArguments(new JSONArray()
+                .put(new JSONObject()
+                        .put("key", "tag")
+                        .put("type", String.class)
+                        .put("error", "Invalid tag!")));
+        this.withNSFW(true);
+        this.withUsage("danbooru {tag}");
+        this.withEnabled(false);
     }
 
     @Override
-    public void run(MessageReceivedEvent messageReceivedEvent, Message message, String[] args) throws IllegalArgumentException {
-        if (!messageReceivedEvent.getTextChannel().isNSFW()) {
-            message.getChannel().sendMessage("This channel is not NSFW. \nThis command can only be used in channels with an NSFW tag.").queue();
-            return;
-        }
+    public void run(MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
+        event.getChannel().sendMessage("This channel is not NSFW. \nThis command can only be used in channels with an NSFW tag.").queue();
 
 
     }

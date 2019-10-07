@@ -22,9 +22,9 @@ package com.solostudios.solobot.commands.search;
 import com.solostudios.solobot.framework.commands.AbstractCommand;
 import com.solostudios.solobot.framework.utility.WebUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,17 +33,16 @@ public class Hentai extends AbstractCommand {
     private String url = "https://danbooru.donmai.us/posts.json?random=true&tags=rating%3Ae&limit=1&min_level=30";
 
     public Hentai() {
-        super("hentai",
-                "Search",
-                "Retrieves a hentai image from danbooru. [NSFW]",
-                "hentai",
-                true);
+        super("hentai");
+        this.withCategory("Search");
+        this.withDescription("Retrieves a hentai image from (danbooru)[https://danboorudonmai.us]. [NSFW]");
+        this.withNSFW(true);
     }
 
     @Override
-    public void run(MessageReceivedEvent messageReceivedEvent, Message message, String[] args) throws IllegalArgumentException {
-        if (!messageReceivedEvent.getTextChannel().isNSFW()) {
-            message.getChannel().sendMessage("This channel is not NSFW. \nThis command can only be used in channels with an NSFW tag.").queue();
+    public void run(MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
+        if (!event.getTextChannel().isNSFW()) {
+            event.getChannel().sendMessage("This channel is not NSFW. \nThis command can only be used in channels with an NSFW tag.").queue();
             return;
         }
 
@@ -57,10 +56,10 @@ public class Hentai extends AbstractCommand {
         } while (hentaiJSON.getJSONObject(0).getString("file_url") == null && counter > 10);
 
         if (counter == 10) {
-            message.getChannel().sendMessage("Sorry, an error occurred while trying to get the image. \n" +
+            event.getChannel().sendMessage("Sorry, an error occurred while trying to get the image. \n" +
                     "Please try again or contact @solonovamax#3163 if this is a recurring problem.").queue();
         } else {
-            message.getChannel().sendMessage(new EmbedBuilder().setImage(hentaiJSON.getJSONObject(0).getString("file_url")).build()).queue();
+            event.getChannel().sendMessage(new EmbedBuilder().setImage(hentaiJSON.getJSONObject(0).getString("file_url")).build()).queue();
         }
 
     }

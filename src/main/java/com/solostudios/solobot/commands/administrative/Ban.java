@@ -20,13 +20,13 @@
 package com.solostudios.solobot.commands.administrative;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
-import com.solostudios.solobot.framework.events.UserMessageStateMachine;
-import com.solostudios.solobot.framework.utility.MessageUtils;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,85 +36,45 @@ public class Ban extends AbstractCommand {
     private Permission BAN_MEMBERS = Permission.BAN_MEMBERS;
 
     public Ban() {
-        super("ban",
-                "Moderation",
-                "Bans a user.",
-                "ban {@user}\n" +
-                        "ban {@user} {reason}",
-                true);
+        super("ban");
+        this.withCategory("Moderation");
+        this.withDescription("Bans a user.");
+        this.withArguments(new JSONArray()
+                .put(new JSONObject()
+                        .put("key", "user")
+                        .put("type", Member.class)
+                        .put("error", "Invalid user!"))
+                .put(new JSONObject()
+                        .put("key", "reason")
+                        .put("type", String.class)
+                        .put("error", "Invalid reason")
+                        .put("default", "No reason specified")));
+        this.withUsage("ban {user} <reason>");
+        this.withClientPermissions(Permission.BAN_MEMBERS);
+        this.withUserPermissions(Permission.BAN_MEMBERS);
     }
 
     @Override
-    public Permission getPermissions() {
-        return Permission.BAN_MEMBERS;
-    }
-
-    @Override
-    public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, @NotNull String[] args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
         String response;
         User author = event.getAuthor();
+        User userToBan;
 
-        if (event.getGuild().getMember(author).getPermissions().contains(BAN_MEMBERS)) { //Check if the user can ban members.
-            User userToBan = null;
+        userToBan = ((Member) args.get("user")).getUser();
 
-            if (message.getMentionedMembers().size() > 0) {
-                userToBan = message.getMentionedMembers().get(0).getUser();
-            } else {
-                if (args.length > 1) {
-                    userToBan = MessageUtils.getUserFromMessage(event, args[0]);
-                    if (userToBan == null) {
-                        message.getChannel().sendMessage("Could not find specified user").queue();
-                        return;
-                    }
-                } else {
-                    message.getChannel().sendMessage("Which user would you like to ban?").queue((m) -> {
-                        UserMessageStateMachine stateMachine = new UserMessageStateMachine(message.getChannel().getIdLong(), message.getAuthor().getIdLong(), event.getJDA(), null);
-                        event.getJDA().addEventListener(stateMachine);
-                        stateMachine.setAction((e, argList) -> {
-                            User user = MessageUtils.getUserFromMessage(e, "");
-                            if (user != null) {
-                                if (!(author == user)) { //Check if user mentioned user is the same as themselves.
-                                    if (!(user == event.getJDA().getSelfUser())) { //Check if mentioned user is equal to the bot
-                                        message.getChannel().sendMessage("Banning user " + user.getAsTag()).queue();
-                                        event.getGuild().ban(user, 7).queue();
-                                        stateMachine.destroyStateMaching();
-                                    } else {
-                                        message.getChannel().sendMessage("You cannot ban me! " + author.getAsMention()).queue();
-                                    }
-                                } else {
-                                    message.getChannel().sendMessage("You cannon ban yourself! " + author.getAsMention()).queue();
-                                }
-                            } else {
-                                message.getChannel().sendMessage("Please say a valid user.").queue();
-                            }
-                        });
-                    });
-                    return;
-                }
-            }
-
-            if (!(author == userToBan)) { //Check if user mentioned user is the same as themselves.
-                if (!(userToBan == event.getJDA().getSelfUser())) { //Check if mentioned user is equal to the bot
-                    if ((args.length > 2)) { //If there is a reason provided (more than 2 arguments.) then provide reason in ban.
-                        StringBuilder reason = new StringBuilder();
-                        for (int x = 2; x < args.length; x++) {
-                            reason.append(args[x]).append(" ");
-                        }
-                        message.getGuild().ban(userToBan, 7, reason.toString()).queue(); //Ban member.
-                        response = "Banned user " + userToBan.getAsMention() + "!\n" + "For reason: `" + reason.toString() + "`";
-                    } else {
-                        message.getGuild().ban(userToBan, 7).queue(); //Ban member.
-                        response = "Banned user " + userToBan.getAsMention() + "!"; //Ban message
-                    }
-                } else {
-                    response = "You cannot ban me! " + author.getAsMention();
-                }
-            } else {
-                response = "You cannon ban yourself! " + author.getAsMention();
-            }
-        } else {
-            response = "You have insufficient permissions! " + author.getAsMention();
+        if (userToBan.getIdLong() == author.getIdLong()) {
+            event.getChannel().sendMessage("You cannot ban yourself!").queue();
+            return;
         }
-        message.getChannel().sendMessage(response).queue();
+
+        if (userToBan.getIdLong() == event.getJDA().getSelfUser().getIdLong()) {
+            event.getChannel().sendMessage("You cannot ban me!").queue();
+            return;
+        }
+
+        event.getGuild().ban(userToBan, 7, args.getString("reason")).queue(); //Ban member.
+        response = "Banned user " + userToBan.getAsMention() + "!"; //Ban message
+
+        event.getChannel().sendMessage(response).queue();
     }
 }

@@ -21,24 +21,26 @@ package com.solostudios.solobot.commands.utility;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
 import com.solostudios.solobot.framework.main.MongoDBInterface;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class Prefix extends AbstractCommand {
     public Prefix() {
-        super("prefix",
-                "Utility",
-                "Changes the prefix for the server.\n" +
-                        "The default is !",
-                "prefix {new prefix}",
-                true);
+        super("prefix");
+        this.withCategory("Utility");
+        this.withDescription("Changes the prefix of the bot.");
+        this.withArguments(new JSONArray()
+                .put(new JSONObject()
+                        .put("key", "prefix")
+                        .put("type", String.class)
+                        .put("default", "!")
+                        .put("error", "Invalid prefix!")));
+        this.withUsage("prefix <prefix>");
     }
 
     @Override
-    public void run(MessageReceivedEvent messageReceivedEvent, Message message, String[] args) throws IllegalArgumentException {
-        if (args.length == 2)
-            MongoDBInterface.setPrefix(message.getGuild().getIdLong(), args[1]);
-        else
-            throw new IllegalArgumentException();
+    public void run(MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
+        MongoDBInterface.setPrefix(event.getGuild().getIdLong(), args.getString("prefix"));
     }
 }

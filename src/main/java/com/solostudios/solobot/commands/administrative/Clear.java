@@ -24,52 +24,51 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.List;
 
 public class Clear extends AbstractCommand {
     public Clear() {
-        super("clear",
-                "Utility",
-                "Purges messages from a chat",
-                "clear {number}",
-                true,
-                "purge");
+        super("clear");
+        this.withCategory("Moderation");
+        this.withAliases("purge");
+        this.withDescription("Clears messages from chat");
+        this.withArguments(new JSONArray()
+                .put(new JSONObject()
+                        .put("key", "amount")
+                        .put("type", int.class)
+                        .put("error", "Invalid amount of messages to clear!")));
+        this.withUsage("clear {# of messages to clear}");
+        this.withClientPermissions(Permission.MESSAGE_MANAGE);
+        this.withUserPermissions(Permission.MESSAGE_MANAGE);
     }
 
-    @Override
-    public Permission getPermissions() {
-        return Permission.MESSAGE_MANAGE;
-    }
 
     @Override
-    public void run(MessageReceivedEvent event, @NotNull Message message, String[] args) throws IllegalArgumentException {
-        message.delete().queue();
-
-        if (!event.getGuild().getMember(message.getAuthor()).getPermissions().contains(Permission.MESSAGE_MANAGE)) { //Check if the user can ban members.
-            message.getChannel().sendMessage("You have insufficient permissions\n" + message.getAuthor().getAsMention()).queue();
-            return;
-        }
+    public void run(MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
+        event.getTextChannel().retrieveMessageById(event.getMessage().getId()).queue(msg -> msg.delete().queue(), error -> {
+        });
 
         int len;
         try {
-            len = Integer.parseInt(args[1]);
+            len = args.getInt("amount");
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException();
         }
 
         if (len > 100) {
             for (int i = 0; i < Math.floorDiv(len, 100); i++) {
-                MessageHistory history = new MessageHistory(message.getChannel());
+                MessageHistory history = new MessageHistory(event.getChannel());
                 List<Message> msgs = history.retrievePast(100).complete();
-                message.getChannel().purgeMessages(msgs);
+                event.getChannel().purgeMessages(msgs);
             }
         }
 
-        MessageHistory history = new MessageHistory(message.getChannel());
+        MessageHistory history = new MessageHistory(event.getChannel());
         List<Message> msgs = history.retrievePast(len % 100).complete();
 
-        message.getChannel().purgeMessages(msgs);
+        event.getChannel().purgeMessages(msgs);
     }
 }

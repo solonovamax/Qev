@@ -21,33 +21,44 @@ package com.solostudios.solobot.commands.utility;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class Avatar extends AbstractCommand {
     public Avatar() {
-        super("avatar",
-                "Utility",
-                "Requests a user's avatar.",
-                "avatar \n" +
-                        "avatar {@user}",
-                true);
+        super("avatar");
+        this.withCategory("Utility");
+        this.withDescription("Gets a user's avatar");
+        this.withArguments(new JSONArray()
+                .put(new JSONObject()
+                        .put("key", "user")
+                        .put("type", Member.class)
+                        .put("optional", true)
+                        .put("error", "Invalid command!")));
+        this.withUsage("avatar <member>");
     }
 
     @Override
-    public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, @NotNull String[] args) throws IllegalArgumentException {
-        User author = event.getAuthor();
-        if (args.length == 2) {
-            if (message.getMentionedMembers().isEmpty()) {
-                message.getChannel().sendMessage("You must mention someone.").queue();
-                return;
+    public void run(@NotNull MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
+        try {
+            User author = event.getAuthor();
+            if (args.has("user")) {
+                event.getChannel().sendMessage(new EmbedBuilder()
+                        .setImage(((Member) args.get("user")).getUser().getAvatarUrl()
+                                .replace(".png", ".webp?size=256"))
+                        .build())
+                        .queue();
+                event.getChannel().sendMessage(((Member) args.get("user")).getUser().getAvatarUrl().replace(".png", ".webp?size=256")).queue();
+            } else {
+                event.getChannel().sendMessage(new EmbedBuilder().setImage(author.getAvatarUrl().replace(".png", ".webp?size=256")).build()).queue();
+                //message.getChannel().sendMessage(author.getAvatarUrl().replace(".png", ".webp?size=256")).queue();
             }
-            message.getChannel().sendMessage(message.getMentionedMembers().get(0).getUser().getAvatarUrl().replace(".png", ".webp?size=256")).queue();
-        } else {
-            message.getChannel().sendMessage(new EmbedBuilder().setImage(author.getAvatarUrl().replace(".png", ".webp?size=256")).build()).queue();
-            //message.getChannel().sendMessage(author.getAvatarUrl().replace(".png", ".webp?size=256")).queue();
+        } catch (NullPointerException e) {
+            event.getChannel().sendMessage("Unknown user").queue();
         }
     }
 }

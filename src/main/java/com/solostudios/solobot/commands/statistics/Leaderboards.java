@@ -22,7 +22,6 @@ package com.solostudios.solobot.commands.statistics;
 import com.solostudios.solobot.framework.commands.AbstractCommand;
 import com.solostudios.solobot.framework.main.MongoDBInterface;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
@@ -39,17 +38,16 @@ import static com.solostudios.solobot.framework.utility.Sort.sortByValue;
 public class Leaderboards extends AbstractCommand {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     public Leaderboards() {
-        super("leaderboard",
-                "Statistics",
-                "Gets the top 10 people with the most xp on the server.",
-                "leaderboard",
-                true,
-                "leaderboards", "levels");
+        super("leaderboards");
+        this.withAliases("leaderboard", "levels", "top");
+        this.withCategory("Utility");
+        this.withDescription("Gets the leaderboards for this server");
     }
 
     @Override
-    public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, String[] args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
 
+        @SuppressWarnings("unchecked")
         LinkedHashMap<String, Integer> leaderboard = (LinkedHashMap<String, Integer>) MongoDBInterface.get((guild, ignore, ex) -> {
             LinkedHashMap<String, Integer> leaderBoard = new LinkedHashMap<>();
             logger.info("1");
@@ -64,7 +62,7 @@ public class Leaderboards extends AbstractCommand {
 
             return sortByValue(leaderBoard);
 
-        }, message.getGuild().getIdLong(), 0L);
+        }, event.getGuild().getIdLong(), 0L);
 
         assert leaderboard != null;
         EmbedBuilder topTen = new EmbedBuilder()
@@ -75,13 +73,13 @@ public class Leaderboards extends AbstractCommand {
             nOfUsers++;
             try {
                 if (nOfUsers <= 10) {
-                    topTen.addField("Number " + nOfUsers + ": " + message.getGuild().getJDA().getUserById(entry.getKey()).getName(), "XP:" + entry.getValue().toString(), false);
+                    topTen.addField("Number " + nOfUsers + ": " + event.getGuild().getJDA().getUserById(entry.getKey()).getName(), "XP:" + entry.getValue().toString(), false);
                 }
             } catch (NullPointerException ignored) {
                 nOfUsers--;
             }
         }
 
-        message.getChannel().sendMessage(topTen.build()).queue();
+        event.getChannel().sendMessage(topTen.build()).queue();
     }
 }

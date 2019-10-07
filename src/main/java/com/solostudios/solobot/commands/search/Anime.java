@@ -22,8 +22,8 @@ package com.solostudios.solobot.commands.search;
 import com.solostudios.solobot.framework.commands.AbstractCommand;
 import com.solostudios.solobot.framework.utility.WebUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,31 +36,28 @@ public class Anime extends AbstractCommand {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public Anime() {
-        super("anime",
-                "Search",
-                "Searches MyAnimeList.net for an anime",
-                "anime {search}",
-                true,
-                "mal", "MyAnimeList");
+        super("anime");
+        this.withAliases("mal", "MyAnimeList");
+        this.withCategory("Search");
+        this.withDescription("Searches (MyAnimeList)[https://myanimelist.net] for an anime.");
+        this.withArguments(new JSONArray()
+                .put(new JSONObject()
+                        .put("key", "anime")
+                        .put("type", String.class)
+                        .put("error", "Invalid anime!")));
+        this.withUsage("anime {anime}");
     }
 
     @Override
-    public void run(MessageReceivedEvent messageReceivedEvent, Message message, String[] args) throws IllegalArgumentException {
+    public void run(MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
         /*
         https://api.jikan.moe/v3/search/anime/?q=no%20game%20%no%life&limit=1
          */
 
-        StringBuilder search = new StringBuilder();
-        for (String arg : args) {
-            if (args[0].equals(arg))
-                continue;
-            search.append(" ").append(arg);
-        }
-
         //https://www.urlencoder.io/learn/
 
         String urlStart = "https://api.jikan.moe/v3/search/anime/?q=";
-        String urlSearch = search.toString();
+        String urlSearch = args.getString("anime");
         String urlEnd = "&limit=1";
 
         String url;
@@ -71,7 +68,7 @@ public class Anime extends AbstractCommand {
         //logger.info(malJSON != null ? malJSON.toString(11) : null);
 
         if ((malJSON != null ? malJSON.getJSONArray("results").length() : 0) == 0)
-            message.getChannel().sendMessage("No results found for search " + search.toString()).queue();
+            event.getChannel().sendMessage("No results found for search " + args.getString("anime")).queue();
         else {
             url = "https://api.jikan.moe/v3/anime/" + malJSON.getJSONArray("results").getJSONObject(0).getInt("mal_id") + "/";
 
@@ -92,7 +89,7 @@ public class Anime extends AbstractCommand {
                         .addField("Rank", Integer.toString(aniJSON.getInt("rank")), true)
                         .addField("Synopsis", malJSON.getJSONArray("results").getJSONObject(0).getString("synopsis"), false);
 
-                message.getChannel().sendMessage(malEmbed.build()).queue();
+                event.getChannel().sendMessage(malEmbed.build()).queue();
             }
 
         }

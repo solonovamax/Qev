@@ -20,6 +20,7 @@
 package com.solostudios.solobot.framework.commands;
 
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
 import org.json.JSONArray;
 
 public class CommandInfo {
@@ -47,8 +48,13 @@ public class CommandInfo {
         this.enabled = enabled;
     }
 
-    public boolean fitsArguments(String message) {
 
+    public boolean fitsArguments(Message message) {
+        return fitsArguments(message.getContentRaw());
+    }
+
+    private boolean fitsArguments(String message) {
+        return false;
     }
 
     public JSONArray getArguments() {

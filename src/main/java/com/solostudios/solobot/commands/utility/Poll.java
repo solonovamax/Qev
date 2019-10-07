@@ -22,9 +22,10 @@ package com.solostudios.solobot.commands.utility;
 import com.solostudios.solobot.framework.commands.AbstractCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.time.OffsetDateTime;
 import java.util.regex.MatchResult;
@@ -47,24 +48,29 @@ public class Poll extends AbstractCommand {
     };
 
     public Poll() {
-        super("poll",
-                "Utility",
-                "Generates a poll.\n" +
-                        "You may have up to 10 answers.",
-                "poll \"{question}\" [\"{answer}\" \"{answer}\" . . .]",
-                true);
+        super("poll");
+        this.withCategory("Utility");
+        this.withDescription("Generates a poll.\n" +
+                "You may have up to 10 answers.");
+        this.withArguments(new JSONArray()
+                .put(new JSONObject()
+                        .put("key", "question")
+                        .put("type", String.class)
+                        .put("error", "Invalid question!"))
+                .put(new JSONObject()
+                        .put("key", "answers")
+                        .put("type", String.class)
+                        .put("error", "Invalid answers!")));
+        this.withClientPermissions(Permission.MESSAGE_ADD_REACTION);
+        this.withUsage("poll \"{question}\" \"{answer1}\" \"{answer2}\" . . . \"{answer10}\"");
+        this.withExample("poll \"Do you go to school?\" \"Yes!\" \"No!\"");
     }
 
     @Override
-    public Permission getPermissions() {
-        return Permission.MESSAGE_ADD_REACTION;
-    }
-
-    @Override
-    public void run(@NotNull MessageReceivedEvent messageReceivedEvent, @NotNull Message message, String[] args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
 
         String[] items = Pattern.compile("\"(.*?)\"")
-                .matcher(message.getContentRaw())
+                .matcher(args.getString("answers"))
                 .results()
                 .map(MatchResult::group)
                 .toArray(String[]::new);
@@ -72,23 +78,23 @@ public class Poll extends AbstractCommand {
         for (int i = 0; i < items.length; i++)
             items[i] = items[i].replace("\"", "");
 
-        if (items.length < 3 || items.length > 10)
+        if (items.length < 2 || items.length >= 10)
             throw new IllegalArgumentException();
 
         EmbedBuilder poll = new EmbedBuilder()
-                .setTitle("Poll by: " + messageReceivedEvent.getAuthor().getAsTag())
-                .setThumbnail(messageReceivedEvent.getAuthor().getAvatarUrl())
+                .setTitle("Poll by: " + event.getAuthor().getAsTag())
+                .setThumbnail(event.getAuthor().getAvatarUrl())
                 .setTimestamp(OffsetDateTime.now());
 
         StringBuilder p = new StringBuilder();
-        for (int x = 1; x < items.length; x++) {
+        for (int x = 0; x < items.length; x++) {
             p.append("\n").append(reactionNumbers[x]).append(": ").append(items[x]);
         }
 
-        poll.addField(items[0], p.toString(), false);
+        poll.addField(args.getString("question").replace("\"", ""), p.toString(), false);
 
 
-        message.getChannel().sendMessage(poll.build()).queue(pollMessage -> {
+        event.getChannel().sendMessage(poll.build()).queue(pollMessage -> {
             for (int x = 1; x < items.length; x++) {
                 pollMessage.addReaction(reactionNumbers[x]).queue();
             }

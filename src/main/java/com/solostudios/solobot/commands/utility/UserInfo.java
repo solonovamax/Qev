@@ -21,9 +21,11 @@ package com.solostudios.solobot.commands.utility;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -32,29 +34,28 @@ import java.util.TimeZone;
 
 public class UserInfo extends AbstractCommand {
     public UserInfo() {
-        super("userinfo",
-                "Utility",
-                "Gets info for specified user. (Defaults to self.)",
-                "userinfo\n" +
-                        "userinfo {@user}",
-                true);
+        super("userinfo");
+        this.withCategory("Utility");
+        this.withDescription("Gets info for a certain user");
+        this.withArguments(new JSONArray()
+                .put(new JSONObject()
+                        .put("key", "user")
+                        .put("type", Member.class)
+                        .put("optional", true)
+                        .put("error", "Invalid user!")));
     }
 
     @Override
-    public void run(MessageReceivedEvent messageReceivedEvent, Message message, String[] args) throws IllegalArgumentException {
-        User author = message.getAuthor();
+    public void run(MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
+        User author = event.getAuthor();
         User user;
-        if (args.length > 1) {
-            try {
-                user = message.getMentionedMembers().get(0).getUser();
-            } catch (IndexOutOfBoundsException e) {
-                throw new IllegalArgumentException();
-            }
+        if (args.has("user")) {
+            user = ((Member) args.get("user")).getUser();
         } else {
             user = author;
         }
         Date discJoinDateD = new Date(user.getTimeCreated().toInstant().toEpochMilli());
-        Date servJoinDateD = new Date(messageReceivedEvent.getGuild().getMember(user).getTimeJoined().toInstant().toEpochMilli());
+        Date servJoinDateD = new Date(event.getGuild().getMember(user).getTimeJoined().toInstant().toEpochMilli());
         DateFormat formatter = new SimpleDateFormat("YYYY-L-dd HH:mm");
         formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
         String discJoinDate = formatter.format(discJoinDateD);
@@ -68,6 +69,6 @@ public class UserInfo extends AbstractCommand {
                 .addField("Account Created Date", discJoinDate + " UTC", true)
                 .addField("Server Joined Date", servJoinDate + " UTC", true);
 
-        message.getChannel().sendMessage(info.build()).queue();
+        event.getChannel().sendMessage(info.build()).queue();
     }
 }

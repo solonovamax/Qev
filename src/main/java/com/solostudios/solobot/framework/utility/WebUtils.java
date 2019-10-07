@@ -19,7 +19,6 @@
 
 package com.solostudios.solobot.framework.utility;
 
-import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -30,32 +29,22 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.charset.Charset;
 
 public class WebUtils {
     private static final Logger logger = LoggerFactory.getLogger(WebUtils.class);
 
     public static JSONObject readJSONObjectFromUrl(String url) {
         try {
-            return new JSONObject(IOUtils.toString(new URL(url), Charset.forName("UTF-8")));
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    public static JSONObject readJSONObjectFromUrl(String url, String clientID) {
-        try {
             HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(url).openConnection();
-            urlConnection.setRequestProperty("Authorization", "Client-ID " + clientID);
 
             int responseCode = urlConnection.getResponseCode();
-            logger.info(responseCode + "");
+            logger.info(Integer.toString(responseCode));
 
             if (responseCode == HttpsURLConnection.HTTP_OK) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(
                         urlConnection.getInputStream()));
                 String inputLine;
-                StringBuffer response = new StringBuffer();
+                StringBuilder response = new StringBuilder();
 
                 while ((inputLine = in.readLine()) != null) {
                     response.append(inputLine);
@@ -69,34 +58,50 @@ public class WebUtils {
             }
         } catch (IOException ignored) {
         }
-        try {
-            return new JSONObject(IOUtils.toString(new URL(url), Charset.forName("UTF-8")));
-        } catch (IOException e) {
-            return null;
-        }
+        return null;
     }
 
-    public static JSONArray readJSONArrayFromUrl(String url) {
-        try {
-            return new JSONArray(IOUtils.toString(new URL(url), Charset.forName("UTF-8")));
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    public static JSONArray readJSONArrayFromUrl(String url, String clientID) {
+    public static JSONObject readJSONObjectFromUrl(String url, String clientID) {
         try {
             HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(url).openConnection();
             urlConnection.setRequestProperty("Authorization", "Client-ID " + clientID);
 
             int responseCode = urlConnection.getResponseCode();
-            logger.info(responseCode + "");
+            logger.info(Integer.toString(responseCode));
 
             if (responseCode == HttpsURLConnection.HTTP_OK) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(
                         urlConnection.getInputStream()));
                 String inputLine;
-                StringBuffer response = new StringBuffer();
+                StringBuilder response = new StringBuilder();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                // print result
+                logger.info(response.toString());
+
+                return new JSONObject(response.toString());
+            }
+        } catch (IOException ignored) {
+        }
+        return null;
+    }
+
+    public static JSONArray readJSONArrayFromUrl(String url) {
+        try {
+            HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(url).openConnection();
+
+            int responseCode = urlConnection.getResponseCode();
+            logger.info(Integer.toString(responseCode));
+
+            if (responseCode == HttpsURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(
+                        urlConnection.getInputStream()));
+                String inputLine;
+                StringBuilder response = new StringBuilder();
 
                 while ((inputLine = in.readLine()) != null) {
                     response.append(inputLine);
@@ -110,10 +115,35 @@ public class WebUtils {
             }
         } catch (IOException ignored) {
         }
+        return null;
+    }
+
+    public static JSONArray readJSONArrayFromUrl(String url, String clientID) {
         try {
-            return new JSONArray(IOUtils.toString(new URL(url), Charset.forName("UTF-8")));
-        } catch (IOException e) {
-            return null;
+            HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(url).openConnection();
+            urlConnection.setRequestProperty("Authorization", "Client-ID " + clientID);
+
+            int responseCode = urlConnection.getResponseCode();
+            logger.info(Integer.toString(responseCode));
+
+            if (responseCode == HttpsURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(
+                        urlConnection.getInputStream()));
+                String inputLine;
+                StringBuilder response = new StringBuilder();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                // print result
+                logger.info(response.toString());
+
+                return new JSONArray(response.toString());
+            }
+        } catch (IOException ignored) {
         }
+        return null;
     }
 }

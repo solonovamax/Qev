@@ -20,16 +20,17 @@
 package com.solostudios.solobot.commands.statistics;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
-import com.solostudios.solobot.framework.commands.AbstractCommandBuilder;
 import com.solostudios.solobot.framework.main.LevelCard;
 import com.solostudios.solobot.framework.main.MongoDBInterface;
 import com.solostudios.solobot.framework.main.UserStats;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,34 +47,26 @@ import static com.solostudios.solobot.framework.utility.Sort.sortByValue;
 public class Rank extends AbstractCommand {
     private final Logger logger = LoggerFactory.getLogger(Rank.class);
 
-    /*
     public Rank() {
-        super("rank",
-                "Statistics",
-                "Gets the rank of a given user.",
-                "rank \n" +
-                        "rank {@user}",
-                true,
-                "r", "level", "l");
-    }
-     */
-
-    @Override
-    public AbstractCommand getAbstractCommand() {
-        return AbstractCommandBuilder.anAbstractCommand(new Rank(), "rank", false)
-                .build();
+        super("rank");
+        this.withAliases("r", "level", "l");
+        this.withCategory("Statistics");
+        this.withDescription("Gets the rank of a given user");
+        this.withArguments(new JSONArray()
+                .put(new JSONObject()
+                        .put("key", "user")
+                        .put("type", Member.class)
+                        .put("optional", true)
+                        .put("error", "Invalid user!")));
+        this.withUsage("rank <user>");
     }
 
     @Override
-    public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, String[] args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
         User author = event.getAuthor();
         User user;
-        if (args.length > 1) {
-            try {
-                user = message.getMentionedMembers().get(0).getUser();
-            } catch (IndexOutOfBoundsException e) {
-                throw new IllegalArgumentException();
-            }
+        if (args.has("user")) {
+            user = ((Member) args.get("user")).getUser();
         } else {
             user = author;
         }
@@ -92,7 +85,7 @@ public class Rank extends AbstractCommand {
 
             return sortByValue(leaderBoard);
 
-        }, message.getGuild().getIdLong(), 0L);
+        }, event.getGuild().getIdLong(), 0L);
 
         assert leaderboard != null;
         EmbedBuilder pos = new EmbedBuilder()
@@ -112,14 +105,14 @@ public class Rank extends AbstractCommand {
             }
 
 
-            UserStats u = new UserStats(MongoDBInterface.getGuildDocument(message.getGuild().getIdLong()), user);
+            UserStats u = new UserStats(MongoDBInterface.getGuildDocument(event.getGuild().getIdLong()), user);
 
             try {
                 levelCard = LevelCard.makeLevelCard(user, u.getLevelXP(), u.getXpToNextLevel(), u.getLevel(), nOfUsers, leaderboard.size());
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                 ImageIO.write(levelCard, "png", bytes);
                 bytes.flush();
-                message.getChannel().sendFile(bytes.toByteArray(), "src/levelCard.png").queue();
+                event.getChannel().sendFile(bytes.toByteArray(), "src/levelCard.png").queue();
                 return;
             } catch (IOException ignored) {
             }
@@ -127,6 +120,6 @@ public class Rank extends AbstractCommand {
         }
 
 
-        message.getChannel().sendMessage("Could not find specified user.").queue();
+        event.getChannel().sendMessage("Could not find specified user.").queue();
     }
 }

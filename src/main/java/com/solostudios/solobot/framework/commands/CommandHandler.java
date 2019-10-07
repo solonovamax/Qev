@@ -37,7 +37,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.BiConsumer;
 
 public class CommandHandler {
     private static final Logger logger = LoggerFactory.getLogger(CommandHandler.class);
@@ -140,7 +139,7 @@ public class CommandHandler {
                 e.printStackTrace();
             } catch (DuplicateMemberException e) {
                 logger.warn("Rejecting {}, as there is already a command with that name or alias in the command list.\n" +
-                        "Please either change the command name/alias, or change the name/alias of the other command.", command.getName());
+                        "Please either change the command name/alias, or change the name/alias of the other command. name: {}", command.getName(), e.getMessage());
             }
         }
 
@@ -173,12 +172,8 @@ public class CommandHandler {
 
                     StringBuilder sb = new StringBuilder();
 
-                    BiConsumer getArgs = (messageEvent, strings) -> {
-                        sb.append("test");
-                    };
+                    new CommandStateMachine(event, event.getJDA(), command);
 
-
-                    command.run(event, msg, args);
                     logger.debug("{} command run properly.", command.getName());
                 } catch (IllegalArgumentException e) {
                     logger.debug("Command syntax is illegal! Returning usage message.");
@@ -208,8 +203,8 @@ public class CommandHandler {
 
     private static void addCommand(@NotNull AbstractCommand command, String name, @NotNull String... aliases) throws DuplicateMemberException {
 
-        if (executedCommandList.get(name) != null) {
-            throw new DuplicateMemberException("");
+        if (executedCommandList.containsKey(name)) {
+            throw new DuplicateMemberException(executedCommandList.get(name).getClass().getCanonicalName());
         }
 
 

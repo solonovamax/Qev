@@ -20,9 +20,10 @@
 package com.solostudios.solobot.commands.fun;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class EightBall extends AbstractCommand {
 
@@ -46,17 +47,21 @@ public class EightBall extends AbstractCommand {
     };
 
     public EightBall() {
-        super("8ball",
-                "Fun",
-                "Ask the magic 8 ball a question! It will give you the answer.",
-                "8ball {question}",
-                true,
-                "eightball");
+        super("8ball");
+        this.withAliases("eightball");
+        this.withCategory("Fun");
+        this.withDescription("Ask the magic 8 ball a question! It will give you the answer.");
+        this.withArguments(new JSONArray()
+                .put(new JSONObject()
+                        .put("key", "question")
+                        .put("type", String.class)
+                        .put("error", "Invalid question!")));
+        this.withUsage("8ball {question}");
     }
 
     @Override
-    public void run(@NotNull MessageReceivedEvent messageReceivedEvent, @NotNull Message message, String[] args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
         String response = answerList[(int) Math.floor(answerList.length * Math.random())];
-        messageReceivedEvent.getChannel().sendMessage(message.getAuthor().getAsMention() + " " + response).queue();
+        event.getChannel().sendMessage(event.getAuthor().getAsMention() + " " + response).queue();
     }
 }

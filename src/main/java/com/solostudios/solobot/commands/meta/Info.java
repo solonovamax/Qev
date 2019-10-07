@@ -23,21 +23,19 @@ import com.solostudios.solobot.framework.commands.AbstractCommand;
 import com.solostudios.solobot.soloBOT;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 public class Info extends AbstractCommand {
     public Info() {
-        super("info",
-                "Utility",
-                "Returns bot info",
-                "info",
-                true);
+        super("info");
+        this.withCategory("Utility");
+        this.withDescription("Returns bot info");
     }
 
     @Override
-    public void run(@NotNull MessageReceivedEvent event, @NotNull Message message, String[] args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
 
         long tDiff = (System.currentTimeMillis() - (soloBOT.START_TIME));
         int uMonths = (int) (tDiff / 1000 / 60 / 60 / 24 / 30.42);
@@ -52,7 +50,7 @@ public class Info extends AbstractCommand {
         JDA.ShardInfo shardInfo = jda.getShardInfo();
         int shardID = shardInfo.getShardId();
         int shardTotal = shardInfo.getShardTotal();
-        message.getChannel().sendMessage(new EmbedBuilder()
+        event.getChannel().sendMessage(new EmbedBuilder()
                 .setTitle("soloBOT Shard #" + (shardID + 1) + " out of " + shardTotal)
                 .addField("Number of servers in this shard", event.getJDA().getGuilds().size() + "", false)
                 .addField("Github", "https://github.com/solonovamax/soloBOT", false)

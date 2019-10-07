@@ -19,58 +19,315 @@
 
 package com.solostudios.solobot.framework.commands;
 
+import com.solostudios.solobot.framework.utility.MessageUtils;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public abstract class AbstractCommand {
 
-    private CommandInfo info;
+    private String name;
+    private String[] aliases = new String[]{""};
+    private String category = null;
+    private JSONArray arguments = null;
+    private String usage = null;
+    private String description = null;
+    private boolean enabled = true;
+    private Permission[] userPermissions = new Permission[]{};
+    private Permission[] clientPermissions = new Permission[]{Permission.MESSAGE_WRITE};
+    private boolean ownerOnly;
+    private String example = null;
+    private boolean nsfw = false;
+    private JSONObject defaultArgs = new JSONObject();
 
 
-    private AbstractCommand(CommandInfo info) {
-        this.info = info;
+    protected AbstractCommand(String name) {
+        this.name = name;
     }
 
-    public abstract AbstractCommand getAbstractCommand();
-
     public final boolean isEnabled() {
-        return info.isEnabled();
+        return enabled;
     }
 
     public final String getName() {
-        return info.getName();
+        return name;
     }
 
     public final String[] getAliases() {
-        return info.getAliases();
+        return aliases;
     }
 
     public final String getCategory() {
-        return info.getCategory();
+        return category;
     }
 
     public final String getUsage() {
-        return info.getUsage();
+        return usage;
     }
 
     public final String getDescription() {
-        return info.getDescription();
-    }
-
-    public final CommandInfo getCommandInfo() {
-        return info;
+        return description;
     }
 
     public Permission[] getUserPermissions() {
-        return info.getUserPermissions();
+        return userPermissions;
     }
 
     public Permission[] getClientPermissions() {
-        return info.getClientPermissions();
+        return clientPermissions;
+    }
+
+    public JSONArray getArguments() {
+        return arguments;
+    }
+
+    public JSONObject getDefaultArgs() {
+        return defaultArgs;
+    }
+
+    public String getExample() {
+        return example;
+    }
+
+    public boolean isOwnerOnly() {
+        return ownerOnly;
+    }
+
+    public boolean isNsfw() {
+        return nsfw;
     }
 
 
-    public abstract void run(MessageReceivedEvent messageReceivedEvent, JSONObject arguments) throws IllegalArgumentException;
+    public abstract void run(MessageReceivedEvent event, JSONObject arguments) throws IllegalArgumentException;
+
+    protected void withEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    protected void withAliases(String... aliases) {
+        this.aliases = aliases;
+    }
+
+    protected void withCategory(String category) {
+        this.category = category;
+    }
+
+    /**
+     * @param usage
+     * @return instance of calling object.
+     */
+    protected void withUsage(String usage) {
+        this.usage = usage;
+    }
+
+    protected void withArguments(JSONArray arguments) {
+        if (verifyArguments(arguments)) {
+            this.arguments = arguments;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * @param description
+     * @return instance of calling object
+     */
+    protected void withDescription(String description) {
+        this.description = description;
+    }
+
+
+    protected void withExample(String example) {
+        this.example = example;
+    }
+
+    protected void withNSFW(boolean nsfw) {
+        this.nsfw = nsfw;
+    }
+
+
+    /**
+     * @param userPermissions
+     * @return instance of calling object
+     */
+    protected void withUserPermissions(Permission... userPermissions) {
+        this.userPermissions = userPermissions;
+    }
+
+    /**
+     * @param clientPermissions
+     * @return instance of calling object
+     */
+    protected void withClientPermissions(Permission... clientPermissions) {
+        Permission[] tempPermissions = new Permission[clientPermissions.length + 1];
+        tempPermissions[0] = Permission.MESSAGE_WRITE;
+        System.arraycopy(clientPermissions, 0, tempPermissions, 1, clientPermissions.length);
+        this.clientPermissions = tempPermissions;
+    }
+
+    /**
+     * @param ownerOnly
+     * @return instance of calling object
+     */
+    protected void withOwnerOnly(boolean ownerOnly) {
+        this.ownerOnly = ownerOnly;
+    }
+
+
+    private boolean verifyArguments(JSONArray args) {
+        if (args.length() < 1) {
+            return false;
+        }
+
+
+        for (int i = 0; i < args.length(); i++) {
+            JSONObject arg;
+            try {
+                arg = args.getJSONObject(i);
+            } catch (JSONException e) {
+                return false;
+            }
+            if (!arg.has("key") || !arg.has("type"))
+                return false;
+
+            Object c = arg.get("type");
+            if (!(c == String.class || c == int.class || c == double.class || c == Role.class || c == Member.class || c == boolean.class || c.equals("BannedUser")))
+                return false;
+
+            if (arg.has("default")) {
+                if (arg.get("default").getClass() != c) {
+                    return false;
+                }
+                defaultArgs.put(arg.getString("key"), arg.get("default"));
+            }
+
+            if (arg.has("optional")) {
+                try {
+                    arg.getBoolean("optional");
+                } catch (JSONException e) {
+                    return false;
+                }
+            }
+
+            if (!arg.has("prompt")) {
+                arg.put("prompt", "Please input the " + arg.getString("key"));
+            }
+        }
+        return true;
+    }
+
+    /* layout of the JSONArray
+    [{
+        "key": String,
+        "type": Clazz, <- Must be integer, double, boolean, role, member or string
+        "optional": boolean,
+        "default": Object <- Must be of class type
+        "error": "Invalid input" <- What it says when there is an error
+        "prompt": "Please input an argument" <- What is says when the user need to input something.
+     },
+     {
+        "key": String,
+        "type": Clazz, <- Must be integer, double, boolean, role, member or string
+        "optional": boolean,
+        "default": Object <- Must be of class type
+        "error": "Invalid input" <- What it says when there is an error
+        "prompt": "Please input an argument" <- What is says when the user need to input something.
+     }]
+     */
+
+    public boolean fitsArguments(JSONObject args) {
+        for (int i = 0; i < arguments.length(); i++) {
+            JSONObject obj = arguments.getJSONObject(i);
+
+            try {
+                if (obj.has("optional") && obj.getBoolean("optional"))
+                    continue;
+            } catch (JSONException e) {
+            }
+
+            if (!args.has(obj.getString("key")))
+                return false;
+
+            if (args.get(obj.getString("key")).getClass() != obj.get("type"))
+                return false;
+        }
+
+        return true;
+    }
+
+    public String nextArgPrompt(JSONObject args) {
+        for (int i = 0; i < arguments.length(); i++) {
+            JSONObject obj = arguments.getJSONObject(i);
+
+            if (args.has(obj.getString("key")) || (obj.has("optional") && obj.getBoolean("optional"))) {
+                continue;
+            }
+
+            return obj.getString("prompt");
+        }
+
+        return "error";
+    }
+
+    public void putNextArg(MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
+        for (int i = 0; i < arguments.length(); i++) {
+            JSONObject obj = arguments.getJSONObject(i);
+
+            if (args.has(obj.getString("key"))) {
+                continue;
+            }
+            String key = obj.getString("key");
+
+            if (event.getMessage().getContentRaw().equals("null") && obj.has("default")) {
+                args.put(key, obj.get("default"));
+                return;
+            }
+
+            Class clazz = (Class) obj.get("type");
+
+
+            try {
+                if (clazz == Role.class) {
+                    if (MessageUtils.getRoleFromMessage(event, "") == null)
+                        throw new IllegalArgumentException();
+                    args.put(key, MessageUtils.getRoleFromMessage(event, ""));
+                    return;
+                }
+                if (clazz == Member.class) {
+                    if (MessageUtils.getMemberFromMessage(event, "") == null)
+                        throw new IllegalArgumentException();
+                    args.put(key, MessageUtils.getMemberFromMessage(event, ""));
+                    return;
+                }
+                if (clazz == int.class) {
+                    args.put(key, Integer.parseInt(event.getMessage().getContentRaw()));
+                    return;
+                }
+                if (clazz == double.class) {
+                    args.put(key, Double.parseDouble(event.getMessage().getContentRaw()));
+                    return;
+                }
+                if (clazz == boolean.class) {
+                    args.put(key, parseBoolean(event.getMessage().getContentRaw()));
+                    return;
+                }
+            } catch (IllegalArgumentException e) {
+            }
+            throw new IllegalArgumentException((obj.getString("error") == null ? "Invalid input" : obj.getString("error")));
+        }
+        throw new IllegalArgumentException("No more arguments");
+    }
+
+    private boolean parseBoolean(String s) {
+        if (s.equals("t") || s.equals("true") || s.equals("yes"))
+            return true;
+        if (s.equals("f") || s.equals("false") || s.equals("no"))
+            return false;
+        throw new IllegalArgumentException();
+    }
 
 }
