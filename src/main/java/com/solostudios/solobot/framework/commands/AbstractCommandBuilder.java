@@ -48,7 +48,7 @@ public final class AbstractCommandBuilder<T extends AbstractCommand> {
     }
 
     public static <V extends AbstractCommand> AbstractCommandBuilder anAbstractCommand(@NotNull Class<V> command, @NotNull String name, boolean enabled) {
-        return new AbstractCommandBuilder<V>(command, name, enabled);
+        return new AbstractCommandBuilder<>(command, name, enabled);
     }
 
     public AbstractCommandBuilder withAliases(String... aliases) {

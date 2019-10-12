@@ -20,6 +20,7 @@
 package com.solostudios.solobot.framework.commands;
 
 import com.solostudios.solobot.abstracts.AbstractCategory;
+import com.solostudios.solobot.framework.commands.Errors.ArgumentError;
 import com.solostudios.solobot.soloBOT;
 import javassist.bytecode.DuplicateMemberException;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -170,9 +171,16 @@ public class CommandHandler {
                         }
                     }
 
-                    StringBuilder sb = new StringBuilder();
+                    try {
+                        command.run(event, AbstractCommand.parseArgs(event, command));
+                        if (args[args.length - 1].equals("-hide")) {
+                            event.getMessage().getTextChannel().retrieveMessageById(event.getMessage().getId()).queue(mess -> msg.delete().queue(), error -> {
+                            });
+                        }
+                    } catch (ArgumentError e) {
+                        new CommandStateMachine(event, event.getJDA(), command);
+                    }
 
-                    new CommandStateMachine(event, event.getJDA(), command);
 
                     logger.debug("{} command run properly.", command.getName());
                 } catch (IllegalArgumentException e) {

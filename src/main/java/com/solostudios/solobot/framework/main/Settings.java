@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -89,7 +88,7 @@ public class Settings {
     }
 
     private static JSONObject load() throws IOException {
-        jsettings = new JSONObject(new String(Files.readAllBytes(Paths.get(settings.getPath())), StandardCharsets.UTF_8));
+        jsettings = new JSONObject(Files.readString(Paths.get(settings.getPath())));
         return jsettings;
     }
 

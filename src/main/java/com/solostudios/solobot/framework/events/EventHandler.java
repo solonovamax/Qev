@@ -35,9 +35,6 @@ public class EventHandler extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (event.getGuild() == null)
-            return;
-
         MongoDBInterface.messageEvent(event); //Forward message receive event to the Level Handler.
     }
 }

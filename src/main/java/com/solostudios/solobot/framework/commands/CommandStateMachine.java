@@ -27,14 +27,19 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+
 public class CommandStateMachine extends ListenerAdapter {
     private final long channelID, userID;
     private final JDA jda;
     private final AbstractCommand command;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     private JSONObject args;
+    private boolean deleteMessages = false;
+    private ArrayList<Message> messageList = new ArrayList<>();
 
     public CommandStateMachine(MessageReceivedEvent event, JDA jda, AbstractCommand command) {
+        messageList.add(event.getMessage());
         this.command = command;
         logger.info("constructing state machine");
         this.channelID = event.getChannel().getIdLong();
@@ -51,11 +56,17 @@ public class CommandStateMachine extends ListenerAdapter {
         }
     }
 
+    public CommandStateMachine withDeleteMessages(boolean deleteMessages) {
+        this.deleteMessages = deleteMessages;
+        return this;
+    }
+
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
 
         Message message = event.getMessage();
         if (message.getChannel().getIdLong() == channelID && message.getAuthor().getIdLong() == userID) {
+            messageList.add(event.getMessage());
             if (message.getContentStripped().toLowerCase().equals("cancel")) {
                 message.getChannel().sendMessage("Canceling.").queue();
                 destroyStateMaching();
@@ -78,5 +89,9 @@ public class CommandStateMachine extends ListenerAdapter {
 
     private void destroyStateMaching() {
         jda.removeEventListener(this);
+        for (Message message : messageList) {
+            message.getTextChannel().retrieveMessageById(message.getId()).queue(msg -> msg.delete().queue(), error -> {
+            });
+        }
     }
 }

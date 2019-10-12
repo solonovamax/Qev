@@ -62,25 +62,20 @@ public class CommandListener extends ListenerAdapter {
         logger.debug("Received message from shard {}/{}. Attempting to parse.", (shardInfo.getShardId() + 1), shardInfo.getShardTotal());
 
         String[] args;
-        if (message.getContentRaw().startsWith("<@" + message.getGuild().getSelfMember().getId() + "> "))
-            args = message.getContentRaw().toLowerCase().replace("<@" + message.getGuild().getSelfMember().getId() + "> ", "").split(" ");
-        else
+        if (message.getContentRaw().startsWith("<@" + message.getGuild().getSelfMember().getId() + "> ")) {
+            args = message.getContentRaw().toLowerCase().replace("<@" + message.getGuild().getSelfMember().getId() + ">", "").split(" ");
+            args[0] = args[0].replace(MongoDBInterface.getPrefix(event.getGuild().getIdLong()), "");
+            if (args[0].equals("info") || (args[0].equals("") && args[1].equals("info"))) {
+                CommandHandler.parseMessage(event, message, args);
+            } else {
+                event.getChannel().sendMessage("You can only use the mention prefix for the info command.").queue();
+            }
+        } else {
             args = message.getContentRaw().toLowerCase().split(" ");
-        args[0] = args[0].replace(MongoDBInterface.getPrefix(event.getGuild().getIdLong()), "");
-        args[0] = args[0].replace("<@" + message.getGuild().getSelfMember().getId() + ">", "");
+        }
 
+        args[0] = args[0].replace(MongoDBInterface.getPrefix(event.getGuild().getIdLong()), "");
 
         CommandHandler.parseMessage(event, message, args);
-
-        if (args[args.length - 1].equals("-hide")) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            message.getTextChannel().retrieveMessageById(message.getId()).queue(msg -> msg.delete().queue(), error -> {
-            });
-        }
     }
 }

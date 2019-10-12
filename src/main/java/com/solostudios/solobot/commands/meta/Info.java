@@ -20,6 +20,7 @@
 package com.solostudios.solobot.commands.meta;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
+import com.solostudios.solobot.framework.main.MongoDBInterface;
 import com.solostudios.solobot.soloBOT;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -52,12 +53,15 @@ public class Info extends AbstractCommand {
         int shardTotal = shardInfo.getShardTotal();
         event.getChannel().sendMessage(new EmbedBuilder()
                 .setTitle("soloBOT Shard #" + (shardID + 1) + " out of " + shardTotal)
+                .addField(" --- BOT DATA --- ", "", false)
                 .addField("Number of servers in this shard", event.getJDA().getGuilds().size() + "", false)
                 .addField("Github", "https://github.com/solonovamax/soloBOT", false)
                 .addField("Uptime:",
                         uptime,
                         false)
                 .addField("Support Server", soloBOT.SUPPORT_SERVER, false)
+                .addField(" --- SERVER DATA --- ", "", false)
+                .addField("Prefix", MongoDBInterface.getPrefix(event.getGuild().getIdLong()), true)
                 .setThumbnail(jda.getSelfUser().getAvatarUrl())
                 .setFooter("By solonovamax#3163", "https://cdn.discordapp.com/avatars/195735703726981120/f6277c9582ee4509be2ab7094b340dec.png")
                 .build()).queue();

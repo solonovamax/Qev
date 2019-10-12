@@ -178,7 +178,7 @@ public class MongoDBInterface {
         User author = messageReceivedEvent.getAuthor();
         UserStats userStats = new UserStats(getGuildDocument(guild.getIdLong()), author.getIdLong());
 
-        if (System.currentTimeMillis() > (userStats.getLastMessageTime() + 1000 * 60)) {
+        if (System.currentTimeMillis() > (userStats.getLastMessageTime() + (1000 * 60))) {
             logger.debug("Adding random amount of xp to user {}", author.getAsTag());
             userStats.addXP((int) (Math.random() * 10 + 15));
             logger.debug("User now has {} xp.", userStats.getXP());

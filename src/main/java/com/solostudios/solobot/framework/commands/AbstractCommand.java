@@ -19,6 +19,7 @@
 
 package com.solostudios.solobot.framework.commands;
 
+import com.solostudios.solobot.framework.commands.Errors.ArgumentError;
 import com.solostudios.solobot.framework.utility.MessageUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -103,6 +104,52 @@ public abstract class AbstractCommand {
 
 
     public abstract void run(MessageReceivedEvent event, JSONObject arguments) throws IllegalArgumentException;
+
+    /* layout of the JSONArray
+    [{
+        "key": String,
+        "type": Clazz, <- Must be integer, double, boolean, role, member or string
+        "optional": boolean,
+        "default": Object <- Must be of class type
+        "error": "Invalid input" <- What it says when there is an error
+        "prompt": "Please input an argument" <- What is says when the user need to input something.
+     },
+     {
+        "key": String,
+        "type": Clazz, <- Must be integer, double, boolean, role, member or string
+        "optional": boolean,
+        "default": Object <- Must be of class type
+        "error": "Invalid input" <- What it says when there is an error
+        "prompt": "Please input an argument" <- What is says when the user need to input something.
+     }]
+     */
+
+
+    public static JSONObject parseArgs(MessageReceivedEvent event, AbstractCommand command) throws ArgumentError {
+        JSONObject temp = new JSONObject();
+
+        if (command.getArguments().length() == 0) {
+            return temp;
+        }
+
+        JSONArray argumentsList = command.getArguments();
+
+        for (int i = 0; i < argumentsList.length(); i++) {
+            try {
+                JSONObject object = argumentsList.getJSONObject(i);
+
+                Object tempClazz = object.get("key");
+
+                if (tempClazz instanceof Class) {
+                    Class clazz = (Class) tempClazz;
+                }
+
+            } catch (JSONException ignored) {
+            }
+        }
+
+        return temp;
+    }
 
     protected void withEnabled(boolean enabled) {
         this.enabled = enabled;
@@ -191,12 +238,14 @@ public abstract class AbstractCommand {
             } catch (JSONException e) {
                 return false;
             }
-            if (!arg.has("key") || !arg.has("type"))
+            if (!arg.has("key") || !arg.has("type")) {
                 return false;
+            }
 
             Object c = arg.get("type");
-            if (!(c == String.class || c == int.class || c == double.class || c == Role.class || c == Member.class || c == boolean.class || c.equals("BannedUser")))
+            if (!(c == String.class || c == int.class || c == double.class || c == Role.class || c == Member.class || c == boolean.class || c.equals("BannedUser"))) {
                 return false;
+            }
 
             if (arg.has("default")) {
                 if (arg.get("default").getClass() != c) {
@@ -220,24 +269,6 @@ public abstract class AbstractCommand {
         return true;
     }
 
-    /* layout of the JSONArray
-    [{
-        "key": String,
-        "type": Clazz, <- Must be integer, double, boolean, role, member or string
-        "optional": boolean,
-        "default": Object <- Must be of class type
-        "error": "Invalid input" <- What it says when there is an error
-        "prompt": "Please input an argument" <- What is says when the user need to input something.
-     },
-     {
-        "key": String,
-        "type": Clazz, <- Must be integer, double, boolean, role, member or string
-        "optional": boolean,
-        "default": Object <- Must be of class type
-        "error": "Invalid input" <- What it says when there is an error
-        "prompt": "Please input an argument" <- What is says when the user need to input something.
-     }]
-     */
 
     public boolean fitsArguments(JSONObject args) {
         for (int i = 0; i < arguments.length(); i++) {
