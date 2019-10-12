@@ -20,7 +20,7 @@
 package com.solostudios.solobot.framework.commands;
 
 import com.solostudios.solobot.abstracts.AbstractCategory;
-import com.solostudios.solobot.framework.commands.Errors.ArgumentError;
+import com.solostudios.solobot.framework.commands.errors.ArgumentError;
 import com.solostudios.solobot.soloBOT;
 import javassist.bytecode.DuplicateMemberException;
 import net.dv8tion.jda.api.EmbedBuilder;

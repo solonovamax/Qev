@@ -17,39 +17,39 @@
  *
  */
 
-package com.solostudios.solobot.framework.commands.Errors;
+package com.solostudios.solobot.framework.commands.errors;
 
-public class ArgumentError extends RuntimeException {
+public class IncorrectArgumentException extends RuntimeException {
     /**
      * Serialization ID
      */
     private static final long serialVersionUID = 0;
 
     /**
-     * Constructs a JSONException with an explanatory message.
+     * Constructs a IncorrectArgumentException with an explanatory message.
      *
      * @param message Detail about the reason for the exception.
      */
-    public ArgumentError(final String message) {
+    public IncorrectArgumentException(final String message) {
         super(message);
     }
 
     /**
-     * Constructs a JSONException with an explanatory message and cause.
+     * Constructs a IncorrectArgumentException with an explanatory message and cause.
      *
      * @param message Detail about the reason for the exception.
      * @param cause   The cause.
      */
-    public ArgumentError(final String message, final Throwable cause) {
+    public IncorrectArgumentException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
     /**
-     * Constructs a new JSONException with the specified cause.
+     * Constructs a new IncorrectArgumentException with the specified cause.
      *
      * @param cause The cause.
      */
-    public ArgumentError(final Throwable cause) {
+    public IncorrectArgumentException(final Throwable cause) {
         super(cause.getMessage(), cause);
     }
 }

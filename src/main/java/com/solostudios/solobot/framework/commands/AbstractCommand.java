@@ -19,7 +19,7 @@
 
 package com.solostudios.solobot.framework.commands;
 
-import com.solostudios.solobot.framework.commands.Errors.ArgumentError;
+import com.solostudios.solobot.framework.commands.errors.ArgumentError;
 import com.solostudios.solobot.framework.utility.MessageUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
