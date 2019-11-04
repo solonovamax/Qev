@@ -19,37 +19,37 @@
 
 package com.solostudios.solobot.framework.commands.errors;
 
-public class ArgumentError extends RuntimeException {
+public class NoMoreArgumentsException extends RuntimeException {
     /**
      * Serialization ID
      */
     private static final long serialVersionUID = 0;
 
     /**
-     * Constructs a ArgumentError with an explanatory message.
+     * Constructs a NoMoreArgumentsException with an explanatory message.
      *
      * @param message Detail about the reason for the exception.
      */
-    public ArgumentError(final String message) {
+    public NoMoreArgumentsException(final String message) {
         super(message);
     }
 
     /**
-     * Constructs a ArgumentError with an explanatory message and cause.
+     * Constructs a NoMoreArgumentsException with an explanatory message and cause.
      *
      * @param message Detail about the reason for the exception.
      * @param cause   The cause.
      */
-    public ArgumentError(final String message, final Throwable cause) {
+    public NoMoreArgumentsException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
     /**
-     * Constructs a new ArgumentError with the specified cause.
+     * Constructs a new NoMoreArgumentsException with the specified cause.
      *
      * @param cause The cause.
      */
-    public ArgumentError(final Throwable cause) {
+    public NoMoreArgumentsException(final Throwable cause) {
         super(cause.getMessage(), cause);
     }
 }

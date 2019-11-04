@@ -20,6 +20,8 @@
 package com.solostudios.solobot.commands.utility;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
+import com.solostudios.solobot.framework.commands.ArgumentContainer;
+import com.solostudios.solobot.framework.commands.errors.IllegalInputException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -46,7 +48,7 @@ public class UserInfo extends AbstractCommand {
     }
 
     @Override
-    public void run(MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
+    public void run(MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
         User author = event.getAuthor();
         User user;
         if (args.has("user")) {

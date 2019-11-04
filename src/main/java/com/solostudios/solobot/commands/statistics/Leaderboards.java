@@ -20,6 +20,8 @@
 package com.solostudios.solobot.commands.statistics;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
+import com.solostudios.solobot.framework.commands.ArgumentContainer;
+import com.solostudios.solobot.framework.commands.errors.IllegalInputException;
 import com.solostudios.solobot.framework.main.MongoDBInterface;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -45,7 +47,7 @@ public class Leaderboards extends AbstractCommand {
     }
 
     @Override
-    public void run(@NotNull MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
 
         @SuppressWarnings("unchecked")
         LinkedHashMap<String, Integer> leaderboard = (LinkedHashMap<String, Integer>) MongoDBInterface.get((guild, ignore, ex) -> {

@@ -20,11 +20,12 @@
 package com.solostudios.solobot.commands.search;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
+import com.solostudios.solobot.framework.commands.ArgumentContainer;
+import com.solostudios.solobot.framework.commands.errors.IllegalInputException;
 import com.solostudios.solobot.framework.utility.WebUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,7 @@ public class Hentai extends AbstractCommand {
     }
 
     @Override
-    public void run(MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
+    public void run(MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
         if (!event.getTextChannel().isNSFW()) {
             event.getChannel().sendMessage("This channel is not NSFW. \nThis command can only be used in channels with an NSFW tag.").queue();
             return;

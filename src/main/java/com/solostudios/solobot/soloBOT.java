@@ -30,10 +30,12 @@ import net.dv8tion.jda.api.JDABuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -60,6 +62,23 @@ public class soloBOT {
     //public static DiscordBotListAPI dblapi;
 
     public static void main(String[] args) {
+
+        logger.info("Loading classes.");
+
+        Reflections categories = new Reflections("com.solostudios.solobot.");
+        Set<Class<?>> Categories = categories.getSubTypesOf(Object.class);
+        ClassLoader classLoader = soloBOT.class.getClassLoader();
+
+        for (Class<?> clazz : Categories) {
+            try {
+                logger.debug("Attempting to load {}.", clazz.getName());
+                Class klazz = classLoader.loadClass(clazz.getName());
+                logger.info("Class {} successfully loaded.", clazz.getName());
+            } catch (ClassNotFoundException e) {
+                logger.warn("Could not load class " + clazz.getCanonicalName());
+            }
+        }
+
 
         logger.info("Initializing level handler.");
         new MongoDBInterface();

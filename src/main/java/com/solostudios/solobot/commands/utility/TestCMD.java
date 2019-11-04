@@ -20,9 +20,10 @@
 package com.solostudios.solobot.commands.utility;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
+import com.solostudios.solobot.framework.commands.ArgumentContainer;
+import com.solostudios.solobot.framework.commands.errors.IllegalInputException;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,13 +32,13 @@ public class TestCMD extends AbstractCommand {
 
     public TestCMD() {
         super("test");
-        this.withEnabled(false);
         this.withCategory("Utility");
         this.withDescription("Test");
+        this.withOwnerOnly(false);
     }
 
     @Override
-    public void run(MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
+    public void run(MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
         User author = event.getAuthor();
         event.getChannel().sendMessage(author.getAvatarUrl() + "").queue();
         event.getChannel().sendMessage(author.getDefaultAvatarUrl() + "").queue();

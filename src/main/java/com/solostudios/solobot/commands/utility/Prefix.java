@@ -20,7 +20,10 @@
 package com.solostudios.solobot.commands.utility;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
+import com.solostudios.solobot.framework.commands.ArgumentContainer;
+import com.solostudios.solobot.framework.commands.errors.IllegalInputException;
 import com.solostudios.solobot.framework.main.MongoDBInterface;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,13 +37,20 @@ public class Prefix extends AbstractCommand {
                 .put(new JSONObject()
                         .put("key", "prefix")
                         .put("type", String.class)
-                        .put("default", "!")
-                        .put("error", "Invalid prefix!")));
+                        .put("error", "Invalid prefix!")
+                        .put("optional", true)));
         this.withUsage("prefix <prefix>");
     }
 
     @Override
-    public void run(MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
-        MongoDBInterface.setPrefix(event.getGuild().getIdLong(), args.getString("prefix"));
+    public void run(MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
+        if (args.has("prefix")) {
+            MongoDBInterface.setPrefix(event.getGuild().getIdLong(), args.getString("prefix"));
+        } else {
+            event.getChannel().sendMessage(new EmbedBuilder()
+                    .setTitle(event.getGuild().getName())
+                    .addField("Prefix", MongoDBInterface.getPrefix(event.getGuild().getIdLong()), false)
+                    .build()).queue();
+        }
     }
 }

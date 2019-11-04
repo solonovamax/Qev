@@ -20,6 +20,8 @@
 package com.solostudios.solobot.commands.search;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
+import com.solostudios.solobot.framework.commands.ArgumentContainer;
+import com.solostudios.solobot.framework.commands.errors.IllegalInputException;
 import com.solostudios.solobot.framework.utility.WebUtils;
 import com.solostudios.solobot.soloBOT;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -47,7 +49,7 @@ public class Youtube extends AbstractCommand {
     }
 
     @Override
-    public void run(MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
+    public void run(MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
 
         //https://www.urlencoder.io/learn/
 

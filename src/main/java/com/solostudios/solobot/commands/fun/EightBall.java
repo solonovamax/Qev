@@ -20,6 +20,8 @@
 package com.solostudios.solobot.commands.fun;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
+import com.solostudios.solobot.framework.commands.ArgumentContainer;
+import com.solostudios.solobot.framework.commands.errors.IllegalInputException;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -60,7 +62,7 @@ public class EightBall extends AbstractCommand {
     }
 
     @Override
-    public void run(@NotNull MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
         String response = answerList[(int) Math.floor(answerList.length * Math.random())];
         event.getChannel().sendMessage(event.getAuthor().getAsMention() + " " + response).queue();
     }

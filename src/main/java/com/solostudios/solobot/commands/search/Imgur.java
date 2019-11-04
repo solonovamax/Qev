@@ -20,6 +20,8 @@
 package com.solostudios.solobot.commands.search;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
+import com.solostudios.solobot.framework.commands.ArgumentContainer;
+import com.solostudios.solobot.framework.commands.errors.IllegalInputException;
 import com.solostudios.solobot.framework.utility.WebUtils;
 import com.solostudios.solobot.soloBOT;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -48,7 +50,7 @@ public class Imgur extends AbstractCommand {
     }
 
     @Override
-    public void run(MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
+    public void run(MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
         // https://api.imgur.com/3/
         //https://www.urlencoder.io/learn/
 

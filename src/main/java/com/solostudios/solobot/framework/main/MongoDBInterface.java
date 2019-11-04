@@ -59,7 +59,8 @@ public class MongoDBInterface {
             .append("version", guildDataVersion)
             .append("guild", 0L)
             .append("prefix", "!")
-            .append("updateTime", 0L);
+            .append("updateTime", 0L)
+            .append("muteRole", 0L);
     @NotNull
     private static final String uriString = "mongodb://bot:tob@solo-serv.local:27017/soloBOT?authSource=admin";
     @NotNull
@@ -170,6 +171,9 @@ public class MongoDBInterface {
     }
 
     public static void messageEvent(@NotNull MessageReceivedEvent messageReceivedEvent) {
+        if (!messageReceivedEvent.getChannelType().isGuild()) {
+            return;
+        }
         if (messageReceivedEvent.getAuthor().isBot())
             return;
 

@@ -20,6 +20,8 @@
 package com.solostudios.solobot.commands.administrative;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
+import com.solostudios.solobot.framework.commands.ArgumentContainer;
+import com.solostudios.solobot.framework.commands.errors.IllegalInputException;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
@@ -47,7 +49,7 @@ public class Clear extends AbstractCommand {
 
 
     @Override
-    public void run(MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
+    public void run(MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
         event.getTextChannel().retrieveMessageById(event.getMessage().getId()).queue(msg -> msg.delete().queue(), error -> {
         });
 

@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.concurrent.Exchanger;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.regex.Pattern;
 
 public class MessageUtils {
     private static Logger logger = LoggerFactory.getLogger(MessageUtils.class);
@@ -150,6 +151,21 @@ public class MessageUtils {
     }
 
     public static Member getMemberFromString(String message, Guild guild) {
+        // <@\d{18}>
+
+        Pattern checkMention = Pattern.compile("<@\\d{18}>");
+
+        if (checkMention.matcher(message.trim()).matches()) {
+            Member member = null;
+            try {
+                member = guild.getMemberById(message.replace("<@", "").replace(">", ""));
+            } catch (NumberFormatException ignored) {
+            }
+            if (member != null) {
+                return member;
+            }
+        }
+
         if (message.length() > 1) {
             List<Member> memberList = guild.getMembers();
 
@@ -167,6 +183,20 @@ public class MessageUtils {
     }
 
     public static User getUserFromString(String message, Guild guild) {
+
+        Pattern checkMention = Pattern.compile("<@\\d{18}>");
+
+        if (checkMention.matcher(message.trim()).matches()) {
+            User user = null;
+            try {
+                user = guild.getMemberById(message.replace("<@", "").replace(">", "")).getUser();
+            } catch (NumberFormatException | NullPointerException ignored) {
+            }
+            if (user != null) {
+                return user;
+            }
+        }
+
         if (message.length() > 0) {
             List<Member> memberList = guild.getMembers();
 
@@ -224,6 +254,21 @@ public class MessageUtils {
     }
 
     public static Role getRoleFromString(String message, Guild guild) {
+
+        //<@&\d{18}>
+
+        Pattern checkMention = Pattern.compile("<@&\\d{18}>");
+
+        if (checkMention.matcher(message.trim()).matches()) {
+            Role role = null;
+            try {
+                role = guild.getRoleById(message.replace("<@&", "").replace(">", ""));
+            } catch (NumberFormatException | NullPointerException ignored) {
+            }
+            if (role != null) {
+                return role;
+            }
+        }
 
         if (message.length() > 1) {
 

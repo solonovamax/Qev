@@ -20,6 +20,8 @@
 package com.solostudios.solobot.commands.statistics;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
+import com.solostudios.solobot.framework.commands.ArgumentContainer;
+import com.solostudios.solobot.framework.commands.errors.IllegalInputException;
 import com.solostudios.solobot.framework.main.LevelCard;
 import com.solostudios.solobot.framework.main.MongoDBInterface;
 import com.solostudios.solobot.framework.main.UserStats;
@@ -62,7 +64,7 @@ public class Rank extends AbstractCommand {
     }
 
     @Override
-    public void run(@NotNull MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
         User author = event.getAuthor();
         User user;
         if (args.has("user")) {

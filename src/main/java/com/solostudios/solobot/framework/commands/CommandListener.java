@@ -63,12 +63,12 @@ public class CommandListener extends ListenerAdapter {
 
         String[] args;
         if (message.getContentRaw().startsWith("<@" + message.getGuild().getSelfMember().getId() + "> ")) {
-            args = message.getContentRaw().toLowerCase().replace("<@" + message.getGuild().getSelfMember().getId() + ">", "").split(" ");
-            args[0] = args[0].replace(MongoDBInterface.getPrefix(event.getGuild().getIdLong()), "");
-            if (args[0].equals("info") || (args[0].equals("") && args[1].equals("info"))) {
+            args = message.getContentRaw().toLowerCase().replaceFirst("<@" + message.getGuild().getSelfMember().getId() + "> ", "").split(" ");
+            args[0] = args[0].replace(MongoDBInterface.getPrefix(event.getGuild().getIdLong()), "").trim();
+            if (args[0].equals("info")) {
                 CommandHandler.parseMessage(event, message, args);
             } else {
-                event.getChannel().sendMessage("You can only use the mention prefix for the info command.").queue();
+                event.getChannel().sendMessage("If you wish to find out the prefix of the bot, mention with the word info after it.").queue();
             }
         } else {
             args = message.getContentRaw().toLowerCase().split(" ");

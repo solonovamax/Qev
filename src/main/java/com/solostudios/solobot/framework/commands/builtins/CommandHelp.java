@@ -19,8 +19,11 @@
 
 package com.solostudios.solobot.framework.commands.builtins;
 
+import com.solostudios.solobot.abstracts.AbstractCategory;
 import com.solostudios.solobot.framework.commands.AbstractCommand;
+import com.solostudios.solobot.framework.commands.ArgumentContainer;
 import com.solostudios.solobot.framework.commands.CommandHandler;
+import com.solostudios.solobot.framework.commands.errors.IllegalInputException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +33,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.TreeMap;
 
 public class CommandHelp extends AbstractCommand {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -49,61 +55,69 @@ public class CommandHelp extends AbstractCommand {
     }
 
     @Override
-    public void run(@NotNull MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
 
         //https://solonovamax.github.io/soloBOT/#commands
 
-        if (!args.has("command")) {
-            event.getChannel().sendMessage(new EmbedBuilder()
-                    .addField("Info", "Please type `!help {string}` with the name of a command to get info on a specific command. Otherwise, click the link below.", false)
-                    .addField("Link to commands", "[commands](https://solonovamax.github.io/soloBOT/#commands)", false)
-                    .setColor(Color.BLUE)
-                    .build()).queue();
-            /*
-            logger.debug("Retrieving category list.");
+        String cmd;
 
-            TreeMap<AbstractCategory, HashMap<String, AbstractCommand>> categoryList = new TreeMap<>(CommandHandler.getCategoryList());
+        logger.info(args.toString(11));
 
-            logger.debug("Generating categories.");
-            categoryList.forEach((AbstractCategory abstractCategory, HashMap<String, AbstractCommand> commandList) -> {
-                EmbedBuilder category = new EmbedBuilder();
-                category.setTitle(abstractCategory.getName())
-                        .setColor(abstractCategory.getColor());
-                logger.debug("Generating category {}.", abstractCategory.getName());
+        try {
+            cmd = args.getString("command").trim();
 
-                StringBuilder cList = new StringBuilder();
+            if (cmd.equals("all")) {
+                logger.debug("Retrieving category list.");
+                TreeMap<AbstractCategory, HashMap<String, AbstractCommand>> categoryList = new TreeMap<>(CommandHandler.getCategoryList());
+                logger.debug("Generating categories.");
 
-                commandList.forEach((String name, AbstractCommand command) -> {
+                ArrayList<EmbedBuilder> categoryEmbedList = new ArrayList<>(categoryList.size());
 
-                    logger.debug("Adding command {}.", name);
-
-                    StringBuilder cmd = new StringBuilder();
-
-                    StringBuilder commandName = new StringBuilder()
-                            .append(name);
-                    for (String alias : command.getAliases()) {
-                        commandName.append("/").append(alias);
-                    }
-
-                    cmd.append("**`").append(commandName).append("`** ").append(command.getDescription()).append("\n");
-
-                    cList.append(cmd);
-
+                categoryList.forEach((AbstractCategory abstractCategory, HashMap<String, AbstractCommand> commandList) -> {
+                    EmbedBuilder category = new EmbedBuilder();
+                    category.setTitle(abstractCategory.getName())
+                            .setColor(abstractCategory.getColor());
+                    logger.debug("Generating category {}.", abstractCategory.getName());
+                    StringBuilder cList = new StringBuilder();
+                    commandList.forEach((String name, AbstractCommand command) -> {
+                        if (command.isOwnerOnly()) {
+                            return;
+                        }
+                        logger.debug("Adding command {}.", name);
+                        StringBuilder _cmd = new StringBuilder();
+                        StringBuilder commandName = new StringBuilder()
+                                .append(name);
+                        for (String alias : command.getAliases()) {
+                            commandName.append("/").append(alias);
+                        }
+                        _cmd.append("**`").append(commandName).append("`** ").append(command.getDescription()).append("\n");
+                        cList.append(_cmd);
+                    });
+                    category.addField("Commands:", cList.toString() +
+                            "\nType !help {Command Name} to get usage for a specific command.", false);
+                    categoryEmbedList.add(category);
                 });
-                category.addField("Commands:", cList.toString() +
-                        "\nType !help {Command Name} to get usage for a specific command.", false);
+                event.getAuthor().openPrivateChannel().queue((ch) -> {
+                    Boolean exit = Boolean.TRUE;
+                    ch.sendMessage("Command List:").queue((message) -> {
+                        for (EmbedBuilder category : categoryEmbedList) {
+                            ch.sendMessage(category.build()).queue();
+                        }
+                    }, (throwable) -> {
+                        event.getChannel().sendMessage("I cannot message you. Please enabled your DMs if you want to be able to use this feature.\n" +
+                                "If you think this is an error, please contact @solonovamax#3163.").queue();
+                    });
+                }, (throwable -> {
+                    event.getChannel().sendMessage("You must enable DMs to use this feature.").queue();
+                }));
+                return;
+            }
 
-                message.getChannel().sendMessage(category.build()).queue();
-
-            });
-            */
-        } else {
-            String cmd = args.getString("command");
+            logger.info(cmd);
             AbstractCommand command = CommandHandler.getCommandList().get(cmd);
 
             if (command == null) {
-                event.getChannel().sendMessage("Invalid command name!").queue();
-                return;
+                throw new IllegalInputException("Invalid command name!");
             }
             EmbedBuilder help = new EmbedBuilder()
                     .setTitle(command.getName())
@@ -119,6 +133,14 @@ public class CommandHelp extends AbstractCommand {
             }
 
             event.getChannel().sendMessage(help.build()).queue();
+        } catch (NullPointerException e) {
+            logger.warn(e.getMessage());
+            event.getChannel().sendMessage(new EmbedBuilder()
+                    .addField("Info", "Please type `!help {string}` with the name of a command or group to get info on a specific command. " +
+                            "If you want info for all commands, you can either use `!help all`, or you can click the link below.", false)
+                    .addField("Link to commands", "[commands](https://solonovamax.github.io/Qev/#commands)", false)
+                    .setColor(Color.BLUE)
+                    .build()).queue();
         }
 
     }

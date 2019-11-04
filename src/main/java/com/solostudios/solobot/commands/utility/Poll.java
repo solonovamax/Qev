@@ -20,6 +20,8 @@
 package com.solostudios.solobot.commands.utility;
 
 import com.solostudios.solobot.framework.commands.AbstractCommand;
+import com.solostudios.solobot.framework.commands.ArgumentContainer;
+import com.solostudios.solobot.framework.commands.errors.IllegalInputException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -67,7 +69,7 @@ public class Poll extends AbstractCommand {
     }
 
     @Override
-    public void run(@NotNull MessageReceivedEvent event, JSONObject args) throws IllegalArgumentException {
+    public void run(@NotNull MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
 
         String[] items = Pattern.compile("\"(.*?)\"")
                 .matcher(args.getString("answers"))
@@ -79,7 +81,7 @@ public class Poll extends AbstractCommand {
             items[i] = items[i].replace("\"", "");
 
         if (items.length < 2 || items.length >= 10)
-            throw new IllegalArgumentException();
+            throw new IllegalInputException("poll not in right format");
 
         EmbedBuilder poll = new EmbedBuilder()
                 .setTitle("Poll by: " + event.getAuthor().getAsTag())
@@ -95,7 +97,8 @@ public class Poll extends AbstractCommand {
 
 
         event.getChannel().sendMessage(poll.build()).queue(pollMessage -> {
-            for (int x = 1; x < items.length; x++) {
+            for (int x = 0; x < items.length; x++) {
+                System.out.println(items.length);
                 pollMessage.addReaction(reactionNumbers[x]).queue();
             }
         });

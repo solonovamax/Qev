@@ -19,37 +19,37 @@
 
 package com.solostudios.solobot.framework.commands.errors;
 
-public class IncorrectArgumentException extends RuntimeException {
+public class IllegalArgumentException extends RuntimeException {
     /**
      * Serialization ID
      */
     private static final long serialVersionUID = 0;
 
     /**
-     * Constructs a IncorrectArgumentException with an explanatory message.
+     * Constructs a IllegalArgumentException with an explanatory message.
      *
      * @param message Detail about the reason for the exception.
      */
-    public IncorrectArgumentException(final String message) {
+    public IllegalArgumentException(final String message) {
         super(message);
     }
 
     /**
-     * Constructs a IncorrectArgumentException with an explanatory message and cause.
+     * Constructs a IllegalArgumentException with an explanatory message and cause.
      *
      * @param message Detail about the reason for the exception.
      * @param cause   The cause.
      */
-    public IncorrectArgumentException(final String message, final Throwable cause) {
+    public IllegalArgumentException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
     /**
-     * Constructs a new IncorrectArgumentException with the specified cause.
+     * Constructs a new IllegalArgumentException with the specified cause.
      *
      * @param cause The cause.
      */
-    public IncorrectArgumentException(final Throwable cause) {
+    public IllegalArgumentException(final Throwable cause) {
         super(cause.getMessage(), cause);
     }
 }

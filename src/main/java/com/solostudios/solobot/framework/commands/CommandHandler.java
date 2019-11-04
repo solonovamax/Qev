@@ -20,7 +20,7 @@
 package com.solostudios.solobot.framework.commands;
 
 import com.solostudios.solobot.abstracts.AbstractCategory;
-import com.solostudios.solobot.framework.commands.errors.ArgumentError;
+import com.solostudios.solobot.framework.commands.errors.IllegalInputException;
 import com.solostudios.solobot.soloBOT;
 import javassist.bytecode.DuplicateMemberException;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -172,18 +172,38 @@ public class CommandHandler {
                     }
 
                     try {
-                        command.run(event, AbstractCommand.parseArgs(event, command));
+
                         if (args[args.length - 1].equals("-hide")) {
-                            event.getMessage().getTextChannel().retrieveMessageById(event.getMessage().getId()).queue(mess -> msg.delete().queue(), error -> {
-                            });
+                            String[] tempArgs = new String[args.length - 1];
+                            System.arraycopy(args, 0, tempArgs, 0, args.length - 1);
+                            command.prerun(event, AbstractCommand.parseArgs(event, command, tempArgs));
+                            if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)) {
+                                event.getMessage().getTextChannel().retrieveMessageById(event.getMessage().getId()).queue(mess -> msg.delete().queue(), error -> {
+                                });
+                            } else {
+                                event.getChannel().sendMessage("I cannot delete your message, as I do not have the delete messages permission.").queue();
+                            }
+                        } else {
+                            command.prerun(event, AbstractCommand.parseArgs(event, command, args));
                         }
-                    } catch (ArgumentError e) {
-                        new CommandStateMachine(event, event.getJDA(), command);
+                    } catch (IllegalArgumentException e) {
+                        event.getChannel().sendMessage(e.getMessage() + " ").queue();
+
+                        CommandStateMachine argumentWaiter = new CommandStateMachine(event, event.getJDA(), command);
+
+                        if (args[args.length - 1].equals("-hide")) {
+                            argumentWaiter.withDeleteMessages(true);
+                        }
+
+
+                    } catch (IllegalInputException e) {
+                        event.getChannel().sendMessage(e.getMessage()).queue();
+                        return;
                     }
 
 
                     logger.debug("{} command run properly.", command.getName());
-                } catch (IllegalArgumentException e) {
+                } catch (java.lang.IllegalArgumentException e) {
                     logger.debug("Command syntax is illegal! Returning usage message.");
                     StringBuilder aliases = new StringBuilder();
                     for (String alias : command.getAliases()) {

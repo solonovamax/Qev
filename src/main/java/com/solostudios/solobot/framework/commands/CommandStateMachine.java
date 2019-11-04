@@ -19,11 +19,12 @@
 
 package com.solostudios.solobot.framework.commands;
 
+import com.solostudios.solobot.framework.commands.errors.IllegalInputException;
+import com.solostudios.solobot.framework.commands.errors.NoMoreArgumentsException;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,7 @@ public class CommandStateMachine extends ListenerAdapter {
     private final JDA jda;
     private final AbstractCommand command;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
-    private JSONObject args;
+    private ArgumentContainer args;
     private boolean deleteMessages = false;
     private ArrayList<Message> messageList = new ArrayList<>();
 
@@ -48,9 +49,9 @@ public class CommandStateMachine extends ListenerAdapter {
         args = command.getDefaultArgs();
         jda.addEventListener(this);
 
+
         if (command.getArguments() == null || command.fitsArguments(args)) {
-            command.run(event, args);
-            destroyStateMaching();
+            runCommand(event);
         } else {
             event.getChannel().sendMessage(command.nextArgPrompt(args)).queue();
         }
@@ -63,9 +64,11 @@ public class CommandStateMachine extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-
         Message message = event.getMessage();
         if (message.getChannel().getIdLong() == channelID && message.getAuthor().getIdLong() == userID) {
+
+            logger.info(args.toString(11));
+
             messageList.add(event.getMessage());
             if (message.getContentStripped().toLowerCase().equals("cancel")) {
                 message.getChannel().sendMessage("Canceling.").queue();
@@ -74,12 +77,17 @@ public class CommandStateMachine extends ListenerAdapter {
                 try {
                     command.putNextArg(event, args);
                 } catch (IllegalArgumentException e) {
+                    logger.info("sending message " + e.getMessage());
                     event.getChannel().sendMessage(e.getMessage() + " ").queue();
                     e.printStackTrace();
+                } catch (NoMoreArgumentsException e) {
+                    if (command.fitsArguments(args)) {
+                        runCommand(event);
+                    }
                 }
+
                 if (command.fitsArguments(args)) {
-                    command.run(event, args);
-                    destroyStateMaching();
+                    runCommand(event);
                 } else {
                     event.getChannel().sendMessage(command.nextArgPrompt(args)).queue();
                 }
@@ -88,10 +96,25 @@ public class CommandStateMachine extends ListenerAdapter {
     }
 
     private void destroyStateMaching() {
+        logger.info("destroying state machine");
         jda.removeEventListener(this);
-        for (Message message : messageList) {
-            message.getTextChannel().retrieveMessageById(message.getId()).queue(msg -> msg.delete().queue(), error -> {
-            });
+        if (this.deleteMessages) {
+            for (Message message : messageList) {
+                message.getTextChannel().retrieveMessageById(message.getId()).queue(msg -> msg.delete().queue(), error -> {
+                });
+            }
         }
+    }
+
+    private void runCommand(MessageReceivedEvent event) {
+        try {
+            command.prerun(event, args);
+        } catch (IllegalInputException e) {
+            event.getChannel().sendMessage(e.getMessage()).queue();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        destroyStateMaching();
     }
 }

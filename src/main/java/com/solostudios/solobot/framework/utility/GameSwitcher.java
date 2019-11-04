@@ -33,7 +33,8 @@ public class GameSwitcher extends Thread {
     public void run() {
         int index = (int) Math.round(Math.random() * (Presence.values().length - 1));
         Presence p = Presence.values()[index];
-        Activity.of(p.getGameType(), p.getAction());
+
+        shard.getPresence().setActivity(Activity.of(p.getGameType(), p.getAction()));
     }
 }
 
