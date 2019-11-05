@@ -41,8 +41,8 @@ public enum Presence {
     codeI(Activity.ActivityType.DEFAULT, "With some lines of code"),
     codeII(Activity.ActivityType.DEFAULT, "With some code");
 
-    private final Activity.ActivityType gameType;   // in kilograms
-    private final String action; // in meters
+    private final Activity.ActivityType gameType;
+    private final String action;
 
     Presence(Activity.ActivityType gameType, String action) {
         this.gameType = gameType;

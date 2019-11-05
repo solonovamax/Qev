@@ -161,6 +161,7 @@ public class CommandHandler {
                         if (!Objects.requireNonNull(event.getGuild().getMemberById(event.getJDA().getSelfUser().getId())).hasPermission(event.getTextChannel(), permission)) {
                             event.getChannel().sendMessage("Insufficient permissions.\n" +
                                     "I require the " + permission.getName() + " permission to run this command.").queue();
+                            return;
                         }
                     }
 
@@ -168,6 +169,7 @@ public class CommandHandler {
                         if (!Objects.requireNonNull(event.getGuild().getMemberById(msg.getAuthor().getId())).hasPermission(event.getTextChannel(), permission)) {
                             event.getChannel().sendMessage("Insufficient permissions.\n" +
                                     "You must have the " + permission.getName() + " permission to run this command.").queue();
+                            return;
                         }
                     }
 
@@ -187,6 +189,7 @@ public class CommandHandler {
                             command.prerun(event, AbstractCommand.parseArgs(event, command, args));
                         }
                     } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
                         event.getChannel().sendMessage(e.getMessage() + " ").queue();
 
                         CommandStateMachine argumentWaiter = new CommandStateMachine(event, event.getJDA(), command);

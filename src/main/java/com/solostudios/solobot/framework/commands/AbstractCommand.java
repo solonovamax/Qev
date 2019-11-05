@@ -127,7 +127,7 @@ public abstract class AbstractCommand {
                         if (defaultable) {
                             continue;
                         }
-                        throw new java.lang.IllegalArgumentException();
+                        throw new java.lang.IllegalArgumentException(obj.getString("error"));
                     }
                     temp.put(key, put);
                     continue;
@@ -142,7 +142,7 @@ public abstract class AbstractCommand {
                         if (defaultable) {
                             continue;
                         }
-                        throw new java.lang.IllegalArgumentException();
+                        throw new java.lang.IllegalArgumentException(obj.getString("error"));
                     }
                     temp.put(key, put);
                     continue;
@@ -157,7 +157,7 @@ public abstract class AbstractCommand {
                         if (defaultable) {
                             continue;
                         }
-                        throw new java.lang.IllegalArgumentException();
+                        throw new java.lang.IllegalArgumentException(obj.getString("error"));
                     }
                     temp.put(key, put);
                     continue;
@@ -181,7 +181,7 @@ public abstract class AbstractCommand {
                         if (defaultable) {
                             continue;
                         }
-                        throw new java.lang.IllegalArgumentException();
+                        throw new java.lang.IllegalArgumentException(obj.getString("error"));
                     }
                     temp.put(key, sb.toString().trim());
                     continue;
@@ -189,11 +189,11 @@ public abstract class AbstractCommand {
 
                 try {
                     if (clazz.equals(int.class) || clazz.equals(Integer.class)) {
-                        temp.put(key, Integer.parseInt(event.getMessage().getContentRaw()));
+                        temp.put(key, Integer.parseInt(args[j++]));
                         continue;
                     }
                     if (clazz.equals(double.class) || clazz.equals(Double.class)) {
-                        temp.put(key, Double.parseDouble(event.getMessage().getContentRaw()));
+                        temp.put(key, Double.parseDouble(args[j++]));
                         continue;
                     }
                 } catch (NumberFormatException e) {
@@ -204,7 +204,7 @@ public abstract class AbstractCommand {
                     if (defaultable) {
                         continue;
                     }
-                    throw new java.lang.IllegalArgumentException();
+                    throw new java.lang.IllegalArgumentException(obj.getString("error"));
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
                 if (skippable) {
@@ -214,7 +214,7 @@ public abstract class AbstractCommand {
                 if (defaultable) {
                     continue;
                 }
-                throw new java.lang.IllegalArgumentException();
+                throw new java.lang.IllegalArgumentException(obj.getString("error"));
             }
         }
 
@@ -370,7 +370,7 @@ public abstract class AbstractCommand {
      * @return instance of calling object
      */
     protected void withClientPermissions(Permission... clientPermissions) {
-        Permission[] tempPermissions = new Permission[clientPermissions.length];
+        Permission[] tempPermissions = new Permission[clientPermissions.length + 1];
         tempPermissions[0] = Permission.MESSAGE_WRITE;
         System.arraycopy(clientPermissions, 0, tempPermissions, 1, clientPermissions.length);
         this.clientPermissions = tempPermissions;
