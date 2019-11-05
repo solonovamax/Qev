@@ -30,6 +30,8 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 public class Avatar extends AbstractCommand {
     public Avatar() {
         super("avatar");
@@ -50,13 +52,13 @@ public class Avatar extends AbstractCommand {
             User author = event.getAuthor();
             if (args.has("user")) {
                 event.getChannel().sendMessage(new EmbedBuilder()
-                        .setImage(((Member) args.get("user")).getUser().getAvatarUrl()
+                        .setImage(Objects.requireNonNull(((Member) args.get("user")).getUser().getAvatarUrl())
                                 .replace(".png", ".webp?size=256"))
                         .build())
                         .queue();
-                event.getChannel().sendMessage(((Member) args.get("user")).getUser().getAvatarUrl().replace(".png", ".webp?size=256")).queue();
+                event.getChannel().sendMessage(Objects.requireNonNull(((Member) args.get("user")).getUser().getAvatarUrl()).replace(".png", ".webp?size=256")).queue();
             } else {
-                event.getChannel().sendMessage(new EmbedBuilder().setImage(author.getAvatarUrl().replace(".png", ".webp?size=256")).build()).queue();
+                event.getChannel().sendMessage(new EmbedBuilder().setImage(Objects.requireNonNull(author.getAvatarUrl()).replace(".png", ".webp?size=256")).build()).queue();
                 //message.getChannel().sendMessage(author.getAvatarUrl().replace(".png", ".webp?size=256")).queue();
             }
         } catch (NullPointerException e) {

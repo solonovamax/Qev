@@ -31,10 +31,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("WeakerAccess")
 public class JobQueue {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private static Queue<Job<MongoSetOperation>> jobQueue = new PriorityQueue<>(20);
 
+    @SuppressWarnings("WeakerAccess")
     public JobQueue() {
         Runnable task = () -> {
             try {
@@ -43,7 +45,7 @@ public class JobQueue {
                     job.getPayload().run(job.getuserData(), job.getGuildID(), job.getUserID(), job.getExchanger());
                 }
             } catch (Exception e) {
-                logger.error("Error fuck you you little peice of shit", e);
+                logger.error(e.getClass().getName(), e);
             }
         };
 
@@ -63,7 +65,7 @@ public class JobQueue {
         jobQueue.add(new Job<>(op, Job.Priority.HIGH, userData, guildID, userID, ex));
     }
 
-    public static Job<MongoSetOperation> getNext() {
+    private static Job<MongoSetOperation> getNext() {
         return jobQueue.remove();
     }
 

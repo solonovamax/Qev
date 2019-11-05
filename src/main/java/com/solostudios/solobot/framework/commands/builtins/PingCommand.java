@@ -42,6 +42,7 @@ public class PingCommand extends AbstractCommand {
                 "Can also be used to see response times of the bot.");
     }
 
+    @SuppressWarnings("IntegerDivisionInFloatingPointContext")
     @Override
     public void run(MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
 

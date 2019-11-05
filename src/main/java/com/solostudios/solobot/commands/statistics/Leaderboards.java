@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.solostudios.solobot.framework.utility.Sort.sortByValue;
 
@@ -75,7 +76,7 @@ public class Leaderboards extends AbstractCommand {
             nOfUsers++;
             try {
                 if (nOfUsers <= 10) {
-                    topTen.addField("Number " + nOfUsers + ": " + event.getGuild().getJDA().getUserById(entry.getKey()).getName(), "XP:" + entry.getValue().toString(), false);
+                    topTen.addField("Number " + nOfUsers + ": " + Objects.requireNonNull(event.getGuild().getJDA().getUserById(entry.getKey())).getName(), "XP:" + entry.getValue().toString(), false);
                 }
             } catch (NullPointerException ignored) {
                 nOfUsers--;

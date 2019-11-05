@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
 
 public class Hentai extends AbstractCommand {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @SuppressWarnings("FieldCanBeLocal")
     private String url = "https://danbooru.donmai.us/posts.json?random=true&tags=rating%3Ae&limit=1&min_level=30";
 
     public Hentai() {
@@ -50,7 +52,7 @@ public class Hentai extends AbstractCommand {
 
 
         JSONArray hentaiJSON;
-        String fileURL = null;
+        String fileURL;
         int counter = 0;
         do {
             hentaiJSON = getHentai();

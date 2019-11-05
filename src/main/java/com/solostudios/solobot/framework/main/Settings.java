@@ -19,7 +19,7 @@
 
 package com.solostudios.solobot.framework.main;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +33,7 @@ public class Settings {
     private static final Logger logger = LoggerFactory.getLogger(Settings.class);
 
     private static final File settings = new File("settings.json");
+    @SuppressWarnings("FieldCanBeLocal")
     private static JSONObject jsettings;
 
 
@@ -41,7 +42,7 @@ public class Settings {
      *
      * @return returns JSON settings object.
      */
-    @Nullable
+    @NotNull
     public static JSONObject get() {
         if (!settings.exists()) {
             logger.info("Settings file does not exist.\n" +
@@ -63,7 +64,8 @@ public class Settings {
         try {
             jsettings = Settings.load();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Couldn't load settings file.", e);
+            System.exit(0);
         }
 
         return jsettings;

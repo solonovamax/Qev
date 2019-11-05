@@ -29,6 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class CommandStateMachine extends ListenerAdapter {
     private final long channelID, userID;
@@ -49,6 +52,14 @@ public class CommandStateMachine extends ListenerAdapter {
         args = command.getDefaultArgs();
         jda.addEventListener(this);
 
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        Runnable messageTimeOut = () -> {
+            this.destroyStateMachine();
+            logger.debug("UserMessageStateMachine has awaited input for too long and is now exiting.");
+            executor.shutdown();
+        };
+        executor.schedule(messageTimeOut, 20, TimeUnit.SECONDS);
+
 
         if (command.getArguments() == null || command.fitsArguments(args)) {
             runCommand(event);
@@ -57,6 +68,7 @@ public class CommandStateMachine extends ListenerAdapter {
         }
     }
 
+    @SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})
     public CommandStateMachine withDeleteMessages(boolean deleteMessages) {
         this.deleteMessages = deleteMessages;
         return this;
@@ -72,7 +84,7 @@ public class CommandStateMachine extends ListenerAdapter {
             messageList.add(event.getMessage());
             if (message.getContentStripped().toLowerCase().equals("cancel")) {
                 message.getChannel().sendMessage("Canceling.").queue();
-                destroyStateMaching();
+                destroyStateMachine();
             } else {
                 try {
                     command.putNextArg(event, args);
@@ -95,7 +107,7 @@ public class CommandStateMachine extends ListenerAdapter {
         }
     }
 
-    private void destroyStateMaching() {
+    private void destroyStateMachine() {
         logger.info("destroying state machine");
         jda.removeEventListener(this);
         if (this.deleteMessages) {
@@ -115,6 +127,6 @@ public class CommandStateMachine extends ListenerAdapter {
             e.printStackTrace();
         }
 
-        destroyStateMaching();
+        destroyStateMachine();
     }
 }

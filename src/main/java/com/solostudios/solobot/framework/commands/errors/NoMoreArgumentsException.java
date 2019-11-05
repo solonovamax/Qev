@@ -19,6 +19,7 @@
 
 package com.solostudios.solobot.framework.commands.errors;
 
+@SuppressWarnings("unused")
 public class NoMoreArgumentsException extends RuntimeException {
     /**
      * Serialization ID

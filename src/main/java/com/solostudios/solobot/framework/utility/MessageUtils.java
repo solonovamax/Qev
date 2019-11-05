@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Exchanger;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -189,7 +190,7 @@ public class MessageUtils {
         if (checkMention.matcher(message.trim()).matches()) {
             User user = null;
             try {
-                user = guild.getMemberById(message.replace("<@", "").replace(">", "")).getUser();
+                user = Objects.requireNonNull(guild.getMemberById(message.replace("<@", "").replace(">", ""))).getUser();
             } catch (NumberFormatException | NullPointerException ignored) {
             }
             if (user != null) {

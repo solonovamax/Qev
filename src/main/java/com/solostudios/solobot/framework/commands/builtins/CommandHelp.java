@@ -103,13 +103,9 @@ public class CommandHelp extends AbstractCommand {
                         for (EmbedBuilder category : categoryEmbedList) {
                             ch.sendMessage(category.build()).queue();
                         }
-                    }, (throwable) -> {
-                        event.getChannel().sendMessage("I cannot message you. Please enabled your DMs if you want to be able to use this feature.\n" +
-                                "If you think this is an error, please contact @solonovamax#3163.").queue();
-                    });
-                }, (throwable -> {
-                    event.getChannel().sendMessage("You must enable DMs to use this feature.").queue();
-                }));
+                    }, (throwable) -> event.getChannel().sendMessage("I cannot message you. Please enabled your DMs if you want to be able to use this feature.\n" +
+                            "If you think this is an error, please contact @solonovamax#3163.").queue());
+                }, (throwable -> event.getChannel().sendMessage("You must enable DMs to use this feature.").queue()));
                 return;
             }
 

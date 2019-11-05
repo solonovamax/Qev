@@ -37,6 +37,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings({"SameParameterValue", "WeakerAccess", "unused"})
 public abstract class AbstractCommand {
 
     private static Logger logger = LoggerFactory.getLogger(AbstractCommand.class);
@@ -61,6 +62,7 @@ public abstract class AbstractCommand {
         this.usage = name;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public final boolean isEnabled() {
         return enabled;
     }
@@ -483,7 +485,7 @@ public abstract class AbstractCommand {
                 if (obj.has("optional") && obj.getBoolean("optional")) {
                     return obj.getString("prompt") + "\nSay skip if you want to skip this optional argument.";
                 }
-            } catch (JSONException e) {
+            } catch (JSONException ignored) {
             }
 
             return obj.getString("prompt");
@@ -555,7 +557,7 @@ public abstract class AbstractCommand {
                     args.put(key, event.getMessage().getContentDisplay());
                     return;
                 }
-            } catch (java.lang.IllegalArgumentException e) {
+            } catch (java.lang.IllegalArgumentException ignored) {
             }
             throw new java.lang.IllegalArgumentException((!obj.has("error") ? "Invalid input" : obj.getString("error")));
         }

@@ -48,11 +48,9 @@ public class CommandListener extends ListenerAdapter {
             return;
 
 
-        if (!event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).hasPermission(Permission.MESSAGE_WRITE)) {
-            event.getAuthor().openPrivateChannel().queue(pms -> {
-                pms.sendMessage("I do not have permission to post messages in chat.\n" +
-                        "Please contact the server owner, and request them to give me this permission, if you wish to use any of the functionality of this bot.").queue();
-            });
+        if (!event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_WRITE)) {
+            event.getAuthor().openPrivateChannel().queue(pms -> pms.sendMessage("I do not have permission to post messages in chat.\n" +
+                    "Please contact the server owner, and request them to give me this permission, if you wish to use any of the functionality of this bot.").queue());
             return;
         }
 

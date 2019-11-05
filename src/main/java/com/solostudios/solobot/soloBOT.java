@@ -41,6 +41,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("WeakerAccess")
 public class soloBOT {
 
     private final static Logger logger = LoggerFactory.getLogger(soloBOT.class);
@@ -57,6 +58,7 @@ public class soloBOT {
     public static boolean DEBUG;
     public static String BOT_OWNER;
     public static String SUPPORT_SERVER;
+    @SuppressWarnings("FieldCanBeLocal")
     private static JDABuilder shardBuilder;
 
     //public static DiscordBotListAPI dblapi;
@@ -84,6 +86,7 @@ public class soloBOT {
         new MongoDBInterface();
 
         //Loads settings from the file.
+        //noinspection ConstantConditions
         PREFIX = settings.getString("prefix");
         BOT_OWNER = settings.getString("botOwner");
         DEBUG = settings.getBoolean("debug");

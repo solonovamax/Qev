@@ -121,9 +121,11 @@ public class UserStats {
 
             Document guildData = collection.find(new Document("guild", guildID)).first();
 
-            guildData.put(Long.toString(userID), userData);
+            if (guildData != null) {
+                guildData.put(Long.toString(userID), userData);
+                collection.updateMany(new Document("guild", guildID), guildData, new UpdateOptions().upsert(true));
+            }
 
-            collection.replaceOne(new Document("guild", guildID), guildData, new UpdateOptions().upsert(true));
         }, guild, user);
     }
 
@@ -156,6 +158,7 @@ public class UserStats {
         save();
     }
 
+    @SuppressWarnings("unchecked")
     private void save() {
         Exchanger e = new Exchanger();
         MongoDBInterface.set((userData, guildID, userID, ex) -> {

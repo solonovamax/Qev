@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import java.util.TimeZone;
 
 public class Info extends AbstractCommand {
@@ -61,25 +62,31 @@ public class Info extends AbstractCommand {
         JDA.ShardInfo shardInfo = jda.getShardInfo();
         int shardID = shardInfo.getShardId();
         int shardTotal = shardInfo.getShardTotal();
-        event.getChannel().sendMessage(new EmbedBuilder()
-                .setTitle("soloBOT Shard #" + (shardID + 1) + " out of " + shardTotal)
-                .setDescription("**Servers on this shard:** " + event.getJDA().getGuilds().size() + "\n" +
-                        "[Github](https://github.com/solonovamax/Qev)\n" +
-                        "**Uptime:** " + uptime + "\n" +
-                        "[Support Server](" + soloBOT.SUPPORT_SERVER + ")")
-                .addField("Prefix", MongoDBInterface.getPrefix(event.getGuild().getIdLong()), true)
-                .addField("Name", event.getGuild().getName(), true)
-                .addField("Guild region", event.getGuild().getRegion().getName(), true)
-                .addField("Guild members online", event.getGuild().getMembers().stream().filter(member -> member.getOnlineStatus() == OnlineStatus.DO_NOT_DISTURB
-                        || member.getOnlineStatus() == OnlineStatus.IDLE
-                        || member.getOnlineStatus() == OnlineStatus.ONLINE)
-                        .count()
-                        + "/" + event.getGuild().getMembers().size(), true)
-                .addField("Guild create date", event.getGuild().getTimeCreated().format(DateTimeFormatter.ofPattern("YYYY-L-dd HH:mm")), true)
-                .addField("Guild owner", event.getGuild().getOwner().getEffectiveName(), true)
-                .setThumbnail(jda.getSelfUser().getAvatarUrl())
-                .setFooter("By solonovamax#3163", "https://cdn.discordapp.com/avatars/195735703726981120/f6277c9582ee4509be2ab7094b340dec.png")
-                .build()).queue();
+
+        try {
+            event.getChannel().sendMessage(new EmbedBuilder()
+                    .setTitle("soloBOT Shard #" + (shardID + 1) + " out of " + shardTotal)
+                    .setDescription("**Servers on this shard:** " + event.getJDA().getGuilds().size() + "\n" +
+                            "[Github](https://github.com/solonovamax/Qev)\n" +
+                            "**Uptime:** " + uptime + "\n" +
+                            "[Support Server](" + soloBOT.SUPPORT_SERVER + ")")
+                    .addField("Prefix", MongoDBInterface.getPrefix(event.getGuild().getIdLong()), true)
+                    .addField("Name", event.getGuild().getName(), true)
+                    .addField("Guild region", event.getGuild().getRegion().getName(), true)
+                    .addField("Guild members online", event.getGuild().getMembers().stream().filter(member -> member.getOnlineStatus() == OnlineStatus.DO_NOT_DISTURB
+                            || member.getOnlineStatus() == OnlineStatus.IDLE
+                            || member.getOnlineStatus() == OnlineStatus.ONLINE)
+                            .count()
+                            + "/" + event.getGuild().getMembers().size(), true)
+                    .addField("Guild create date", event.getGuild().getTimeCreated().format(DateTimeFormatter.ofPattern("YYYY-L-dd HH:mm")), true)
+                    .addField("Guild owner", Objects.requireNonNull(event.getGuild().getOwner()).getEffectiveName(), true)
+                    .setThumbnail(jda.getSelfUser().getAvatarUrl())
+                    .setFooter("By solonovamax#3163", "https://cdn.discordapp.com/avatars/195735703726981120/f6277c9582ee4509be2ab7094b340dec.png")
+                    .build()).queue();
+        } catch (NullPointerException e) {
+            event.getChannel().sendMessage("Error when trying to get guild owner. Guild owner doesn't exist??\n" +
+                    "(This should be an unreachable error. If you are seeing this, then may god have mercy on your sould.)").queue();
+        }
     }
 
     @NotNull

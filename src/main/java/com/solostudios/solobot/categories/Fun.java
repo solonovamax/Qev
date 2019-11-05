@@ -23,6 +23,7 @@ import com.solostudios.solobot.abstracts.AbstractCategory;
 
 import java.awt.*;
 
+@SuppressWarnings("unused")
 public class Fun extends AbstractCategory {
     public Fun() {
         super("Fun",

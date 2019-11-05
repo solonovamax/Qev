@@ -54,7 +54,9 @@ public class MongoDBInterface {
             .append("softBanLength", 0L)
             .append("muteTime", 0L)
             .append("muteLength", 0L);
+    @SuppressWarnings("WeakerAccess")
     public static final String guildDataVersion = "1.1.0";
+    @SuppressWarnings("WeakerAccess")
     public static final Document newGuildData = new Document()
             .append("version", guildDataVersion)
             .append("guild", 0L)
@@ -82,10 +84,11 @@ public class MongoDBInterface {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T get(MongoGetOperation op, Long guildID, Long userID, Class<T> clazz) {
         try {
             return (T) op.run(getGuildDocument(guildID), userID, new Exchanger());
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | ClassCastException e) {
             return null;
         }
     }
@@ -98,13 +101,11 @@ public class MongoDBInterface {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T get(MongoGetOperation op, Long guildID, Long userID, Exchanger ex, Class<T> clazz) {
-        logger.info("fuck you8");
         try {
-            logger.info("running");
             return (T) op.run(getGuildDocument(guildID), userID, ex);
         } catch (InterruptedException e) {
-            logger.warn("FUCK YOU", e);
             return null;
         }
     }
@@ -117,6 +118,7 @@ public class MongoDBInterface {
         JobQueue.add(op, userData, guildID, userID, ex);
     }
 
+    @SuppressWarnings({"unchecked", "UnusedReturnValue"})
     private static Document updateGuild(Long guildID) throws InterruptedException {
         Exchanger<? extends Document> exchanger = new Exchanger<>();
         JobQueue.update((userData, gID, uID, ex) -> {
@@ -145,7 +147,7 @@ public class MongoDBInterface {
             } else {
                 nGData.put("guild", gID);
             }
-            userData.replaceOne(new Document("guild", guildID), nGData, new UpdateOptions().upsert(true));
+            userData.updateMany(new Document("guild", guildID), nGData, new UpdateOptions().upsert(true));
             try {
                 ex.exchange(nGData);
             } catch (InterruptedException ignored) {
@@ -154,6 +156,7 @@ public class MongoDBInterface {
         return exchanger.exchange(null);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean guildExists(Long guildID) {
         try {
             updateGuild(guildID);
@@ -204,8 +207,10 @@ public class MongoDBInterface {
     public static void setPrefix(Long guild, String prefix) {
         MongoDBInterface.set((userData, guildID, userID, ex) -> {
             Document newGuildData = userData.find(new Document("guild", guildID)).first();
-            newGuildData.put("prefix", prefix);
-            userData.replaceOne(new Document("guild", guildID), newGuildData, new UpdateOptions().upsert(true));
+            if (newGuildData != null) {
+                newGuildData.put("prefix", prefix);
+                userData.updateMany(new Document("guild", guildID), newGuildData, new UpdateOptions().upsert(true));
+            }
         }, guild, 0L);
     }
 

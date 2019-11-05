@@ -32,6 +32,7 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.TimeZone;
 
 public class UserInfo extends AbstractCommand {
@@ -49,28 +50,32 @@ public class UserInfo extends AbstractCommand {
 
     @Override
     public void run(MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
-        User author = event.getAuthor();
-        User user;
-        if (args.has("user")) {
-            user = ((Member) args.get("user")).getUser();
-        } else {
-            user = author;
+        try {
+            User author = event.getAuthor();
+            User user;
+            if (args.has("user")) {
+                user = ((Member) args.get("user")).getUser();
+            } else {
+                user = author;
+            }
+            Date discJoinDateD = new Date(user.getTimeCreated().toInstant().toEpochMilli());
+            Date servJoinDateD = new Date(Objects.requireNonNull(event.getGuild().getMember(user)).getTimeJoined().toInstant().toEpochMilli());
+            DateFormat formatter = new SimpleDateFormat("YYYY-L-dd HH:mm");
+            formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+            String discJoinDate = formatter.format(discJoinDateD);
+            String servJoinDate = formatter.format(servJoinDateD);
+
+            EmbedBuilder info = new EmbedBuilder()
+                    .setTitle(user.getName())
+                    .setThumbnail(Objects.requireNonNull(user.getAvatarUrl()).replace(".png", ".webp?size=256"))
+                    .addField("ID", user.getId(), true)
+                    .addField("Link", "[Link](" + user.getAvatarUrl().replace(".png", ".webp?size=256") + ")", true)
+                    .addField("Account Created Date", discJoinDate + " UTC", true)
+                    .addField("Server Joined Date", servJoinDate + " UTC", true);
+
+            event.getChannel().sendMessage(info.build()).queue();
+        } catch (NullPointerException e) {
+            event.getChannel().sendMessage("The user you mentioned does not exist.").queue();
         }
-        Date discJoinDateD = new Date(user.getTimeCreated().toInstant().toEpochMilli());
-        Date servJoinDateD = new Date(event.getGuild().getMember(user).getTimeJoined().toInstant().toEpochMilli());
-        DateFormat formatter = new SimpleDateFormat("YYYY-L-dd HH:mm");
-        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-        String discJoinDate = formatter.format(discJoinDateD);
-        String servJoinDate = formatter.format(servJoinDateD);
-
-        EmbedBuilder info = new EmbedBuilder()
-                .setTitle(user.getName())
-                .setThumbnail(user.getAvatarUrl().replace(".png", ".webp?size=256"))
-                .addField("ID", user.getId(), true)
-                .addField("Link", "[Link](" + user.getAvatarUrl().replace(".png", ".webp?size=256") + ")", true)
-                .addField("Account Created Date", discJoinDate + " UTC", true)
-                .addField("Server Joined Date", servJoinDate + " UTC", true);
-
-        event.getChannel().sendMessage(info.build()).queue();
     }
 }

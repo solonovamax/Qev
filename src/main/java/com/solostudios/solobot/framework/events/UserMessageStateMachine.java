@@ -26,9 +26,13 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 public class UserMessageStateMachine extends ListenerAdapter {
+    @SuppressWarnings("FieldCanBeLocal")
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private long channelID, userID;
@@ -41,6 +45,14 @@ public class UserMessageStateMachine extends ListenerAdapter {
         this.userID = userID;
         this.action = action;
         this.jda = jda;
+
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        Runnable messageTimeOut = () -> {
+            this.destroyStateMachine();
+            logger.debug("UserMessageStateMachine has awaited input for too long and is now exiting.");
+            executor.shutdown();
+        };
+        executor.schedule(messageTimeOut, 20, TimeUnit.SECONDS);
     }
 
     public void setAction(BiConsumer<MessageReceivedEvent, String[]> action) {
@@ -54,14 +66,14 @@ public class UserMessageStateMachine extends ListenerAdapter {
         if (message.getChannel().getIdLong() == channelID && message.getAuthor().getIdLong() == userID) {
             if (args[0].toLowerCase().equals("cancel")) {
                 message.getChannel().sendMessage("Canceling.").queue();
-                destroyStateMaching();
+                destroyStateMachine();
             } else {
                 action.accept(event, args);
             }
         }
     }
 
-    public void destroyStateMaching() {
+    private void destroyStateMachine() {
         action = null;
         channelID = userID = 0L;
         jda.removeEventListener(this);

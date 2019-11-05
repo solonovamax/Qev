@@ -48,8 +48,9 @@ public class ArgumentContainer {
         map = new HashMap<>(container.map);
     }
 
-    static final Writer writeValue(Writer writer, Object value, int indentFactor, int indent) throws JSONException, IOException {
-        if (value == null || value.equals(null)) {
+    @SuppressWarnings("UnusedReturnValue")
+    private static Writer writeValue(Writer writer, Object value, int indentFactor, int indent) throws JSONException, IOException {
+        if (value == null) {
             writer.write("null");
         } else if (value instanceof JSONString) {
             Object o;
@@ -95,7 +96,7 @@ public class ArgumentContainer {
         return writer;
     }
 
-    public static String quote(String string) {
+    private static String quote(String string) {
         StringWriter sw = new StringWriter();
         synchronized (sw.getBuffer()) {
             try {
@@ -107,7 +108,7 @@ public class ArgumentContainer {
         }
     }
 
-    public static Writer quote(String string, Writer w) throws IOException {
+    private static Writer quote(String string, Writer w) throws IOException {
         if (string == null || string.length() == 0) {
             w.write("\"\"");
             return w;
@@ -166,13 +167,13 @@ public class ArgumentContainer {
         return w;
     }
 
-    static final void indent(Writer writer, int indent) throws IOException {
+    private static void indent(Writer writer, int indent) throws IOException {
         for (int i = 0; i < indent; i += 1) {
             writer.write(' ');
         }
     }
 
-    public static String numberToString(Number number) throws JSONException {
+    private static String numberToString(Number number) throws JSONException {
         if (number == null) {
             throw new JSONException("Null pointer");
         }
@@ -193,7 +194,7 @@ public class ArgumentContainer {
         return string;
     }
 
-    public static void testValidity(Object o) throws JSONException {
+    private static void testValidity(Object o) throws JSONException {
         if (o != null) {
             if (o instanceof Double) {
                 if (((Double) o).isInfinite() || ((Double) o).isNaN()) {
@@ -213,6 +214,7 @@ public class ArgumentContainer {
         return this.map.containsKey(key) && this.map.get(key) != null;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public boolean contains(String key) {
         return this.map.containsKey(key);
     }
@@ -222,27 +224,27 @@ public class ArgumentContainer {
     }
 
     public ArgumentContainer put(String key, int value) {
-        this.insert(key, Integer.valueOf(value));
+        this.insert(key, value);
         return this;
     }
 
     public ArgumentContainer put(String key, long value) {
-        this.insert(key, Long.valueOf(value));
+        this.insert(key, value);
         return this;
     }
 
     public ArgumentContainer put(String key, double value) {
-        this.insert(key, Double.valueOf(value));
+        this.insert(key, value);
         return this;
     }
 
     public ArgumentContainer put(String key, float value) {
-        this.insert(key, Double.valueOf(value));
+        this.insert(key, (double) value);
         return this;
     }
 
     public ArgumentContainer put(String key, boolean value) {
-        this.insert(key, Boolean.valueOf(value));
+        this.insert(key, value);
         return this;
     }
 
@@ -276,6 +278,7 @@ public class ArgumentContainer {
         return this;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public boolean isNull(String key) {
         return get(key) == null;
     }
@@ -285,7 +288,7 @@ public class ArgumentContainer {
         return this;
     }
 
-    public ArgumentContainer insert(String key, Object value) {
+    private ArgumentContainer insert(String key, Object value) {
         if (key == null) {
             throw new NullPointerException("Null key.");
         }
@@ -380,7 +383,7 @@ public class ArgumentContainer {
         throw new NullPointerException("Key \"" + key + "\" is not a class.");
     }
 
-    public Object opt(String key) {
+    private Object opt(String key) {
         return key == null ? null : this.map.get(key);
     }
 
@@ -406,7 +409,7 @@ public class ArgumentContainer {
         }
     }
 
-    public Writer write(Writer writer, int indentFactor, int indent) throws JSONException {
+    private Writer write(Writer writer, int indentFactor, int indent) throws JSONException {
         try {
             boolean commanate = false;
             final int length = this.length();
@@ -460,7 +463,7 @@ public class ArgumentContainer {
         }
     }
 
-    protected Set<Map.Entry<String, Object>> entrySet() {
+    private Set<Map.Entry<String, Object>> entrySet() {
         return this.map.entrySet();
     }
 

@@ -64,11 +64,7 @@ public class GiveRole extends AbstractCommand {
         String role = roleToGive.getName();
         String user = userToGiveRole.getEffectiveName();
         try {
-            event.getGuild().addRoleToMember(userToGiveRole, roleToGive).queue((ignored) -> {
-                event.getChannel().sendMessage("Successfully given role " + role + " to " + user).queue();
-            }, (ex) -> {
-                event.getChannel().sendMessage("Failed to give role " + role + " to " + user + " for reason:\n" + ex.getMessage()).queue();
-            });
+            event.getGuild().addRoleToMember(userToGiveRole, roleToGive).queue((ignored) -> event.getChannel().sendMessage("Successfully given role " + role + " to " + user).queue(), (ex) -> event.getChannel().sendMessage("Failed to give role " + role + " to " + user + " for reason:\n" + ex.getMessage()).queue());
         } catch (HierarchyException e) {
             event.getChannel().sendMessage("Could not give role to user " + user + ", as the role " + role + " is higher than my highest one.").queue();
         }

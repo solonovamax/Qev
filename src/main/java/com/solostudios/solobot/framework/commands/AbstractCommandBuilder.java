@@ -127,6 +127,7 @@ public final class AbstractCommandBuilder<T extends AbstractCommand> {
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     public boolean verifyArguments(JSONArray args) {
         if (args.length() > 1) {
             return false;
@@ -160,11 +161,11 @@ public final class AbstractCommandBuilder<T extends AbstractCommand> {
 
     /*
     private JSONArray parseArguments(String argumentsToBeParsed) {
-        JSONArray tempArgements = new JSONArray();
+        JSONArray tempArguments = new JSONArray();
 
         String[] args = argumentsToBeParsed.trim().split("\\S*\\s{(?:string|integer|user|member|role)(?:(?:\\s)+?(?:(?:@optional|@default.*?|@prompt.*?))*)}");
 
-        return tempArgements;
+        return tempArguments;
     }
      */
 }

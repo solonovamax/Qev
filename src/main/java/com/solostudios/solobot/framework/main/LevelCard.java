@@ -58,7 +58,7 @@ public class LevelCard {
     private static final int USERNAME_X = 556;
     private static final int USERNAME_Y = 150;
     private static final Font usernameFont = new Font("Javanese Text", Font.PLAIN, 64);
-    private static final Font usernameTagFong = new Font("Javanese Text", Font.PLAIN, 40);
+    private static final Font usernameTagFont = new Font("Javanese Text", Font.PLAIN, 40);
     private static final int POSITION_X = 875;
     private static final int POSITION_Y = 250;
     //public static final Color backgroundPane = new Color(255, 255, 255, 150);
@@ -113,7 +113,8 @@ public class LevelCard {
 
         double levelPercent = (double) xp / xpRemaining;
 
-        BufferedImage levelCard = new BufferedImage(CANVAS_WIDTH, CANVAS_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage levelCard;
+        levelCard = new BufferedImage(CANVAS_WIDTH, CANVAS_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         Graphics2D levelCardGraphics = levelCard.createGraphics();
 
         circleBufferGraphics.drawImage(avatar, 0, 0, IMG_SIZE, IMG_SIZE, null); // Adding user image to circlecrop graphics.
@@ -151,7 +152,7 @@ public class LevelCard {
 
         levelCardGraphics.drawString(username, USERNAME_X, USERNAME_Y);
         levelCardGraphics.setColor(Color.GRAY);
-        levelCardGraphics.setFont(usernameTagFong);
+        levelCardGraphics.setFont(usernameTagFont);
         levelCardGraphics.drawString(user.getAsTag().replace(user.getName(), ""), USERNAME_X + metrics.stringWidth(username), USERNAME_Y);
 
         levelCardGraphics.setColor(Color.DARK_GRAY);
@@ -194,6 +195,7 @@ public class LevelCard {
         String suffix = e.getValue();
 
         long truncated = value / (divideBy / 10); //the number part of the output times 10
+        //noinspection IntegerDivisionInFloatingPointContext
         boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
         return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
     }

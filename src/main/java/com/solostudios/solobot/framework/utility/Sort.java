@@ -45,6 +45,7 @@ public class Sort {
         //Reverse HashMap.
 
         Set<T> keySet = temp.keySet();
+        //noinspection unchecked
         T[] keyArray = (T[]) keySet.toArray();
         for (int i = keyArray.length - 1; i >= 0; i--) {
             T key = keyArray[i];

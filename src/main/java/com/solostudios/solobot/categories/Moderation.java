@@ -23,6 +23,7 @@ import com.solostudios.solobot.abstracts.AbstractCategory;
 
 import java.awt.*;
 
+@SuppressWarnings("unused")
 public class Moderation extends AbstractCategory {
     public Moderation() {
         super("Moderation",

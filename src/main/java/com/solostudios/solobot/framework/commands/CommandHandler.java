@@ -42,10 +42,13 @@ import java.util.Set;
 public class CommandHandler {
     private static final Logger logger = LoggerFactory.getLogger(CommandHandler.class);
 
+    @SuppressWarnings("WeakerAccess")
     @NotNull
     public static HashMap<String, AbstractCommand> executedCommandList = new HashMap<>();
+    @SuppressWarnings("WeakerAccess")
     @NotNull
     public static HashMap<String, AbstractCommand> commandList = new HashMap<>();
+    @SuppressWarnings("WeakerAccess")
     @NotNull
     public static HashMap<AbstractCategory, HashMap<String, AbstractCommand>> categoryList = new HashMap<>();
 
