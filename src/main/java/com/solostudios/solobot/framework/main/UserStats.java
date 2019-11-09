@@ -19,7 +19,7 @@
 
 package com.solostudios.solobot.framework.main;
 
-import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.ReplaceOptions;
 import net.dv8tion.jda.api.entities.User;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
@@ -123,7 +123,7 @@ public class UserStats {
 
             if (guildData != null) {
                 guildData.put(Long.toString(userID), userData);
-                collection.updateMany(new Document("guild", guildID), guildData, new UpdateOptions().upsert(true));
+                collection.replaceOne(new Document("guild", guildID), guildData, new ReplaceOptions().upsert(true));
             }
 
         }, guild, user);
@@ -172,7 +172,7 @@ public class UserStats {
                     guildData.append(Long.toString(userID), newData);
                 }
 
-                userData.replaceOne(new Document("guild", guildID), guildData, new UpdateOptions().upsert(true));
+                userData.replaceOne(new Document("guild", guildID), guildData, new ReplaceOptions().upsert(true));
             } catch (InterruptedException ignored) {
             }
         }, guild, user, e);

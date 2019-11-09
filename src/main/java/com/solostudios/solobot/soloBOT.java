@@ -58,6 +58,7 @@ public class soloBOT {
     public static boolean DEBUG;
     public static String BOT_OWNER;
     public static String SUPPORT_SERVER;
+    public static String VERSION = "2.0.0";
     @SuppressWarnings("FieldCanBeLocal")
     private static JDABuilder shardBuilder;
 

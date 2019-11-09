@@ -113,15 +113,10 @@ public abstract class AbstractCommand {
             boolean defaultable = obj.has("default");
 
 
-            Class clazz = (Class) obj.get("type");
-
-            logger.info(clazz.getName());
-
-            Object put;
-
             try {
-                if (clazz.equals(RoleImpl.class)) {
-                    if ((put = MessageUtils.getRoleFromString(args[j++], event.getGuild())) == null) {
+                if (obj.get("type").equals("BannedUser")) {
+                    User put;
+                    if ((put = MessageUtils.getBannedUserFromString(args[j++], event.getGuild())) == null) {
                         if (skippable) {
                             temp.setNull(key);
                             continue;
@@ -133,10 +128,93 @@ public abstract class AbstractCommand {
                     }
                     temp.put(key, put);
                     continue;
-                }
+                } else {
 
-                if (clazz.equals(UserImpl.class)) {
-                    if ((put = MessageUtils.getUserFromString(args[j++], event.getGuild())) == null) {
+                    Class clazz = (Class) obj.get("type");
+
+                    logger.info(clazz.getName());
+
+                    Object put;
+
+                    if (clazz.equals(RoleImpl.class)) {
+                        if ((put = MessageUtils.getRoleFromString(args[j++], event.getGuild())) == null) {
+                            if (skippable) {
+                                temp.setNull(key);
+                                continue;
+                            }
+                            if (defaultable) {
+                                continue;
+                            }
+                            throw new java.lang.IllegalArgumentException(obj.getString("error"));
+                        }
+                        temp.put(key, put);
+                        continue;
+                    }
+
+                    if (clazz.equals(UserImpl.class)) {
+                        if ((put = MessageUtils.getUserFromString(args[j++], event.getGuild())) == null) {
+                            if (skippable) {
+                                temp.setNull(key);
+                                continue;
+                            }
+                            if (defaultable) {
+                                continue;
+                            }
+                            throw new java.lang.IllegalArgumentException(obj.getString("error"));
+                        }
+                        temp.put(key, put);
+                        continue;
+                    }
+
+                    if (clazz.equals(MemberImpl.class)) {
+                        if ((put = MessageUtils.getMemberFromString(args[j++], event.getGuild())) == null) {
+                            if (skippable) {
+                                temp.setNull(key);
+                                continue;
+                            }
+                            if (defaultable) {
+                                continue;
+                            }
+                            throw new java.lang.IllegalArgumentException(obj.getString("error"));
+                        }
+                        temp.put(key, put);
+                        continue;
+                    }
+
+                    if (clazz.equals(boolean.class) || clazz.equals(Boolean.class)) {
+                        temp.put(key, parseBoolean(args[j++]));
+                        continue;
+                    }
+
+                    if (clazz.equals(String.class)) {
+                        StringBuilder sb = new StringBuilder();
+                        for (; j < args.length; j++) {
+                            sb.append(args[j]).append(" ");
+                        }
+                        if (sb.toString().strip().equals("")) {
+                            if (skippable) {
+                                temp.setNull(key);
+                                continue;
+                            }
+                            if (defaultable) {
+                                continue;
+                            }
+                            throw new java.lang.IllegalArgumentException(obj.getString("error"));
+                        }
+                        temp.put(key, sb.toString().trim());
+                        continue;
+                    }
+
+                    try {
+                        if (clazz.equals(int.class) || clazz.equals(Integer.class)) {
+                            temp.put(key, Integer.parseInt(args[j++]));
+                            continue;
+                        }
+                        if (clazz.equals(double.class) || clazz.equals(Double.class)) {
+                            temp.put(key, Double.parseDouble(args[j++]));
+                            continue;
+                        }
+                    } catch (NumberFormatException e) {
                         if (skippable) {
                             temp.setNull(key);
                             continue;
@@ -146,67 +224,7 @@ public abstract class AbstractCommand {
                         }
                         throw new java.lang.IllegalArgumentException(obj.getString("error"));
                     }
-                    temp.put(key, put);
-                    continue;
-                }
 
-                if (clazz.equals(MemberImpl.class)) {
-                    if ((put = MessageUtils.getMemberFromString(args[j++], event.getGuild())) == null) {
-                        if (skippable) {
-                            temp.setNull(key);
-                            continue;
-                        }
-                        if (defaultable) {
-                            continue;
-                        }
-                        throw new java.lang.IllegalArgumentException(obj.getString("error"));
-                    }
-                    temp.put(key, put);
-                    continue;
-                }
-
-                if (clazz.equals(boolean.class) || clazz.equals(Boolean.class)) {
-                    temp.put(key, parseBoolean(args[j++]));
-                    continue;
-                }
-
-                if (clazz.equals(String.class)) {
-                    StringBuilder sb = new StringBuilder();
-                    for (; j < args.length; j++) {
-                        sb.append(args[j]).append(" ");
-                    }
-                    if (sb.toString().strip().equals("")) {
-                        if (skippable) {
-                            temp.setNull(key);
-                            continue;
-                        }
-                        if (defaultable) {
-                            continue;
-                        }
-                        throw new java.lang.IllegalArgumentException(obj.getString("error"));
-                    }
-                    temp.put(key, sb.toString().trim());
-                    continue;
-                }
-
-                try {
-                    if (clazz.equals(int.class) || clazz.equals(Integer.class)) {
-                        temp.put(key, Integer.parseInt(args[j++]));
-                        continue;
-                    }
-                    if (clazz.equals(double.class) || clazz.equals(Double.class)) {
-                        temp.put(key, Double.parseDouble(args[j++]));
-                        continue;
-                    }
-                } catch (NumberFormatException e) {
-                    if (skippable) {
-                        temp.setNull(key);
-                        continue;
-                    }
-                    if (defaultable) {
-                        continue;
-                    }
-                    throw new java.lang.IllegalArgumentException(obj.getString("error"));
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
                 if (skippable) {
@@ -463,8 +481,14 @@ public abstract class AbstractCommand {
                 return false;
             }
 
-            if (!args.isNull(obj.getString("key")) && args.get(obj.getString("key")).getClass() != obj.get("type")) {
-                return false;
+            if (obj.get("type").equals("BannedUser")) {
+                if (!args.isNull(obj.getString("key")) && args.get(obj.getString("key")).getClass() != UserImpl.class) {
+                    return false;
+                }
+            } else {
+                if (!args.isNull(obj.getString("key")) && args.get(obj.getString("key")).getClass() != obj.get("type")) {
+                    return false;
+                }
             }
         }
 
@@ -517,47 +541,57 @@ public abstract class AbstractCommand {
                 return;
             }
 
-            Class clazz = (Class) obj.get("type");
+            if (obj.get("type").equals("BannedUser")) {
+                User put;
 
-            logger.info(clazz.getName());
+                if ((put = MessageUtils.getBannedUserFromMessage(event, "")) == null)
+                    throw new java.lang.IllegalArgumentException();
+                args.put(key, put);
+                return;
+            } else {
 
-            try {
-                Object put;
-                if (clazz.equals(RoleImpl.class)) {
-                    if ((put = MessageUtils.getRoleFromMessage(event, "")) == null)
-                        throw new java.lang.IllegalArgumentException();
-                    args.put(key, put);
-                    return;
+                Class clazz = (Class) obj.get("type");
+
+                logger.info(clazz.getName());
+
+                try {
+                    Object put;
+                    if (clazz.equals(RoleImpl.class)) {
+                        if ((put = MessageUtils.getRoleFromMessage(event, "")) == null)
+                            throw new java.lang.IllegalArgumentException();
+                        args.put(key, put);
+                        return;
+                    }
+                    if (clazz.equals(UserImpl.class)) {
+                        if ((put = MessageUtils.getUserFromMessage(event, "")) == null)
+                            throw new java.lang.IllegalArgumentException();
+                        args.put(key, put);
+                        return;
+                    }
+                    if (clazz.equals(MemberImpl.class)) {
+                        if ((put = MessageUtils.getMemberFromMessage(event, "")) == null)
+                            throw new java.lang.IllegalArgumentException();
+                        args.put(key, put);
+                        return;
+                    }
+                    if (clazz.equals(int.class) || clazz.equals(Integer.class)) {
+                        args.put(key, Integer.parseInt(event.getMessage().getContentRaw()));
+                        return;
+                    }
+                    if (clazz.equals(double.class) || clazz.equals(Double.class)) {
+                        args.put(key, Double.parseDouble(event.getMessage().getContentRaw()));
+                        return;
+                    }
+                    if (clazz.equals(boolean.class) || clazz.equals(Boolean.class)) {
+                        args.put(key, parseBoolean(event.getMessage().getContentRaw()));
+                        return;
+                    }
+                    if (clazz.equals(String.class)) {
+                        args.put(key, event.getMessage().getContentDisplay());
+                        return;
+                    }
+                } catch (java.lang.IllegalArgumentException ignored) {
                 }
-                if (clazz.equals(UserImpl.class)) {
-                    if ((put = MessageUtils.getUserFromMessage(event, "")) == null)
-                        throw new java.lang.IllegalArgumentException();
-                    args.put(key, put);
-                    return;
-                }
-                if (clazz.equals(MemberImpl.class)) {
-                    if ((put = MessageUtils.getMemberFromMessage(event, "")) == null)
-                        throw new java.lang.IllegalArgumentException();
-                    args.put(key, put);
-                    return;
-                }
-                if (clazz.equals(int.class) || clazz.equals(Integer.class)) {
-                    args.put(key, Integer.parseInt(event.getMessage().getContentRaw()));
-                    return;
-                }
-                if (clazz.equals(double.class) || clazz.equals(Double.class)) {
-                    args.put(key, Double.parseDouble(event.getMessage().getContentRaw()));
-                    return;
-                }
-                if (clazz.equals(boolean.class) || clazz.equals(Boolean.class)) {
-                    args.put(key, parseBoolean(event.getMessage().getContentRaw()));
-                    return;
-                }
-                if (clazz.equals(String.class)) {
-                    args.put(key, event.getMessage().getContentDisplay());
-                    return;
-                }
-            } catch (java.lang.IllegalArgumentException ignored) {
             }
             throw new java.lang.IllegalArgumentException((!obj.has("error") ? "Invalid input" : obj.getString("error")));
         }

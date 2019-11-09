@@ -23,6 +23,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.model.UpdateOptions;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
@@ -64,11 +65,11 @@ public class MongoDBInterface {
             .append("updateTime", 0L)
             .append("muteRole", 0L);
     @NotNull
-    private static final String uriString = "mongodb://bot:tob@solo-serv.local:27017/soloBOT?authSource=admin";
+    private static final String uriString = "mongodb://bot:tob@solo-serv.local:27017/Qev?authSource=admin";
     @NotNull
     private static MongoClient mongoClient = MongoClients.create(uriString);
     @NotNull
-    private static MongoDatabase botData = mongoClient.getDatabase("soloBOT");
+    private static MongoDatabase botData = mongoClient.getDatabase("Qev");
     @NotNull
     private static MongoCollection<Document> userData = botData.getCollection("UserData");
 
@@ -147,7 +148,7 @@ public class MongoDBInterface {
             } else {
                 nGData.put("guild", gID);
             }
-            userData.updateMany(new Document("guild", guildID), nGData, new UpdateOptions().upsert(true));
+            userData.replaceOne(new Document("guild", guildID), nGData, new ReplaceOptions().upsert(true));
             try {
                 ex.exchange(nGData);
             } catch (InterruptedException ignored) {
