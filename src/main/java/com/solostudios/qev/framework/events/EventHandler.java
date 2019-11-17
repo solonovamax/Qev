@@ -20,14 +20,41 @@
 package com.solostudios.qev.framework.events;
 
 import com.solostudios.qev.framework.main.MongoDBInterface;
+import net.dv8tion.jda.api.events.*;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
 
 
 public class EventHandler extends ListenerAdapter {
 	
+	private final static Logger logger = LoggerFactory.getLogger(EventHandler.class);
+	
+	@Override
+	public void onGenericEvent(@NotNull GenericEvent event) {
+		EventLogger.onGenericEvent(event);
+	}
+	
+	@Override
+	public void onReady(@Nonnull ReadyEvent event) {
+		logger.info("Bot has logged in.");
+	}
+	
+	@Override
+	public void onResume(@Nonnull ResumedEvent event) {
+		logger.info("Bot has resumed connection");
+	}
+	
+	@Override
+	public void onReconnect(@Nonnull ReconnectedEvent event) {
+		logger.info("Bot has reconnected.");
+	}
 	
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
@@ -35,7 +62,18 @@ public class EventHandler extends ListenerAdapter {
 	}
 	
 	@Override
+	public void onDisconnect(@Nonnull DisconnectEvent event) {
+		logger.info("Bot has been disconnected from the discord servers.");
+	}
+	
+	@Override
 	public void onGuildJoin(@NotNull GuildJoinEvent e) {
 		MongoDBInterface.guildJoinEvent(e); //Forward guild join event to the Level Handler.
 	}
+	
+	@Override
+	public void onGuildReady(@NotNull GuildReadyEvent event) {
+		MongoDBInterface.guildReadyEvent(event); //Forward guild join event to the Level Handler.
+	}
+	
 }

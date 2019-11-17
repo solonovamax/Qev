@@ -28,6 +28,7 @@ import com.mongodb.client.model.UpdateOptions;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
@@ -217,6 +218,12 @@ public class MongoDBInterface {
 	public static void guildJoinEvent(@NotNull GuildJoinEvent guildJoinEvent) {
 		if (!guildExists(guildJoinEvent.getGuild().getIdLong())) {
 			addGuild(guildJoinEvent.getGuild().getIdLong());
+		}
+	}
+	
+	public static void guildReadyEvent(@NotNull GuildReadyEvent guildReadyEvent) {
+		if (!guildExists(guildReadyEvent.getGuild().getIdLong())) {
+			addGuild(guildReadyEvent.getGuild().getIdLong());
 		}
 	}
 	
