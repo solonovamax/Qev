@@ -1,0 +1,771 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="qev" default="all">
+
+
+    <property file="Qev.properties"/>
+    <!-- Uncomment the following property if no tests compilation is needed -->
+    <!--
+    <property name="skip.tests" value="true"/>
+     -->
+
+    <!-- Compiler options -->
+
+    <property name="compiler.debug" value="on"/>
+    <property name="compiler.generate.no.warnings" value="off"/>
+    <property name="compiler.args" value=""/>
+    <property name="compiler.max.memory" value="700m"/>
+    <patternset id="ignored.files">
+        <exclude name="**/*.hprof/**"/>
+        <exclude name="**/*.pyc/**"/>
+        <exclude name="**/*.pyo/**"/>
+        <exclude name="**/*.rbc/**"/>
+        <exclude name="**/*.yarb/**"/>
+        <exclude name="**/*~/**"/>
+        <exclude name="**/.DS_Store/**"/>
+        <exclude name="**/.git/**"/>
+        <exclude name="**/.hg/**"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/__pycache__/**"/>
+        <exclude name="**/_svn/**"/>
+        <exclude name="**/vssver.scc/**"/>
+        <exclude name="**/vssver2.scc/**"/>
+    </patternset>
+    <patternset id="library.patterns">
+        <include name="*.war"/>
+        <include name="*.swc"/>
+        <include name="*.zip"/>
+        <include name="*.egg"/>
+        <include name="*.ear"/>
+        <include name="*.ane"/>
+        <include name="*.jar"/>
+        <include name="*.klib"/>
+    </patternset>
+    <patternset id="compiler.resources">
+        <exclude name="**/?*.java"/>
+        <exclude name="**/?*.form"/>
+        <exclude name="**/?*.class"/>
+        <exclude name="**/?*.groovy"/>
+        <exclude name="**/?*.scala"/>
+        <exclude name="**/?*.flex"/>
+        <exclude name="**/?*.kt"/>
+        <exclude name="**/?*.clj"/>
+        <exclude name="**/?*.aj"/>
+    </patternset>
+
+    <!-- JDK definitions -->
+
+    <property name="jdk.bin.11" value="${jdk.home.11}/bin"/>
+    <path id="jdk.classpath.11">
+        <fileset dir="${jdk.home.11}">
+            <include name="../jdk-11.0.3!/java.base"/>
+            <include name="../jdk-11.0.3!/java.compiler"/>
+            <include name="../jdk-11.0.3!/java.datatransfer"/>
+            <include name="../jdk-11.0.3!/java.desktop"/>
+            <include name="../jdk-11.0.3!/java.instrument"/>
+            <include name="../jdk-11.0.3!/java.logging"/>
+            <include name="../jdk-11.0.3!/java.management"/>
+            <include name="../jdk-11.0.3!/java.management.rmi"/>
+            <include name="../jdk-11.0.3!/java.naming"/>
+            <include name="../jdk-11.0.3!/java.net.http"/>
+            <include name="../jdk-11.0.3!/java.prefs"/>
+            <include name="../jdk-11.0.3!/java.rmi"/>
+            <include name="../jdk-11.0.3!/java.scripting"/>
+            <include name="../jdk-11.0.3!/java.se"/>
+            <include name="../jdk-11.0.3!/java.security.jgss"/>
+            <include name="../jdk-11.0.3!/java.security.sasl"/>
+            <include name="../jdk-11.0.3!/java.smartcardio"/>
+            <include name="../jdk-11.0.3!/java.sql"/>
+            <include name="../jdk-11.0.3!/java.sql.rowset"/>
+            <include name="../jdk-11.0.3!/java.transaction.xa"/>
+            <include name="../jdk-11.0.3!/java.xml"/>
+            <include name="../jdk-11.0.3!/java.xml.crypto"/>
+            <include name="../jdk-11.0.3!/jdk.accessibility"/>
+            <include name="../jdk-11.0.3!/jdk.aot"/>
+            <include name="../jdk-11.0.3!/jdk.attach"/>
+            <include name="../jdk-11.0.3!/jdk.charsets"/>
+            <include name="../jdk-11.0.3!/jdk.compiler"/>
+            <include name="../jdk-11.0.3!/jdk.crypto.cryptoki"/>
+            <include name="../jdk-11.0.3!/jdk.crypto.ec"/>
+            <include name="../jdk-11.0.3!/jdk.crypto.mscapi"/>
+            <include name="../jdk-11.0.3!/jdk.dynalink"/>
+            <include name="../jdk-11.0.3!/jdk.editpad"/>
+            <include name="../jdk-11.0.3!/jdk.hotspot.agent"/>
+            <include name="../jdk-11.0.3!/jdk.httpserver"/>
+            <include name="../jdk-11.0.3!/jdk.internal.ed"/>
+            <include name="../jdk-11.0.3!/jdk.internal.jvmstat"/>
+            <include name="../jdk-11.0.3!/jdk.internal.le"/>
+            <include name="../jdk-11.0.3!/jdk.internal.opt"/>
+            <include name="../jdk-11.0.3!/jdk.internal.vm.ci"/>
+            <include name="../jdk-11.0.3!/jdk.internal.vm.compiler"/>
+            <include name="../jdk-11.0.3!/jdk.internal.vm.compiler.management"/>
+            <include name="../jdk-11.0.3!/jdk.jartool"/>
+            <include name="../jdk-11.0.3!/jdk.javadoc"/>
+            <include name="../jdk-11.0.3!/jdk.jcmd"/>
+            <include name="../jdk-11.0.3!/jdk.jconsole"/>
+            <include name="../jdk-11.0.3!/jdk.jdeps"/>
+            <include name="../jdk-11.0.3!/jdk.jdi"/>
+            <include name="../jdk-11.0.3!/jdk.jdwp.agent"/>
+            <include name="../jdk-11.0.3!/jdk.jfr"/>
+            <include name="../jdk-11.0.3!/jdk.jlink"/>
+            <include name="../jdk-11.0.3!/jdk.jshell"/>
+            <include name="../jdk-11.0.3!/jdk.jsobject"/>
+            <include name="../jdk-11.0.3!/jdk.jstatd"/>
+            <include name="../jdk-11.0.3!/jdk.localedata"/>
+            <include name="../jdk-11.0.3!/jdk.management"/>
+            <include name="../jdk-11.0.3!/jdk.management.agent"/>
+            <include name="../jdk-11.0.3!/jdk.management.jfr"/>
+            <include name="../jdk-11.0.3!/jdk.naming.dns"/>
+            <include name="../jdk-11.0.3!/jdk.naming.rmi"/>
+            <include name="../jdk-11.0.3!/jdk.net"/>
+            <include name="../jdk-11.0.3!/jdk.pack"/>
+            <include name="../jdk-11.0.3!/jdk.rmic"/>
+            <include name="../jdk-11.0.3!/jdk.scripting.nashorn"/>
+            <include name="../jdk-11.0.3!/jdk.scripting.nashorn.shell"/>
+            <include name="../jdk-11.0.3!/jdk.sctp"/>
+            <include name="../jdk-11.0.3!/jdk.security.auth"/>
+            <include name="../jdk-11.0.3!/jdk.security.jgss"/>
+            <include name="../jdk-11.0.3!/jdk.unsupported"/>
+            <include name="../jdk-11.0.3!/jdk.unsupported.desktop"/>
+            <include name="../jdk-11.0.3!/jdk.xml.dom"/>
+            <include name="../jdk-11.0.3!/jdk.zipfs"/>
+        </fileset>
+    </path>
+
+    <property name="project.jdk.home" value="${jdk.home.11}"/>
+    <property name="project.jdk.bin" value="${jdk.bin.11}"/>
+    <property name="project.jdk.classpath" value="jdk.classpath.11"/>
+
+
+    <!-- Project Libraries -->
+
+    <path id="library.gradle:_ch.qos.logback:logback-classic:1.3.0-alpha5.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/ch.qos.logback/logback-classic/1.3.0-alpha5/3195156aa3b62b2f4407a7841700f2759bebf192/logback-classic-1.3.0-alpha5.jar"/>
+    </path>
+
+    <path id="library.gradle:_ch.qos.logback:logback-core:1.3.0-alpha5.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/ch.qos.logback/logback-core/1.3.0-alpha5/4f3163d95c96b7be69d9e5245573834fd130a4bb/logback-core-1.3.0-alpha5.jar"/>
+    </path>
+
+    <path id="library.gradle:_club.minnced:opus-java-api:1.0.4.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/club.minnced/opus-java-api/1.0.4/20e4fafa8523ed391446ddc7dff60ef832f1543a/opus-java-api-1.0.4.jar"/>
+    </path>
+
+    <path id="library.gradle:_club.minnced:opus-java-natives:1.0.4.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/club.minnced/opus-java-natives/1.0.4/292d015243833578eda04b1ad0af2dc351b14b1b/opus-java-natives-1.0.4.jar"/>
+    </path>
+
+    <path id="library.gradle:_club.minnced:opus-java:pom:1.0.4.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/club.minnced/opus-java/1.0.4/596995aaf2f5b5091c4d251fdc11fa62680cc59e/opus-java-1.0.4.pom"/>
+    </path>
+
+    <path id="library.gradle:_com.fasterxml.jackson.core:jackson-annotations:2.9.0.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.9.0/7c10d545325e3a6e72e06381afe469fd40eb701/jackson-annotations-2.9.0.jar"/>
+    </path>
+
+    <path id="library.gradle:_com.fasterxml.jackson.core:jackson-core:2.9.8.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.9.8/f5a654e4675769c716e5b387830d19b501ca191/jackson-core-2.9.8.jar"/>
+    </path>
+
+    <path id="library.gradle:_com.fasterxml.jackson.core:jackson-databind:2.9.8.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.9.8/11283f21cc480aa86c4df7a0a3243ec508372ed2/jackson-databind-2.9.8.jar"/>
+    </path>
+
+    <path id="library.gradle:_com.google.code.findbugs:jsr305:3.0.2.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/3.0.2/25ea2e8b0c338a877313bd4672d3fe056ea78f0d/jsr305-3.0.2.jar"/>
+    </path>
+
+    <path id="library.gradle:_com.google.guava:guava:20.0.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/com.google.guava/guava/20.0/89507701249388e1ed5ddcf8c41f4ce1be7831ef/guava-20.0.jar"/>
+    </path>
+
+    <path id="library.gradle:_com.neovisionaries:nv-websocket-client:2.5.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/com.neovisionaries/nv-websocket-client/2.5/562c5e33fbb23a576d5ae9b359dd554ce79de37e/nv-websocket-client-2.5.jar"/>
+    </path>
+
+    <path id="library.gradle:_com.squareup.okhttp3:okhttp:3.13.0.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/okhttp/3.13.0/f53f6362226e4546c3987b8693f3d6976df8c797/okhttp-3.13.0.jar"/>
+    </path>
+
+    <path id="library.gradle:_com.squareup.okio:okio:1.17.2.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/com.squareup.okio/okio/1.17.2/78c7820b205002da4d2d137f6f312bd64b3d6049/okio-1.17.2.jar"/>
+    </path>
+
+    <path id="library.gradle:_com.sun.mail:javax.mail:1.6.2.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/com.sun.mail/javax.mail/1.6.2/935151eb71beff17a2ffac15dd80184a99a0514f/javax.mail-1.6.2.jar"/>
+    </path>
+
+    <path id="library.gradle:_edu.washington.cs.types.checker:checker-framework:1.7.0.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/edu.washington.cs.types.checker/checker-framework/1.7.0/f652eb570f82dea2f7718c23f81b759c0c8e5ccf/checker-framework-1.7.0.jar"/>
+    </path>
+
+    <path id="library.gradle:_javax.activation:activation:1.1.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/javax.activation/activation/1.1/e6cb541461c2834bdea3eb920f1884d1eb508b50/activation-1.1.jar"/>
+    </path>
+
+    <path id="library.gradle:_net.dv8tion:jda:4.0.0_61.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/net.dv8tion/JDA/4.0.0_61/419672d98e7dfc6802517c7150fd3007f194a198/JDA-4.0.0_61.jar"/>
+    </path>
+
+    <path id="library.gradle:_net.java.dev.jna:jna:4.4.0.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/net.java.dev.jna/jna/4.4.0/cb208278274bf12ebdb56c61bd7407e6f774d65a/jna-4.4.0.jar"/>
+    </path>
+
+    <path id="library.gradle:_net.sf.trove4j:trove4j:3.0.3.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/net.sf.trove4j/trove4j/3.0.3/42ccaf4761f0dfdfa805c9e340d99a755907e2dd/trove4j-3.0.3.jar"/>
+    </path>
+
+    <path id="library.gradle:_org.apache.commons:commons-collections4:4.1.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-collections4/4.1/a4cf4688fe1c7e3a63aa636cc96d013af537768e/commons-collections4-4.1.jar"/>
+    </path>
+
+    <path id="library.gradle:_org.javassist:javassist:3.21.0-ga.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/org.javassist/javassist/3.21.0-GA/598244f595db5c5fb713731eddbb1c91a58d959b/javassist-3.21.0-GA.jar"/>
+    </path>
+
+    <path id="library.gradle:_org.jetbrains:annotations:16.0.1.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/16.0.1/c1a6655cebcac68e63e4c24d23f573035032eb2a/annotations-16.0.1.jar"/>
+    </path>
+
+    <path id="library.gradle:_org.json:json:20190722.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/org.json/json/20190722/7bce7bacf0ab5e9f894d307a3de8b7f540064d5/json-20190722.jar"/>
+    </path>
+
+    <path id="library.gradle:_org.mongodb:bson:3.11.2.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/org.mongodb/bson/3.11.2/96b17202f1250736ba83021ff56550e83e8fd8c5/bson-3.11.2.jar"/>
+    </path>
+
+    <path id="library.gradle:_org.mongodb:mongodb-driver-core:3.11.2.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/org.mongodb/mongodb-driver-core/3.11.2/798e2d948326c5bfd9924e524bab22ee39c8f4f/mongodb-driver-core-3.11.2.jar"/>
+    </path>
+
+    <path id="library.gradle:_org.mongodb:mongodb-driver-sync:3.11.2.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/org.mongodb/mongodb-driver-sync/3.11.2/a011ecee75c110e95d33ece066f4bee149d5487a/mongodb-driver-sync-3.11.2.jar"/>
+    </path>
+
+    <path id="library.gradle:_org.reflections:reflections:0.9.11.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/org.reflections/reflections/0.9.11/4c686033d918ec1727e329b7222fcb020152e32b/reflections-0.9.11.jar"/>
+    </path>
+
+    <path id="library.gradle:_org.slf4j:slf4j-api:2.0.0-alpha1.classpath">
+        <pathelement
+                location="${basedir}/../../../Users/solonovamax/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/2.0.0-alpha1/e979781e847d44d3618c4479d438956593b6b080/slf4j-api-2.0.0-alpha1.jar"/>
+    </path>
+
+
+    <!-- Global Libraries -->
+    <!-- Register Custom Compiler Taskdefs -->
+    <property name="javac2.home" value="${idea.home}/lib"/>
+    <path id="javac2.classpath">
+        <fileset dir="${javac2.home}">
+            <include name="javac2.jar"/>
+            <include name="jdom.jar"/>
+            <include name="asm-all*.jar"/>
+            <include name="forms-*.jar"/>
+        </fileset>
+    </path>
+    <target name="register.custom.compilers">
+        <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+        <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions"
+                 classpathref="javac2.classpath"/>
+    </target>
+
+    <!-- Modules -->
+
+
+    <!-- Module Qev -->
+
+    <dirname property="module.qev.basedir" file="${ant.file}"/>
+
+
+    <property name="module.jdk.home.qev" value="${project.jdk.home}"/>
+    <property name="module.jdk.bin.qev" value="${project.jdk.bin}"/>
+    <property name="module.jdk.classpath.qev" value="${project.jdk.classpath}"/>
+
+    <property name="compiler.args.qev" value="-encoding UTF-8 -source 11 -target 11 ${compiler.args}"/>
+
+    <property name="qev.output.dir" value="undefined"/>
+    <property name="qev.testoutput.dir" value="undefined"/>
+
+    <path id="qev.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="qev.module.production.classpath">
+        <path refid="${module.jdk.classpath.qev}"/>
+    </path>
+
+    <path id="qev.runtime.production.module.classpath"/>
+
+    <path id="qev.module.classpath">
+        <path refid="${module.jdk.classpath.qev}"/>
+    </path>
+
+    <path id="qev.runtime.module.classpath"/>
+
+
+    <patternset id="excluded.from.module.qev">
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.qev">
+        <patternset refid="excluded.from.module.qev"/>
+    </patternset>
+
+
+    <target name="compile.module.qev" depends="compile.module.qev.production,compile.module.qev.tests"
+            description="Compile module Qev"/>
+
+    <target name="compile.module.qev.production" depends="register.custom.compilers"
+            description="Compile module Qev; production classes"/>
+
+    <target name="compile.module.qev.tests" depends="register.custom.compilers,compile.module.qev.production"
+            description="compile module Qev; test classes" unless="skip.tests"/>
+
+    <target name="clean.module.qev" description="cleanup module">
+        <delete dir="${qev.output.dir}"/>
+        <delete dir="${qev.testoutput.dir}"/>
+    </target>
+
+
+    <!-- Module Qev.main -->
+
+    <dirname property="module.qev.main.basedir" file="${ant.file}"/>
+
+
+    <property name="module.jdk.home.qev.main" value="${project.jdk.home}"/>
+    <property name="module.jdk.bin.qev.main" value="${project.jdk.bin}"/>
+    <property name="module.jdk.classpath.qev.main" value="${project.jdk.classpath}"/>
+
+    <property name="compiler.args.qev.main" value="-encoding UTF-8 -source 11 -target 11 ${compiler.args}"/>
+
+    <property name="qev.main.output.dir" value="${module.qev.main.basedir}/build/classes/java/main"/>
+    <property name="qev.main.testoutput.dir" value="${module.qev.main.basedir}/build/classes/java/main"/>
+
+    <path id="qev.main.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="qev.main.module.production.classpath">
+        <path refid="${module.jdk.classpath.qev.main}"/>
+        <path refid="library.gradle:_org.json:json:20190722.classpath"/>
+        <path refid="library.gradle:_net.dv8tion:jda:4.0.0_61.classpath"/>
+        <path refid="library.gradle:_org.reflections:reflections:0.9.11.classpath"/>
+        <path refid="library.gradle:_org.mongodb:mongodb-driver-sync:3.11.2.classpath"/>
+        <path refid="library.gradle:_ch.qos.logback:logback-classic:1.3.0-alpha5.classpath"/>
+        <path refid="library.gradle:_com.google.code.findbugs:jsr305:3.0.2.classpath"/>
+        <path refid="library.gradle:_org.jetbrains:annotations:16.0.1.classpath"/>
+        <path refid="library.gradle:_org.slf4j:slf4j-api:2.0.0-alpha1.classpath"/>
+        <path refid="library.gradle:_com.neovisionaries:nv-websocket-client:2.5.classpath"/>
+        <path refid="library.gradle:_com.squareup.okhttp3:okhttp:3.13.0.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java:pom:1.0.4.classpath"/>
+        <path refid="library.gradle:_org.apache.commons:commons-collections4:4.1.classpath"/>
+        <path refid="library.gradle:_net.sf.trove4j:trove4j:3.0.3.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-databind:2.9.8.classpath"/>
+        <path refid="library.gradle:_com.google.guava:guava:20.0.classpath"/>
+        <path refid="library.gradle:_org.javassist:javassist:3.21.0-ga.classpath"/>
+        <path refid="library.gradle:_org.mongodb:mongodb-driver-core:3.11.2.classpath"/>
+        <path refid="library.gradle:_org.mongodb:bson:3.11.2.classpath"/>
+        <path refid="library.gradle:_ch.qos.logback:logback-core:1.3.0-alpha5.classpath"/>
+        <path refid="library.gradle:_com.sun.mail:javax.mail:1.6.2.classpath"/>
+        <path refid="library.gradle:_edu.washington.cs.types.checker:checker-framework:1.7.0.classpath"/>
+        <path refid="library.gradle:_com.squareup.okio:okio:1.17.2.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java-api:1.0.4.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java-natives:1.0.4.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-annotations:2.9.0.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-core:2.9.8.classpath"/>
+        <path refid="library.gradle:_javax.activation:activation:1.1.classpath"/>
+        <path refid="library.gradle:_net.java.dev.jna:jna:4.4.0.classpath"/>
+    </path>
+
+    <path id="qev.main.runtime.production.module.classpath">
+        <pathelement location="${qev.main.output.dir}"/>
+        <path refid="library.gradle:_org.json:json:20190722.classpath"/>
+        <path refid="library.gradle:_net.dv8tion:jda:4.0.0_61.classpath"/>
+        <path refid="library.gradle:_org.reflections:reflections:0.9.11.classpath"/>
+        <path refid="library.gradle:_org.mongodb:mongodb-driver-sync:3.11.2.classpath"/>
+        <path refid="library.gradle:_ch.qos.logback:logback-classic:1.3.0-alpha5.classpath"/>
+        <path refid="library.gradle:_com.google.code.findbugs:jsr305:3.0.2.classpath"/>
+        <path refid="library.gradle:_org.jetbrains:annotations:16.0.1.classpath"/>
+        <path refid="library.gradle:_org.slf4j:slf4j-api:2.0.0-alpha1.classpath"/>
+        <path refid="library.gradle:_com.neovisionaries:nv-websocket-client:2.5.classpath"/>
+        <path refid="library.gradle:_com.squareup.okhttp3:okhttp:3.13.0.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java:pom:1.0.4.classpath"/>
+        <path refid="library.gradle:_org.apache.commons:commons-collections4:4.1.classpath"/>
+        <path refid="library.gradle:_net.sf.trove4j:trove4j:3.0.3.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-databind:2.9.8.classpath"/>
+        <path refid="library.gradle:_com.google.guava:guava:20.0.classpath"/>
+        <path refid="library.gradle:_org.javassist:javassist:3.21.0-ga.classpath"/>
+        <path refid="library.gradle:_org.mongodb:mongodb-driver-core:3.11.2.classpath"/>
+        <path refid="library.gradle:_org.mongodb:bson:3.11.2.classpath"/>
+        <path refid="library.gradle:_ch.qos.logback:logback-core:1.3.0-alpha5.classpath"/>
+        <path refid="library.gradle:_com.sun.mail:javax.mail:1.6.2.classpath"/>
+        <path refid="library.gradle:_edu.washington.cs.types.checker:checker-framework:1.7.0.classpath"/>
+        <path refid="library.gradle:_com.squareup.okio:okio:1.17.2.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java-api:1.0.4.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java-natives:1.0.4.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-annotations:2.9.0.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-core:2.9.8.classpath"/>
+        <path refid="library.gradle:_javax.activation:activation:1.1.classpath"/>
+        <path refid="library.gradle:_net.java.dev.jna:jna:4.4.0.classpath"/>
+    </path>
+
+    <path id="qev.main.module.classpath">
+        <path refid="${module.jdk.classpath.qev.main}"/>
+        <pathelement location="${qev.main.output.dir}"/>
+        <path refid="library.gradle:_org.json:json:20190722.classpath"/>
+        <path refid="library.gradle:_net.dv8tion:jda:4.0.0_61.classpath"/>
+        <path refid="library.gradle:_org.reflections:reflections:0.9.11.classpath"/>
+        <path refid="library.gradle:_org.mongodb:mongodb-driver-sync:3.11.2.classpath"/>
+        <path refid="library.gradle:_ch.qos.logback:logback-classic:1.3.0-alpha5.classpath"/>
+        <path refid="library.gradle:_com.google.code.findbugs:jsr305:3.0.2.classpath"/>
+        <path refid="library.gradle:_org.jetbrains:annotations:16.0.1.classpath"/>
+        <path refid="library.gradle:_org.slf4j:slf4j-api:2.0.0-alpha1.classpath"/>
+        <path refid="library.gradle:_com.neovisionaries:nv-websocket-client:2.5.classpath"/>
+        <path refid="library.gradle:_com.squareup.okhttp3:okhttp:3.13.0.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java:pom:1.0.4.classpath"/>
+        <path refid="library.gradle:_org.apache.commons:commons-collections4:4.1.classpath"/>
+        <path refid="library.gradle:_net.sf.trove4j:trove4j:3.0.3.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-databind:2.9.8.classpath"/>
+        <path refid="library.gradle:_com.google.guava:guava:20.0.classpath"/>
+        <path refid="library.gradle:_org.javassist:javassist:3.21.0-ga.classpath"/>
+        <path refid="library.gradle:_org.mongodb:mongodb-driver-core:3.11.2.classpath"/>
+        <path refid="library.gradle:_org.mongodb:bson:3.11.2.classpath"/>
+        <path refid="library.gradle:_ch.qos.logback:logback-core:1.3.0-alpha5.classpath"/>
+        <path refid="library.gradle:_com.sun.mail:javax.mail:1.6.2.classpath"/>
+        <path refid="library.gradle:_edu.washington.cs.types.checker:checker-framework:1.7.0.classpath"/>
+        <path refid="library.gradle:_com.squareup.okio:okio:1.17.2.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java-api:1.0.4.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java-natives:1.0.4.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-annotations:2.9.0.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-core:2.9.8.classpath"/>
+        <path refid="library.gradle:_javax.activation:activation:1.1.classpath"/>
+        <path refid="library.gradle:_net.java.dev.jna:jna:4.4.0.classpath"/>
+    </path>
+
+    <path id="qev.main.runtime.module.classpath">
+        <pathelement location="${qev.main.output.dir}"/>
+        <path refid="library.gradle:_org.json:json:20190722.classpath"/>
+        <path refid="library.gradle:_net.dv8tion:jda:4.0.0_61.classpath"/>
+        <path refid="library.gradle:_org.reflections:reflections:0.9.11.classpath"/>
+        <path refid="library.gradle:_org.mongodb:mongodb-driver-sync:3.11.2.classpath"/>
+        <path refid="library.gradle:_ch.qos.logback:logback-classic:1.3.0-alpha5.classpath"/>
+        <path refid="library.gradle:_com.google.code.findbugs:jsr305:3.0.2.classpath"/>
+        <path refid="library.gradle:_org.jetbrains:annotations:16.0.1.classpath"/>
+        <path refid="library.gradle:_org.slf4j:slf4j-api:2.0.0-alpha1.classpath"/>
+        <path refid="library.gradle:_com.neovisionaries:nv-websocket-client:2.5.classpath"/>
+        <path refid="library.gradle:_com.squareup.okhttp3:okhttp:3.13.0.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java:pom:1.0.4.classpath"/>
+        <path refid="library.gradle:_org.apache.commons:commons-collections4:4.1.classpath"/>
+        <path refid="library.gradle:_net.sf.trove4j:trove4j:3.0.3.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-databind:2.9.8.classpath"/>
+        <path refid="library.gradle:_com.google.guava:guava:20.0.classpath"/>
+        <path refid="library.gradle:_org.javassist:javassist:3.21.0-ga.classpath"/>
+        <path refid="library.gradle:_org.mongodb:mongodb-driver-core:3.11.2.classpath"/>
+        <path refid="library.gradle:_org.mongodb:bson:3.11.2.classpath"/>
+        <path refid="library.gradle:_ch.qos.logback:logback-core:1.3.0-alpha5.classpath"/>
+        <path refid="library.gradle:_com.sun.mail:javax.mail:1.6.2.classpath"/>
+        <path refid="library.gradle:_edu.washington.cs.types.checker:checker-framework:1.7.0.classpath"/>
+        <path refid="library.gradle:_com.squareup.okio:okio:1.17.2.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java-api:1.0.4.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java-natives:1.0.4.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-annotations:2.9.0.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-core:2.9.8.classpath"/>
+        <path refid="library.gradle:_javax.activation:activation:1.1.classpath"/>
+        <path refid="library.gradle:_net.java.dev.jna:jna:4.4.0.classpath"/>
+    </path>
+
+
+    <patternset id="excluded.from.module.qev.main">
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.qev.main">
+        <patternset refid="excluded.from.module.qev.main"/>
+    </patternset>
+
+    <path id="qev.main.module.sourcepath">
+        <dirset dir="${module.qev.main.basedir}/src/main">
+            <include name="java"/>
+            <include name="resources"/>
+        </dirset>
+    </path>
+
+
+    <target name="compile.module.qev.main" depends="compile.module.qev.main.production,compile.module.qev.main.tests"
+            description="Compile module Qev.main"/>
+
+    <target name="compile.module.qev.main.production" depends="register.custom.compilers"
+            description="Compile module Qev.main; production classes">
+        <mkdir dir="${qev.main.output.dir}"/>
+        <javac2 destdir="${qev.main.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
+                memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.qev.main}/javac">
+            <compilerarg line="${compiler.args.qev.main}"/>
+            <bootclasspath refid="qev.main.module.bootclasspath"/>
+            <classpath refid="qev.main.module.production.classpath"/>
+            <src refid="qev.main.module.sourcepath"/>
+            <patternset refid="excluded.from.compilation.qev.main"/>
+        </javac2>
+
+        <copy todir="${qev.main.output.dir}">
+            <fileset dir="${module.qev.main.basedir}/src/main/java">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+            <fileset dir="${module.qev.main.basedir}/src/main/resources">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile.module.qev.main.tests" depends="register.custom.compilers,compile.module.qev.main.production"
+            description="compile module Qev.main; test classes" unless="skip.tests"/>
+
+    <target name="clean.module.qev.main" description="cleanup module">
+        <delete dir="${qev.main.output.dir}"/>
+        <delete dir="${qev.main.testoutput.dir}"/>
+    </target>
+
+
+    <!-- Module Qev.test -->
+
+    <dirname property="module.qev.test.basedir" file="${ant.file}"/>
+
+
+    <property name="module.jdk.home.qev.test" value="${project.jdk.home}"/>
+    <property name="module.jdk.bin.qev.test" value="${project.jdk.bin}"/>
+    <property name="module.jdk.classpath.qev.test" value="${project.jdk.classpath}"/>
+
+    <property name="compiler.args.qev.test" value="-encoding UTF-8 -source 11 -target 11 ${compiler.args}"/>
+
+    <property name="qev.test.output.dir" value="undefined"/>
+    <property name="qev.test.testoutput.dir" value="${module.qev.test.basedir}/build/classes/java/test"/>
+
+    <path id="qev.test.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="qev.test.module.production.classpath">
+        <path refid="${module.jdk.classpath.qev.test}"/>
+        <pathelement location="${qev.main.output.dir}"/>
+        <path refid="library.gradle:_org.json:json:20190722.classpath"/>
+        <path refid="library.gradle:_net.dv8tion:jda:4.0.0_61.classpath"/>
+        <path refid="library.gradle:_org.reflections:reflections:0.9.11.classpath"/>
+        <path refid="library.gradle:_org.mongodb:mongodb-driver-sync:3.11.2.classpath"/>
+        <path refid="library.gradle:_ch.qos.logback:logback-classic:1.3.0-alpha5.classpath"/>
+        <path refid="library.gradle:_com.google.code.findbugs:jsr305:3.0.2.classpath"/>
+        <path refid="library.gradle:_org.jetbrains:annotations:16.0.1.classpath"/>
+        <path refid="library.gradle:_org.slf4j:slf4j-api:2.0.0-alpha1.classpath"/>
+        <path refid="library.gradle:_com.neovisionaries:nv-websocket-client:2.5.classpath"/>
+        <path refid="library.gradle:_com.squareup.okhttp3:okhttp:3.13.0.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java:pom:1.0.4.classpath"/>
+        <path refid="library.gradle:_org.apache.commons:commons-collections4:4.1.classpath"/>
+        <path refid="library.gradle:_net.sf.trove4j:trove4j:3.0.3.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-databind:2.9.8.classpath"/>
+        <path refid="library.gradle:_com.google.guava:guava:20.0.classpath"/>
+        <path refid="library.gradle:_org.javassist:javassist:3.21.0-ga.classpath"/>
+        <path refid="library.gradle:_org.mongodb:mongodb-driver-core:3.11.2.classpath"/>
+        <path refid="library.gradle:_org.mongodb:bson:3.11.2.classpath"/>
+        <path refid="library.gradle:_ch.qos.logback:logback-core:1.3.0-alpha5.classpath"/>
+        <path refid="library.gradle:_com.sun.mail:javax.mail:1.6.2.classpath"/>
+        <path refid="library.gradle:_edu.washington.cs.types.checker:checker-framework:1.7.0.classpath"/>
+        <path refid="library.gradle:_com.squareup.okio:okio:1.17.2.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java-api:1.0.4.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java-natives:1.0.4.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-annotations:2.9.0.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-core:2.9.8.classpath"/>
+        <path refid="library.gradle:_javax.activation:activation:1.1.classpath"/>
+        <path refid="library.gradle:_net.java.dev.jna:jna:4.4.0.classpath"/>
+    </path>
+
+    <path id="qev.test.runtime.production.module.classpath">
+        <path refid="qev.main.runtime.production.module.classpath"/>
+        <path refid="library.gradle:_org.json:json:20190722.classpath"/>
+        <path refid="library.gradle:_net.dv8tion:jda:4.0.0_61.classpath"/>
+        <path refid="library.gradle:_org.reflections:reflections:0.9.11.classpath"/>
+        <path refid="library.gradle:_org.mongodb:mongodb-driver-sync:3.11.2.classpath"/>
+        <path refid="library.gradle:_ch.qos.logback:logback-classic:1.3.0-alpha5.classpath"/>
+        <path refid="library.gradle:_com.google.code.findbugs:jsr305:3.0.2.classpath"/>
+        <path refid="library.gradle:_org.jetbrains:annotations:16.0.1.classpath"/>
+        <path refid="library.gradle:_org.slf4j:slf4j-api:2.0.0-alpha1.classpath"/>
+        <path refid="library.gradle:_com.neovisionaries:nv-websocket-client:2.5.classpath"/>
+        <path refid="library.gradle:_com.squareup.okhttp3:okhttp:3.13.0.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java:pom:1.0.4.classpath"/>
+        <path refid="library.gradle:_org.apache.commons:commons-collections4:4.1.classpath"/>
+        <path refid="library.gradle:_net.sf.trove4j:trove4j:3.0.3.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-databind:2.9.8.classpath"/>
+        <path refid="library.gradle:_com.google.guava:guava:20.0.classpath"/>
+        <path refid="library.gradle:_org.javassist:javassist:3.21.0-ga.classpath"/>
+        <path refid="library.gradle:_org.mongodb:mongodb-driver-core:3.11.2.classpath"/>
+        <path refid="library.gradle:_org.mongodb:bson:3.11.2.classpath"/>
+        <path refid="library.gradle:_ch.qos.logback:logback-core:1.3.0-alpha5.classpath"/>
+        <path refid="library.gradle:_com.sun.mail:javax.mail:1.6.2.classpath"/>
+        <path refid="library.gradle:_edu.washington.cs.types.checker:checker-framework:1.7.0.classpath"/>
+        <path refid="library.gradle:_com.squareup.okio:okio:1.17.2.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java-api:1.0.4.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java-natives:1.0.4.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-annotations:2.9.0.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-core:2.9.8.classpath"/>
+        <path refid="library.gradle:_javax.activation:activation:1.1.classpath"/>
+        <path refid="library.gradle:_net.java.dev.jna:jna:4.4.0.classpath"/>
+    </path>
+
+    <path id="qev.test.module.classpath">
+        <path refid="${module.jdk.classpath.qev.test}"/>
+        <pathelement location="${qev.main.output.dir}"/>
+        <path refid="library.gradle:_org.json:json:20190722.classpath"/>
+        <path refid="library.gradle:_net.dv8tion:jda:4.0.0_61.classpath"/>
+        <path refid="library.gradle:_org.reflections:reflections:0.9.11.classpath"/>
+        <path refid="library.gradle:_org.mongodb:mongodb-driver-sync:3.11.2.classpath"/>
+        <path refid="library.gradle:_ch.qos.logback:logback-classic:1.3.0-alpha5.classpath"/>
+        <path refid="library.gradle:_com.google.code.findbugs:jsr305:3.0.2.classpath"/>
+        <path refid="library.gradle:_org.jetbrains:annotations:16.0.1.classpath"/>
+        <path refid="library.gradle:_org.slf4j:slf4j-api:2.0.0-alpha1.classpath"/>
+        <path refid="library.gradle:_com.neovisionaries:nv-websocket-client:2.5.classpath"/>
+        <path refid="library.gradle:_com.squareup.okhttp3:okhttp:3.13.0.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java:pom:1.0.4.classpath"/>
+        <path refid="library.gradle:_org.apache.commons:commons-collections4:4.1.classpath"/>
+        <path refid="library.gradle:_net.sf.trove4j:trove4j:3.0.3.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-databind:2.9.8.classpath"/>
+        <path refid="library.gradle:_com.google.guava:guava:20.0.classpath"/>
+        <path refid="library.gradle:_org.javassist:javassist:3.21.0-ga.classpath"/>
+        <path refid="library.gradle:_org.mongodb:mongodb-driver-core:3.11.2.classpath"/>
+        <path refid="library.gradle:_org.mongodb:bson:3.11.2.classpath"/>
+        <path refid="library.gradle:_ch.qos.logback:logback-core:1.3.0-alpha5.classpath"/>
+        <path refid="library.gradle:_com.sun.mail:javax.mail:1.6.2.classpath"/>
+        <path refid="library.gradle:_edu.washington.cs.types.checker:checker-framework:1.7.0.classpath"/>
+        <path refid="library.gradle:_com.squareup.okio:okio:1.17.2.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java-api:1.0.4.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java-natives:1.0.4.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-annotations:2.9.0.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-core:2.9.8.classpath"/>
+        <path refid="library.gradle:_javax.activation:activation:1.1.classpath"/>
+        <path refid="library.gradle:_net.java.dev.jna:jna:4.4.0.classpath"/>
+    </path>
+
+    <path id="qev.test.runtime.module.classpath">
+        <pathelement location="${qev.test.testoutput.dir}"/>
+        <path refid="qev.main.runtime.module.classpath"/>
+        <path refid="library.gradle:_org.json:json:20190722.classpath"/>
+        <path refid="library.gradle:_net.dv8tion:jda:4.0.0_61.classpath"/>
+        <path refid="library.gradle:_org.reflections:reflections:0.9.11.classpath"/>
+        <path refid="library.gradle:_org.mongodb:mongodb-driver-sync:3.11.2.classpath"/>
+        <path refid="library.gradle:_ch.qos.logback:logback-classic:1.3.0-alpha5.classpath"/>
+        <path refid="library.gradle:_com.google.code.findbugs:jsr305:3.0.2.classpath"/>
+        <path refid="library.gradle:_org.jetbrains:annotations:16.0.1.classpath"/>
+        <path refid="library.gradle:_org.slf4j:slf4j-api:2.0.0-alpha1.classpath"/>
+        <path refid="library.gradle:_com.neovisionaries:nv-websocket-client:2.5.classpath"/>
+        <path refid="library.gradle:_com.squareup.okhttp3:okhttp:3.13.0.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java:pom:1.0.4.classpath"/>
+        <path refid="library.gradle:_org.apache.commons:commons-collections4:4.1.classpath"/>
+        <path refid="library.gradle:_net.sf.trove4j:trove4j:3.0.3.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-databind:2.9.8.classpath"/>
+        <path refid="library.gradle:_com.google.guava:guava:20.0.classpath"/>
+        <path refid="library.gradle:_org.javassist:javassist:3.21.0-ga.classpath"/>
+        <path refid="library.gradle:_org.mongodb:mongodb-driver-core:3.11.2.classpath"/>
+        <path refid="library.gradle:_org.mongodb:bson:3.11.2.classpath"/>
+        <path refid="library.gradle:_ch.qos.logback:logback-core:1.3.0-alpha5.classpath"/>
+        <path refid="library.gradle:_com.sun.mail:javax.mail:1.6.2.classpath"/>
+        <path refid="library.gradle:_edu.washington.cs.types.checker:checker-framework:1.7.0.classpath"/>
+        <path refid="library.gradle:_com.squareup.okio:okio:1.17.2.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java-api:1.0.4.classpath"/>
+        <path refid="library.gradle:_club.minnced:opus-java-natives:1.0.4.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-annotations:2.9.0.classpath"/>
+        <path refid="library.gradle:_com.fasterxml.jackson.core:jackson-core:2.9.8.classpath"/>
+        <path refid="library.gradle:_javax.activation:activation:1.1.classpath"/>
+        <path refid="library.gradle:_net.java.dev.jna:jna:4.4.0.classpath"/>
+    </path>
+
+
+    <patternset id="excluded.from.module.qev.test">
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.qev.test">
+        <patternset refid="excluded.from.module.qev.test"/>
+    </patternset>
+
+    <path id="qev.test.module.test.sourcepath">
+        <dirset dir="${module.qev.test.basedir}/src/test">
+            <include name="java"/>
+            <include name="resources"/>
+        </dirset>
+    </path>
+
+
+    <target name="compile.module.qev.test" depends="compile.module.qev.test.production,compile.module.qev.test.tests"
+            description="Compile module Qev.test"/>
+
+    <target name="compile.module.qev.test.production" depends="register.custom.compilers,compile.module.qev.main"
+            description="Compile module Qev.test; production classes"/>
+
+    <target name="compile.module.qev.test.tests" depends="register.custom.compilers,compile.module.qev.test.production"
+            description="compile module Qev.test; test classes" unless="skip.tests">
+        <mkdir dir="${qev.test.testoutput.dir}"/>
+        <javac2 destdir="${qev.test.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
+                memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.qev.test}/javac">
+            <compilerarg line="${compiler.args.qev.test}"/>
+            <bootclasspath refid="qev.test.module.bootclasspath"/>
+            <classpath refid="qev.test.module.classpath"/>
+            <src refid="qev.test.module.test.sourcepath"/>
+            <patternset refid="excluded.from.compilation.qev.test"/>
+        </javac2>
+
+        <copy todir="${qev.test.testoutput.dir}">
+            <fileset dir="${module.qev.test.basedir}/src/test/java">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+            <fileset dir="${module.qev.test.basedir}/src/test/resources">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="clean.module.qev.test" description="cleanup module">
+        <delete dir="${qev.test.output.dir}"/>
+        <delete dir="${qev.test.testoutput.dir}"/>
+    </target>
+
+    <target name="init" description="Build initialization">
+        <!-- Perform any build initialization in this target -->
+    </target>
+
+    <target name="clean" depends="clean.module.qev, clean.module.qev.main, clean.module.qev.test"
+            description="cleanup all"/>
+
+    <target name="build.modules"
+            depends="init, clean, compile.module.qev, compile.module.qev.main, compile.module.qev.test"
+            description="build all modules"/>
+
+    <target name="all" depends="build.modules" description="build all"/>
+</project>
