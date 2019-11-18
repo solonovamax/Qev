@@ -19,13 +19,18 @@
 
 package com.solostudios.qev.framework.events;
 
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Category;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.channel.category.GenericCategoryEvent;
+import net.dv8tion.jda.api.events.channel.category.update.CategoryUpdateNameEvent;
 import net.dv8tion.jda.api.events.channel.category.update.GenericCategoryUpdateEvent;
 import net.dv8tion.jda.api.events.channel.text.GenericTextChannelEvent;
-import net.dv8tion.jda.api.events.channel.text.update.GenericTextChannelUpdateEvent;
+import net.dv8tion.jda.api.events.channel.text.update.*;
 import net.dv8tion.jda.api.events.channel.voice.GenericVoiceChannelEvent;
-import net.dv8tion.jda.api.events.channel.voice.update.GenericVoiceChannelUpdateEvent;
+import net.dv8tion.jda.api.events.channel.voice.update.*;
 import net.dv8tion.jda.api.events.emote.GenericEmoteEvent;
 import net.dv8tion.jda.api.events.emote.update.GenericEmoteUpdateEvent;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
@@ -37,6 +42,8 @@ import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GenericGuildMessageReactionEvent;
 import net.dv8tion.jda.api.events.role.GenericRoleEvent;
 import net.dv8tion.jda.api.events.role.update.GenericRoleUpdateEvent;
+
+import java.awt.*;
 
 
 @SuppressWarnings("WeakerAccess")
@@ -120,23 +127,100 @@ public class EventLogger {
 	}
 	
 	private static void textChannelUpdateEvent(GenericTextChannelUpdateEvent event) {
-	
+		String update = null;
+		Color  color  = null;
+		
+		if (event instanceof TextChannelUpdateNameEvent) {
+			update = "Name updated from " + event.getOldValue() + " to " + event.getNewValue() + ".";
+			color = Color.YELLOW;
+		}
+		if (event instanceof TextChannelUpdateNSFWEvent) {
+			update = "NSFW updated from " + event.getOldValue() + " to " + event.getNewValue() + ".";
+			color = Color.PINK;
+		}
+		if (event instanceof TextChannelUpdateParentEvent) {
+			Category oldC = ((TextChannelUpdateParentEvent) event).getOldParent();
+			Category newC = ((TextChannelUpdateParentEvent) event).getOldParent();
+			update = "Parent updated from " + (oldC != null ? oldC.getName() : "no category") + " to " +
+					 (newC != null ? newC.getName() : "no category") + ".";
+			color = Color.GREEN;
+		}
+		if (event instanceof TextChannelUpdateSlowmodeEvent) {
+			update = "Slowmode updated from " + event.getOldValue() + "s to " + event.getNewValue() + "s.";
+			color = Color.LIGHT_GRAY;
+		}
+		if (event instanceof TextChannelUpdateTopicEvent) {
+			update = "Topic updated from " + event.getOldValue() + " to " + event.getNewValue() + ".";
+			color = Color.CYAN;
+		}
+		if (update == null) {
+			return;
+		}
+		channelUpdateEvent(event.getGuild(), "Text Channel Updated", event.getEntity().getName(), update, color);
 	}
 	
-	private static void textChannelEvent(GenericTextChannelEvent event) {
+	private static void channelUpdateEvent(Guild guild, String eventName, String channelName, String update,
+										   Color color) {
+		loggingEvent(guild, new EmbedBuilder()
+				.setTitle(eventName)
+				.addField("Channel Name", channelName, true)
+				.addField("Change", update, true)
+				.setColor(color)
+				.build());
+	}
 	
+	private static void loggingEvent(Guild guild, MessageEmbed embed) {
+		guild.getSystemChannel().sendMessage(embed).queue();
 	}
 	
 	private static void voiceChannelUpdateEvent(GenericVoiceChannelUpdateEvent event) {
-	
-	}
-	
-	private static void voiceChannelEvent(GenericVoiceChannelEvent event) {
-	
+		String update = null;
+		Color  color  = null;
+		
+		if (event instanceof VoiceChannelUpdateNameEvent) {
+			update = "Name updated from " + event.getOldValue() + " to " + event.getNewValue() + ".";
+			color = Color.YELLOW;
+		}
+		if (event instanceof VoiceChannelUpdateBitrateEvent) {
+			update = "Bitrate updated from " + event.getOldValue() + "bps to " + event.getNewValue() + "bps.";
+			color = Color.CYAN;
+		}
+		if (event instanceof VoiceChannelUpdateParentEvent) {
+			Category oldC = ((VoiceChannelUpdateParentEvent) event).getOldParent();
+			Category newC = ((VoiceChannelUpdateParentEvent) event).getOldParent();
+			update = "Updated parent from " + (oldC != null ? oldC.getName() : "no category") + " to " +
+					 (newC != null ? newC.getName() : "no category") + ".";
+			color = Color.GREEN;
+		}
+		if (event instanceof VoiceChannelUpdateUserLimitEvent) {
+			update = "User limit updated from " + event.getOldValue() + " users to " + event.getNewValue() + " users.";
+			color = Color.LIGHT_GRAY;
+		}
+		if (update == null) {
+			return;
+		}
+		channelUpdateEvent(event.getGuild(), "Voice Channel Updated", event.getEntity().getName(), update, color);
 	}
 	
 	private static void categoryUpdateEvent(GenericCategoryUpdateEvent event) {
+		String update = null;
+		Color  color  = null;
+		if (event instanceof CategoryUpdateNameEvent) {
+			update = "Name updated from " + event.getOldValue() + " to " + event.getNewValue() + ".";
+			color = Color.YELLOW;
+		}
+		if (update == null) {
+			return;
+		}
+		channelUpdateEvent(event.getGuild(), "Category Updated", event.getEntity().getName(), update, color);
+	}
 	
+	private static void textChannelEvent(GenericTextChannelEvent event) {
+		/*
+		if (event instanceof TextChannelUpdatePermissionsEvent) {
+			update = "Updated NSFW from " + event.getOldValue() + " to " + event.getNewValue() + ".";
+		}
+		*/
 	}
 	
 	private static void categoryEvent(GenericCategoryEvent event) {
@@ -187,7 +271,7 @@ public class EventLogger {
 	
 	}
 	
-	private static void loggingEvent(String event, String user, String action) {
+	private static void voiceChannelEvent(GenericVoiceChannelEvent event) {
 	
 	}
 	
