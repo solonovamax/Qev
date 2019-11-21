@@ -23,11 +23,14 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.channel.category.GenericCategoryEvent;
 import net.dv8tion.jda.api.events.channel.category.update.CategoryUpdateNameEvent;
 import net.dv8tion.jda.api.events.channel.category.update.GenericCategoryUpdateEvent;
 import net.dv8tion.jda.api.events.channel.text.GenericTextChannelEvent;
+import net.dv8tion.jda.api.events.channel.text.TextChannelCreateEvent;
+import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent;
 import net.dv8tion.jda.api.events.channel.text.update.*;
 import net.dv8tion.jda.api.events.channel.voice.GenericVoiceChannelEvent;
 import net.dv8tion.jda.api.events.channel.voice.update.*;
@@ -42,13 +45,21 @@ import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GenericGuildMessageReactionEvent;
 import net.dv8tion.jda.api.events.role.GenericRoleEvent;
 import net.dv8tion.jda.api.events.role.update.GenericRoleUpdateEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.util.List;
 
 
 @SuppressWarnings("WeakerAccess")
 public class EventLogger {
+	static Logger logger = LoggerFactory.getLogger(EventLogger.class);
+	
 	public static void onGenericEvent(GenericEvent event) {
+		if (event instanceof TextChannelUpdatePermissionsEvent) {
+			logger.info("TextChannelUpdatePermissionsEvent");
+		}
 		if (event instanceof GenericTextChannelEvent) {
 			if (event instanceof GenericTextChannelUpdateEvent) {
 				textChannelUpdateEvent((GenericTextChannelUpdateEvent) event);
@@ -216,11 +227,39 @@ public class EventLogger {
 	}
 	
 	private static void textChannelEvent(GenericTextChannelEvent event) {
-		/*
-		if (event instanceof TextChannelUpdatePermissionsEvent) {
-			update = "Updated NSFW from " + event.getOldValue() + " to " + event.getNewValue() + ".";
+		
+		String update    = null;
+		String eventName = null;
+		Color  color     = null;
+		
+		if (event instanceof TextChannelCreateEvent) {
+			update = "Text channel " + event.getChannel().getName() + " created.";
+			eventName = "Channel Created.";
+			color = Color.GREEN;
 		}
-		*/
+		if (event instanceof TextChannelDeleteEvent) {
+			update = "Text channel " + event.getChannel().getName() + " deleted.";
+			eventName = "Channel Deleted.";
+			color = Color.RED;
+		}
+		if (event instanceof TextChannelUpdatePermissionsEvent) {
+			List<Role> changedRoleList = ((TextChannelUpdatePermissionsEvent) event).getChangedRoles();
+			
+			EmbedBuilder embed = new EmbedBuilder()
+					.setTitle("List of roles changed.")
+					.setColor(Color.BLUE);
+			
+			changedRoleList.forEach((role) -> {
+				embed.addField(role.getName(), "", true);
+			});
+			
+			embed.setAuthor("test");
+			loggingEvent(event.getGuild(), embed.build());
+		}
+		if (update == null) {
+			return;
+		}
+		channelUpdateEvent(event.getGuild(), "Text Channel Updated", event.getChannel().getName(), update, color);
 	}
 	
 	private static void categoryEvent(GenericCategoryEvent event) {
