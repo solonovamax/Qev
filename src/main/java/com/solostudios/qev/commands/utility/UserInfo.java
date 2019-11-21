@@ -45,7 +45,7 @@ public class UserInfo extends AbstractCommand {
 		setIsGuildOnly(true);
 		this.setArguments(new JSONArray()
 								  .put(new JSONObject()
-											   .put("key", "user")
+											   .put("key", "member")
 											   .put("type", Member.class)
 											   .put("optional", true)
 											   .put("error", "Invalid user!")));
@@ -63,7 +63,7 @@ public class UserInfo extends AbstractCommand {
 			assert author != null;
 			Member member;
 			User   user;
-			if (args.has("user")) {
+			if (args.has("member")) {
 				member = args.getMember("member");
 				user = member.getUser();
 			} else {
@@ -75,24 +75,33 @@ public class UserInfo extends AbstractCommand {
 			Date       discJoinDateD = new Date(member.getTimeCreated().toInstant().toEpochMilli());
 			Date       servJoinDateD = new Date(member.getTimeJoined().toInstant().toEpochMilli());
 			DateFormat formatter     = new SimpleDateFormat("YYYY-L-dd HH:mm");
+			
 			formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 			String discJoinDate = formatter.format(discJoinDateD);
 			String servJoinDate = formatter.format(servJoinDateD);
 			
+			String activityName = activity.getType().name();
 			EmbedBuilder info = new EmbedBuilder()
 					.setTitle("User Information")
 					.setThumbnail(Objects.requireNonNull(user.getAvatarUrl()).replace(".png", ".webp?size=256"))
 					.addField("Username", user.getName(), true)
-					.addField("Nickname", member.getNickname(), true)
-					.addField("ID", member.getId(), true)
-					.addField(activity.getType().name(), activity.getName(), true)
-					.addField("Link", "[Link](" + user.getAvatarUrl().replace(".png", ".webp?size=256") + ")", true)
+					.addField("Nickname", (member.getNickname() == null ? "None" : member.getNickname()), true)
+					.addField("Full Name", user.getAsTag(), true)
+					.addField("User ID", member.getId(), true)
+					.addField((activityName.equals("DEFAULT") ? "Playing" : activityName.substring(0, 1).toUpperCase() +
+																			activityName.substring(1)),
+							  activity.getName(), true)
+					.addField("Profile Picture",
+							  "[Link](" + user.getAvatarUrl().replace(".png", ".webp?size=256") + ")", true)
 					.addField("Account Created Date", discJoinDate + " UTC", true)
 					.addField("Server Joined Date", servJoinDate + " UTC", true);
 			
 			event.getChannel().sendMessage(info.build()).queue();
 		} catch (NullPointerException e) {
-			event.getChannel().sendMessage("The user you mentioned does not exist.").queue();
+			NullPointerException npe = new NullPointerException("The member you mentioned is not a user.");
+			npe.setStackTrace(e.getStackTrace());
+			npe.addSuppressed(e);
+			throw npe;
 		}
 	}
 }
