@@ -21,9 +21,7 @@ package com.solostudios.qev.framework.commands;
 
 import com.solostudios.qev.Qev;
 import com.solostudios.qev.abstracts.AbstractCategory;
-import com.solostudios.qev.framework.commands.errors.IllegalArgumentException;
 import javassist.bytecode.DuplicateMemberException;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -192,79 +190,87 @@ public class CommandHandler {
 		Thread commandThread = new Thread(() -> {
 			if (command != null) {
 				logger.debug("Message contains valid command. Attempting to run {}", command.getName());
+				/*
 				try {
-					for (Permission permission : command.getClientPermissions()) {
-						if (!Objects.requireNonNull(
-								event.getGuild().getMemberById(event.getJDA().getSelfUser().getId())).hasPermission(
-								event.getTextChannel(), permission)) {
-							event.getChannel().sendMessage("Insufficient permissions.\n" +
-														   "I require the " + permission.getName() +
-														   " permission to run this command.").queue();
-							return;
-						}
+				 */
+				for (Permission permission : command.getClientPermissions()) {
+					if (!Objects.requireNonNull(
+							event.getGuild().getMemberById(event.getJDA().getSelfUser().getId())).hasPermission(
+							event.getTextChannel(), permission)) {
+						event.getChannel().sendMessage("Insufficient permissions.\n" +
+													   "I require the " + permission.getName() +
+													   " permission to run this command.").queue();
+						return;
 					}
-					
-					for (Permission permission : command.getUserPermissions()) {
-						if (!Objects.requireNonNull(
-								event.getGuild().getMemberById(msg.getAuthor().getId())).hasPermission(
-								event.getTextChannel(), permission)) {
-							event.getChannel().sendMessage("Insufficient permissions.\n" +
-														   "You must have the " + permission.getName() +
-														   " permission to run this command.").queue();
-							return;
-						}
+				}
+				
+				for (Permission permission : command.getUserPermissions()) {
+					if (!Objects.requireNonNull(
+							event.getGuild().getMemberById(msg.getAuthor().getId())).hasPermission(
+							event.getTextChannel(), permission)) {
+						event.getChannel().sendMessage("Insufficient permissions.\n" +
+													   "You must have the " + permission.getName() +
+													   " permission to run this command.").queue();
+						return;
 					}
-					
-					ArrayList<String> tmp   = new ArrayList<>();
-					boolean           hide  = false;
-					boolean           trace = false;
-					boolean           debug = false;
-					
-					for (String arg : args) {
-						switch (arg) {
-							case "-hide":
-								hide = true;
-								continue;
-							case "-trace":
-								trace = true;
-								continue;
-							case "-debug":
-								debug = true;
-								continue;
-							default:
-						}
-						tmp.add(arg);
+				}
+				
+				ArrayList<String> tmp   = new ArrayList<>();
+				boolean           hide  = false;
+				boolean           trace = false;
+				boolean           debug = false;
+				
+				for (String arg : args) {
+					switch (arg) {
+						case "-hide":
+							hide = true;
+							continue;
+						case "-trace":
+							trace = true;
+							continue;
+						case "-debug":
+							debug = true;
+							continue;
+						default:
 					}
-					tmp.trimToSize();
-					
-					if (hide && !event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)) {
-						event.getChannel().sendMessage(
-								"I cannot delete your message, as I do not have the delete messages permission.").queue();
-					} else {
-						try {
-							command.prerun(event, AbstractCommand.parseArgs(event, command, tmp.toArray(
-									new String[tmp.size() - 1])), trace);
-							if (hide) {
-								event.getTextChannel().retrieveMessageById(event.getMessage().getId()).queue(
-										m -> m.delete().queue(),
-										error -> {
-										});
-							}
-						} catch (IllegalArgumentException e) {
-							event.getChannel().sendMessage(e.getMessage() + " ").queue();
-							
-							CommandStateMachine argumentWaiter =
-									new CommandStateMachine(event, event.getJDA(), command);
-							
-							if (args[args.length - 1].equals("-hide")) {
-								argumentWaiter.withDeleteMessages(true);
-							}
+					tmp.add(arg);
+				}
+				tmp.trimToSize();
+				
+				if (hide && !event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)) {
+					event.getChannel().sendMessage(
+							"I cannot delete your message, as I do not have the delete messages permission.").queue();
+				} else {
+					try {
+						command.prerun(event, AbstractCommand.parseArgs(event, command, tmp.toArray(
+								new String[tmp.size() - 1])), trace);
+						if (hide) {
+							event.getTextChannel().retrieveMessageById(event.getMessage().getId()).queue(
+									m -> m.delete().queue(),
+									error -> {
+									});
 						}
+					} catch (IllegalArgumentException e) {
+						event.getChannel().sendMessage(e.getMessage() + " ").queue();
+						
+						CommandStateMachine argumentWaiter =
+								new CommandStateMachine(event, event.getJDA(), command);
+						
+						if (hide) {
+							argumentWaiter.withDeleteMessages(true);
+						}
+						if (trace) {
+							argumentWaiter.withTrace(true);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
+				}
 					
-					
+					/*
 					logger.debug("{} command run properly.", command.getName());
 				} catch (java.lang.IllegalArgumentException e) {
+					e.printStackTrace();
 					logger.debug("Command syntax is illegal! Returning usage message.");
 					StringBuilder aliases = new StringBuilder();
 					for (String alias : command.getAliases()) {
@@ -279,9 +285,8 @@ public class CommandHandler {
 														 .setColor(0x0084ff)
 														 .build())
 					   .queue();
-				} catch (Exception e) {
-					e.printStackTrace();
 				}
+					 */
 			}
 		});
 		

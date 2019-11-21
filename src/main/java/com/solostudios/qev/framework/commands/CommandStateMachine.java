@@ -53,10 +53,11 @@ public class CommandStateMachine extends ListenerAdapter {
 		args = command.getDefaultArgs();
 		jda.addEventListener(this);
 		
-		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+		ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+		
 		Runnable messageTimeOut = () -> {
-			this.destroyStateMachine();
 			logger.debug("UserMessageStateMachine has awaited input for too long and is now exiting.");
+			this.destroyStateMachine();
 			executor.shutdown();
 		};
 		executor.schedule(messageTimeOut, 20, TimeUnit.SECONDS);
