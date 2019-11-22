@@ -21,13 +21,13 @@ public class IntToBin extends AbstractCommand {
 		this.setArguments(new JSONArray()
 								  .put(new JSONObject()
 											   .put("key", "int")
-											   .put("type", Integer.class)
-											   .put("error", "")));
+											   .put("type", int.class)
+											   .put("error", "Invalid string!")));
 	}
 	
 	@Override
 	public void run(@NotNull MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
 		int toHex = args.getInt("int");
-		event.getChannel().sendMessage("Integer: " + Integer.toBinaryString(toHex)).queue();
+		event.getChannel().sendMessage("Binary: " + Integer.toBinaryString(toHex)).queue();
 	}
 }
