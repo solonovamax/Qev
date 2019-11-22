@@ -23,10 +23,12 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.events.channel.category.CategoryCreateEvent;
+import net.dv8tion.jda.api.events.channel.category.CategoryDeleteEvent;
 import net.dv8tion.jda.api.events.channel.category.GenericCategoryEvent;
 import net.dv8tion.jda.api.events.channel.category.update.CategoryUpdateNameEvent;
+import net.dv8tion.jda.api.events.channel.category.update.CategoryUpdatePermissionsEvent;
 import net.dv8tion.jda.api.events.channel.category.update.GenericCategoryUpdateEvent;
 import net.dv8tion.jda.api.events.channel.text.GenericTextChannelEvent;
 import net.dv8tion.jda.api.events.channel.text.TextChannelCreateEvent;
@@ -35,6 +37,8 @@ import net.dv8tion.jda.api.events.channel.text.update.*;
 import net.dv8tion.jda.api.events.channel.voice.GenericVoiceChannelEvent;
 import net.dv8tion.jda.api.events.channel.voice.update.*;
 import net.dv8tion.jda.api.events.emote.GenericEmoteEvent;
+import net.dv8tion.jda.api.events.emote.update.EmoteUpdateNameEvent;
+import net.dv8tion.jda.api.events.emote.update.EmoteUpdateRolesEvent;
 import net.dv8tion.jda.api.events.emote.update.GenericEmoteUpdateEvent;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.member.GenericGuildMemberEvent;
@@ -49,17 +53,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.util.List;
+import java.time.Instant;
+import java.util.StringJoiner;
 
 
 @SuppressWarnings("WeakerAccess")
 public class EventLogger {
-	static Logger logger = LoggerFactory.getLogger(EventLogger.class);
+	static Logger logger       = LoggerFactory.getLogger(EventLogger.class);
+	static Color  defaultColor = new Color(40, 150, 255);
 	
 	public static void onGenericEvent(GenericEvent event) {
-		if (event instanceof TextChannelUpdatePermissionsEvent) {
-			logger.info("TextChannelUpdatePermissionsEvent");
-		}
 		if (event instanceof GenericTextChannelEvent) {
 			if (event instanceof GenericTextChannelUpdateEvent) {
 				textChannelUpdateEvent((GenericTextChannelUpdateEvent) event);
@@ -138,136 +141,212 @@ public class EventLogger {
 	}
 	
 	private static void textChannelUpdateEvent(GenericTextChannelUpdateEvent event) {
-		String update = null;
-		Color  color  = null;
+		
+		boolean eventCaptured = false;
+		
+		EmbedBuilder embedBuilder = new EmbedBuilder()
+				.setFooter(event.getGuild().getName())
+				.setTimestamp(Instant.now())
+				.setColor(defaultColor)
+				.setThumbnail(event.getGuild().getIconUrl());
 		
 		if (event instanceof TextChannelUpdateNameEvent) {
-			update = "Name updated from " + event.getOldValue() + " to " + event.getNewValue() + ".";
-			color = Color.YELLOW;
+			eventCaptured = true;
+			embedBuilder
+					.setAuthor("Name of text channel " + event.getChannel().getAsMention() + " changed.")
+					.addField("Old Name", String.valueOf(event.getOldValue()), true)
+					.addField("New Name", String.valueOf(event.getNewValue()), true);
 		}
 		if (event instanceof TextChannelUpdateNSFWEvent) {
-			update = "NSFW updated from " + event.getOldValue() + " to " + event.getNewValue() + ".";
-			color = Color.PINK;
+			eventCaptured = true;
+			embedBuilder
+					.setAuthor("isNSFW of voice channel " + event.getChannel().getAsMention() + " changed.")
+					.addField("Old isNSFW", String.valueOf(event.getOldValue()), true)
+					.addField("New isNSFW", String.valueOf(event.getNewValue()), true);
 		}
 		if (event instanceof TextChannelUpdateParentEvent) {
+			eventCaptured = true;
 			Category oldC = ((TextChannelUpdateParentEvent) event).getOldParent();
-			Category newC = ((TextChannelUpdateParentEvent) event).getOldParent();
-			update = "Parent updated from " + (oldC != null ? oldC.getName() : "no category") + " to " +
-					 (newC != null ? newC.getName() : "no category") + ".";
-			color = Color.GREEN;
+			Category newC = ((TextChannelUpdateParentEvent) event).getNewParent();
+			embedBuilder
+					.setAuthor("Category of text channel " + event.getChannel().getAsMention() + " changed.")
+					.addField("Old Category", (oldC != null ? oldC.getName() : "no category"), true)
+					.addField("New Category", (newC != null ? newC.getName() : "no category"), true);
 		}
 		if (event instanceof TextChannelUpdateSlowmodeEvent) {
-			update = "Slowmode updated from " + event.getOldValue() + "s to " + event.getNewValue() + "s.";
-			color = Color.LIGHT_GRAY;
+			eventCaptured = true;
+			embedBuilder
+					.setAuthor("Max users of voice channel " + event.getChannel().getAsMention() + " changed.")
+					.addField("Old Max Users", String.valueOf(event.getOldValue()), true)
+					.addField("New Max Users", String.valueOf(event.getNewValue()), true);
 		}
 		if (event instanceof TextChannelUpdateTopicEvent) {
-			update = "Topic updated from " + event.getOldValue() + " to " + event.getNewValue() + ".";
-			color = Color.CYAN;
+			eventCaptured = true;
+			embedBuilder
+					.setAuthor("Max users of voice channel " + event.getChannel().getAsMention() + " changed.")
+					.addField("Old Max Users", String.valueOf(event.getOldValue()), true)
+					.addField("New Max Users", String.valueOf(event.getNewValue()), true);
 		}
-		if (update == null) {
-			return;
+		
+		if (eventCaptured) {
+			loggingEvent(event.getGuild(), embedBuilder.build());
 		}
-		channelUpdateEvent(event.getGuild(), "Text Channel Updated", event.getEntity().getName(), update, color);
-	}
-	
-	private static void channelUpdateEvent(Guild guild, String eventName, String channelName, String update,
-										   Color color) {
-		loggingEvent(guild, new EmbedBuilder()
-				.setTitle(eventName)
-				.addField("Channel Name", channelName, true)
-				.addField("Change", update, true)
-				.setColor(color)
-				.build());
 	}
 	
 	private static void loggingEvent(Guild guild, MessageEmbed embed) {
 		guild.getSystemChannel().sendMessage(embed).queue();
 	}
 	
+	private static void textChannelEvent(GenericTextChannelEvent event) {
+		boolean eventCaptured = false;
+		
+		EmbedBuilder embedBuilder = new EmbedBuilder()
+				.setFooter(event.getGuild().getName())
+				.setTimestamp(Instant.now())
+				.setColor(defaultColor)
+				.setThumbnail(event.getGuild().getIconUrl());
+		
+		if (event instanceof TextChannelCreateEvent) {
+			eventCaptured = true;
+			embedBuilder
+					.setAuthor("Text channel " + event.getChannel().getName() + " created.")
+					.addField("Channel", event.getChannel().getAsMention(), true)
+					.setColor(Color.GREEN);
+		}
+		if (event instanceof TextChannelDeleteEvent) {
+			eventCaptured = true;
+			embedBuilder
+					.setAuthor("Text channel " + event.getChannel().getName() + " deleted.")
+					.addField("Channel", event.getChannel().getName(), true)
+					.setColor(Color.RED);
+		}
+		if (event instanceof TextChannelUpdatePermissionsEvent) {
+			eventCaptured = true;
+			embedBuilder
+					.setAuthor("Permissions for role " +
+							   ((TextChannelUpdatePermissionsEvent) event).getChangedRoles().get(0).getAsMention() +
+							   " changed")
+					.addField("Role", ((TextChannelUpdatePermissionsEvent) event).getChangedRoles().get(0).getName(),
+							  true)
+					.addField("Channel", event.getChannel().getAsMention(), true);
+			
+		}
+		if (eventCaptured) {
+			loggingEvent(event.getGuild(), embedBuilder.build());
+		}
+	}
+	
 	private static void voiceChannelUpdateEvent(GenericVoiceChannelUpdateEvent event) {
-		String update = null;
-		Color  color  = null;
+		boolean eventCaptured = false;
+		
+		EmbedBuilder embedBuilder = new EmbedBuilder()
+				.setFooter(event.getGuild().getName())
+				.setTimestamp(Instant.now())
+				.setColor(defaultColor)
+				.setThumbnail(event.getGuild().getIconUrl());
 		
 		if (event instanceof VoiceChannelUpdateNameEvent) {
-			update = "Name updated from " + event.getOldValue() + " to " + event.getNewValue() + ".";
-			color = Color.YELLOW;
+			eventCaptured = true;
+			embedBuilder
+					.setAuthor("Name of voice channel " + event.getChannel().getName() + " changed.")
+					.addField("Old Name", String.valueOf(event.getOldValue()), true)
+					.addField("New Name", String.valueOf(event.getNewValue()), true);
 		}
 		if (event instanceof VoiceChannelUpdateBitrateEvent) {
-			update = "Bitrate updated from " + event.getOldValue() + "bps to " + event.getNewValue() + "bps.";
-			color = Color.CYAN;
+			eventCaptured = true;
+			embedBuilder
+					.setAuthor("Bitrate of voice channel " + event.getChannel().getName() + " changed.")
+					.addField("Old Bitrate", String.valueOf(event.getOldValue()), true)
+					.addField("New Bitrate", String.valueOf(event.getNewValue()), true);
 		}
 		if (event instanceof VoiceChannelUpdateParentEvent) {
+			eventCaptured = true;
 			Category oldC = ((VoiceChannelUpdateParentEvent) event).getOldParent();
-			Category newC = ((VoiceChannelUpdateParentEvent) event).getOldParent();
-			update = "Updated parent from " + (oldC != null ? oldC.getName() : "no category") + " to " +
-					 (newC != null ? newC.getName() : "no category") + ".";
-			color = Color.GREEN;
+			Category newC = ((VoiceChannelUpdateParentEvent) event).getNewParent();
+			embedBuilder
+					.setAuthor("Category of voice channel " + event.getChannel().getName() + " changed.")
+					.addField("Old Category", (oldC != null ? oldC.getName() : "no category"), true)
+					.addField("New Category", (newC != null ? newC.getName() : "no category"), true);
 		}
 		if (event instanceof VoiceChannelUpdateUserLimitEvent) {
-			update = "User limit updated from " + event.getOldValue() + " users to " + event.getNewValue() + " users.";
-			color = Color.LIGHT_GRAY;
+			eventCaptured = true;
+			embedBuilder
+					.setAuthor("Max users of voice channel " + event.getChannel().getName() + " changed.")
+					.addField("Old Max Users", String.valueOf(event.getOldValue()), true)
+					.addField("New Max Users", String.valueOf(event.getNewValue()), true);
 		}
-		if (update == null) {
-			return;
+		
+		if (eventCaptured) {
+			loggingEvent(event.getGuild(), embedBuilder.build());
 		}
-		channelUpdateEvent(event.getGuild(), "Voice Channel Updated", event.getEntity().getName(), update, color);
+	}
+	
+	private static void voiceChannelEvent(GenericVoiceChannelEvent event) {
+	
 	}
 	
 	private static void categoryUpdateEvent(GenericCategoryUpdateEvent event) {
-		String update = null;
-		Color  color  = null;
+		boolean eventCaptured = false;
+		
+		EmbedBuilder embedBuilder = new EmbedBuilder()
+				.setFooter(event.getGuild().getName())
+				.setTimestamp(Instant.now())
+				.setColor(defaultColor)
+				.setThumbnail(event.getGuild().getIconUrl());
+		
 		if (event instanceof CategoryUpdateNameEvent) {
-			update = "Name updated from " + event.getOldValue() + " to " + event.getNewValue() + ".";
-			color = Color.YELLOW;
+			eventCaptured = true;
+			embedBuilder
+					.setAuthor("Name of category  " + event.getCategory().getName() + " changed.")
+					.addField("Old Name", String.valueOf(event.getOldValue()), true)
+					.addField("New Name", String.valueOf(event.getNewValue()), true);
 		}
-		if (update == null) {
-			return;
-		}
-		channelUpdateEvent(event.getGuild(), "Category Updated", event.getEntity().getName(), update, color);
-	}
-	
-	private static void textChannelEvent(GenericTextChannelEvent event) {
 		
-		String update    = null;
-		String eventName = null;
-		Color  color     = null;
-		
-		if (event instanceof TextChannelCreateEvent) {
-			update = "Text channel " + event.getChannel().getName() + " created.";
-			eventName = "Channel Created.";
-			color = Color.GREEN;
+		if (eventCaptured) {
+			loggingEvent(event.getGuild(), embedBuilder.build());
 		}
-		if (event instanceof TextChannelDeleteEvent) {
-			update = "Text channel " + event.getChannel().getName() + " deleted.";
-			eventName = "Channel Deleted.";
-			color = Color.RED;
-		}
-		if (event instanceof TextChannelUpdatePermissionsEvent) {
-			List<Role> changedRoleList = ((TextChannelUpdatePermissionsEvent) event).getChangedRoles();
-			
-			EmbedBuilder embed = new EmbedBuilder()
-					.setTitle("List of roles changed.")
-					.setColor(Color.BLUE);
-			
-			changedRoleList.forEach((role) -> {
-				embed.addField(role.getName(), "", true);
-			});
-			
-			embed.setAuthor("test");
-			loggingEvent(event.getGuild(), embed.build());
-		}
-		if (update == null) {
-			return;
-		}
-		channelUpdateEvent(event.getGuild(), "Text Channel Updated", event.getChannel().getName(), update, color);
 	}
 	
 	private static void categoryEvent(GenericCategoryEvent event) {
-	
-	}
-	
-	private static void emoteUpdateEvent(GenericEmoteUpdateEvent event) {
-	
+		boolean eventCaptured = false;
+		
+		EmbedBuilder embedBuilder = new EmbedBuilder()
+				.setFooter(event.getGuild().getName())
+				.setTimestamp(Instant.now())
+				.setColor(defaultColor)
+				.setThumbnail(event.getGuild().getIconUrl());
+		
+		if (event instanceof CategoryCreateEvent) {
+			eventCaptured = true;
+			embedBuilder
+					.setAuthor("Text channel " + event.getCategory().getName() + " created.")
+					.addField("Category", event.getCategory().getName(), true)
+					.addField("Category ID", event.getCategory().getId(), true)
+					.setColor(Color.GREEN);
+		}
+		if (event instanceof CategoryDeleteEvent) {
+			eventCaptured = true;
+			embedBuilder
+					.setAuthor("Text channel " + event.getCategory().getName() + " deleted.")
+					.addField("Category", event.getCategory().getName(), true)
+					.addField("Category ID", event.getCategory().getId(), true)
+					.setColor(Color.RED);
+		}
+		if (event instanceof CategoryUpdatePermissionsEvent) {
+			eventCaptured = true;
+			embedBuilder
+					.setAuthor("Permissions for role " +
+							   ((CategoryUpdatePermissionsEvent) event).getChangedRoles().get(0).getAsMention() +
+							   " changed")
+					.addField("Role", ((CategoryUpdatePermissionsEvent) event).getChangedRoles().get(0).getName(),
+							  true)
+					.addField("Category", event.getCategory().getName(), true)
+					.addField("Category ID", event.getCategory().getId(), true);
+			
+		}
+		if (eventCaptured) {
+			loggingEvent(event.getGuild(), embedBuilder.build());
+		}
 	}
 	
 	private static void emoteEvent(GenericEmoteEvent event) {
@@ -310,8 +389,50 @@ public class EventLogger {
 	
 	}
 	
-	private static void voiceChannelEvent(GenericVoiceChannelEvent event) {
+	private static void emoteUpdateEvent(GenericEmoteUpdateEvent event) {
+		boolean eventCaptured = false;
+		
+		EmbedBuilder embedBuilder = new EmbedBuilder()
+				.setFooter(event.getGuild().getName())
+				.setTimestamp(Instant.now())
+				.setColor(defaultColor)
+				.setThumbnail(event.getGuild().getIconUrl());
+		
+		if (event instanceof EmoteUpdateNameEvent) {
+			eventCaptured = true;
+			embedBuilder
+					.setAuthor("Name of emote " + event.getEmote().getAsMention() + " changed.")
+					.addField("Old Name", String.valueOf(event.getOldValue()), true)
+					.addField("New Name", String.valueOf(event.getNewValue()), true);
+		}
+		if (event instanceof EmoteUpdateRolesEvent) {
+			eventCaptured = true;
+			StringJoiner oldRoles = new StringJoiner(",");
+			StringJoiner newRoles = new StringJoiner(",");
+			
+			((EmoteUpdateRolesEvent) event).getOldRoles().forEach((r) -> oldRoles.add(r.getName()));
+			((EmoteUpdateRolesEvent) event).getOldRoles().forEach((r) -> newRoles.add(r.getName()));
+			
+			
+			embedBuilder
+					.setAuthor("White listed roles for emote" + event.getEmote().getName() + " changed.")
+					.addField("Old roles", oldRoles.toString(), true)
+					.addField("New roles", newRoles.toString(), true);
+		}
+		
+		if (eventCaptured) {
+			loggingEvent(event.getGuild(), embedBuilder.build());
+		}
+	}
 	
+	private static void channelUpdateEvent(Guild guild, String eventName, String channelName, String update,
+										   Color color) {
+		loggingEvent(guild, new EmbedBuilder()
+				.setAuthor(eventName)
+				.addField("Channel Name", channelName, true)
+				.addField("Change", update, true)
+				.setColor(color)
+				.build());
 	}
 	
 }
