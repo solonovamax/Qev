@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.StringJoiner;
 import java.util.TreeMap;
 
 
@@ -87,13 +88,13 @@ public class CommandHelp extends AbstractCommand {
 									return;
 								}
 								logger.debug("Adding command {}.", name);
-								StringBuilder _cmd = new StringBuilder();
-								StringBuilder commandName = new StringBuilder()
-										.append(name);
+								StringBuilder _cmd        = new StringBuilder();
+								StringJoiner  commandName = new StringJoiner("/").add(name);
 								for (String alias : command.getAliases()) {
-									commandName.append("/").append(alias);
+									commandName.add(alias);
 								}
-								_cmd.append("**`").append(commandName).append("`** ").append(
+								_cmd.append("**`").append(commandName.toString().replace("`", "")).append(
+										"`** ").append(
 										command.getDescription()).append("\n");
 								cList.append(_cmd);
 							});
@@ -116,7 +117,7 @@ public class CommandHelp extends AbstractCommand {
 			}
 			
 			logger.info(cmd);
-			AbstractCommand command = CommandHandler.getCommandList().get(cmd);
+			AbstractCommand command = CommandHandler.getExecutedCommandList().get(cmd);
 			
 			if (command == null) {
 				throw new IllegalInputException("Invalid command name!");

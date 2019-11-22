@@ -151,8 +151,11 @@ public class CommandHandler {
 		
 	}
 	
-	private static void addCommand(@NotNull AbstractCommand command, String name, @NotNull String... aliases) throws
-			DuplicateMemberException {
+	private static void addCommand(@NotNull AbstractCommand command, String name, @NotNull String... aliases) throws DuplicateMemberException {
+		name = name.toLowerCase();
+		for (int i = 0; i < aliases.length; i++) {
+			aliases[i] = aliases[i].toLowerCase();
+		}
 		
 		if (executedCommandList.containsKey(name)) {
 			throw new DuplicateMemberException(executedCommandList.get(name).getClass().getCanonicalName());
