@@ -66,7 +66,7 @@ public class Info extends AbstractCommand {
 		
 		try {
 			event.getChannel().sendMessage(new EmbedBuilder()
-												   .setTitle("Qev Shard #" + (shardID + 1) + " out of " + shardTotal)
+												   .setTitle("Qev Shard " + (shardID + 1) + " out of " + shardTotal)
 												   .setDescription("**Servers on this shard:** " +
 																   event.getJDA().getGuilds().size() + "\n" +
 																   "[Github](https://github.com/solonovamax/Qev)\n" +
@@ -75,10 +75,10 @@ public class Info extends AbstractCommand {
 												   .addField("Prefix",
 															 MongoDBInterface.getPrefix(event.getGuild().getIdLong()),
 															 true)
-												   .addField("Name", event.getGuild().getName(), true)
-												   .addField("Guild region", event.getGuild().getRegion().getName(),
+												   .addField("Guild Name", event.getGuild().getName(), true)
+												   .addField("Guild Region", event.getGuild().getRegion().getName(),
 															 true)
-												   .addField("Guild members online",
+												   .addField("Guild Members Online",
 															 event.getGuild().getMembers().stream().filter(member ->
 																												   member.getOnlineStatus() ==
 																												   OnlineStatus.DO_NOT_DISTURB
@@ -90,12 +90,12 @@ public class Info extends AbstractCommand {
 																												   OnlineStatus.ONLINE)
 																  .count()
 															 + "/" + event.getGuild().getMembers().size(), true)
-												   .addField("Guild create date",
+												   .addField("Guild Creation Date",
 															 event.getGuild().getTimeCreated().format(
 																	 DateTimeFormatter.ofPattern("YYYY-L-dd HH:mm")),
 															 true)
-												   .addField("Guild owner", Objects.requireNonNull(
-														   event.getGuild().getOwner()).getEffectiveName(), true)
+												   .addField("Guild Owner", Objects.requireNonNull(
+														   event.getGuild().getOwner()).getAsMention(), true)
 												   .setThumbnail(jda.getSelfUser().getAvatarUrl())
 												   .setFooter("By solonovamax#3163",
 															  "https://cdn.discordapp.com/avatars/195735703726981120/f6277c9582ee4509be2ab7094b340dec.png")
