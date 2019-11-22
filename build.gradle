@@ -15,6 +15,8 @@ repositories {
 
 
 dependencies {
+    // https://mvnrepository.com/artifact/org.quartz-scheduler/quartz
+    implementation "org.quartz-scheduler:quartz:+"
     implementation "org.json:json:+"
     implementation "net.dv8tion:JDA:+"
     implementation "org.reflections:reflections:+"
