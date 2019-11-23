@@ -47,7 +47,7 @@ public abstract class AbstractCommand {
 	private static Logger logger = LoggerFactory.getLogger(AbstractCommand.class);
 	
 	private String            name;
-	private String[]          aliases           = new String[]{""};
+	private String[]          aliases           = new String[]{};
 	private String            category          = "";
 	private JSONArray         arguments         = new JSONArray();
 	private String            usage;
