@@ -37,6 +37,8 @@ public class WebUtils {
 	public static JSONObject readJSONObjectFromUrl(String url) {
 		try {
 			HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(url).openConnection();
+			urlConnection.setConnectTimeout(1000);
+			urlConnection.setReadTimeout(1000);
 			
 			int responseCode = urlConnection.getResponseCode();
 			logger.info(Integer.toString(responseCode));
@@ -66,6 +68,8 @@ public class WebUtils {
 		try {
 			HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(url).openConnection();
 			urlConnection.setRequestProperty("Authorization", "Client-ID " + clientID);
+			urlConnection.setConnectTimeout(1000);
+			urlConnection.setReadTimeout(1000);
 			
 			int responseCode = urlConnection.getResponseCode();
 			logger.info(Integer.toString(responseCode));
@@ -94,6 +98,8 @@ public class WebUtils {
 	public static JSONArray readJSONArrayFromUrl(String url) {
 		try {
 			HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(url).openConnection();
+			urlConnection.setConnectTimeout(1000);
+			urlConnection.setReadTimeout(1000);
 			
 			int responseCode = urlConnection.getResponseCode();
 			logger.info(Integer.toString(responseCode));
@@ -123,6 +129,8 @@ public class WebUtils {
 		try {
 			HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(url).openConnection();
 			urlConnection.setRequestProperty("Authorization", "Client-ID " + clientID);
+			urlConnection.setConnectTimeout(1000);
+			urlConnection.setReadTimeout(1000);
 			
 			int responseCode = urlConnection.getResponseCode();
 			logger.info(Integer.toString(responseCode));
