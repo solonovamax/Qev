@@ -88,8 +88,9 @@ public class CommandHelp extends AbstractCommand {
 									return;
 								}
 								logger.debug("Adding command {}.", name);
-								StringBuilder _cmd        = new StringBuilder();
-								StringJoiner  commandName = new StringJoiner("/").add(name);
+								StringBuilder _cmd = new StringBuilder();
+								StringJoiner commandName = new StringJoiner("/", "", "")
+										.add(name);
 								for (String alias : command.getAliases()) {
 									commandName.add(alias);
 								}
@@ -98,9 +99,9 @@ public class CommandHelp extends AbstractCommand {
 										command.getDescription()).append("\n");
 								cList.append(_cmd);
 							});
-							category.addField("Commands:", cList.toString() +
-														   "\nType !help {Command Name} to get usage for a specific command.",
-											  false);
+							category.addField("Commands:", cList.toString(),
+											  false)
+									.setFooter("Type !help {Command Name} to get usage for a specific command.");
 							categoryEmbedList.add(category);
 						});
 				event.getAuthor().openPrivateChannel().queue((ch) -> {
