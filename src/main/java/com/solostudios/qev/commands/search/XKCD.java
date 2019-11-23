@@ -22,7 +22,7 @@ public class XKCD extends AbstractCommand {
 	public XKCD() {
 		super("xkcd");
 		this.setCategory("Search");
-		this.setDescription("Gets the specified comic from xkcd. Use 0 for latest comic.");
+		this.setDescription("Gets the specified comic from [xkcd](https://xkcd.com). Use 0 for latest comic.");
 		this.setArguments(new JSONArray()
 								  .put(new JSONObject()
 											   .put("key", "ComicNumber")
