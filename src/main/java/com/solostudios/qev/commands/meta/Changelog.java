@@ -22,7 +22,13 @@ package com.solostudios.qev.commands.meta;
 import com.solostudios.qev.framework.commands.AbstractCommand;
 import com.solostudios.qev.framework.commands.ArgumentContainer;
 import com.solostudios.qev.framework.commands.errors.IllegalInputException;
+import com.solostudios.qev.framework.utility.WebUtils;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.awt.*;
 
 
 public class Changelog extends AbstractCommand {
@@ -30,10 +36,33 @@ public class Changelog extends AbstractCommand {
 		super("changelog");
 		this.setCategory("Utility");
 		this.setDescription("Gets most recent changelog.");
-		this.setIsEnabled(false);
+		//this.setIsEnabled(false);
 	}
 	
 	@Override
 	public void run(MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
+		JSONArray gitInfo = WebUtils.readJSONArrayFromUrl("https://api.github.com/repos/solonovamax/Qev/commits");
+		try {
+			assert gitInfo != null;
+		} catch (NullPointerException e) {
+			event.getChannel().sendMessage("Error while accessing github api. Please try again later.").queue();
+			return;
+		}
+		JSONArray commits = new JSONArray();
+		
+		//text.length > maxLen ? `${text.substr(0, maxLen - 3)}...` : text;
+		//(text.length > 50 ? text.substring(0, 50 - 3) : text)
+		EmbedBuilder em = new EmbedBuilder()
+				.setAuthor("Qev:master Latest Commits", "https://github.com/solonovamax/Qev/commits/master")
+				.setColor(new Color(40, 150, 255));
+		
+		for (int i = 0; i < 6 && i < gitInfo.length(); i++) {
+			JSONObject obj    = gitInfo.getJSONObject(i);
+			JSONObject commit = obj.getJSONObject("commit");
+			em.addField("Commit " + (i + 1) + " by " + commit.getJSONObject("committer").getString("name"),
+						"[Commit](" + obj.getString("html_url") + "): " + commit.getString("message"), true);
+		}
+		
+		event.getChannel().sendMessage(em.build()).queue();
 	}
 }
