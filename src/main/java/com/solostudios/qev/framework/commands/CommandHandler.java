@@ -152,13 +152,14 @@ public class CommandHandler {
 	}
 	
 	private static void addCommand(@NotNull AbstractCommand command, String name, @NotNull String... aliases) throws DuplicateMemberException {
-		name = name.toLowerCase();
+		String   _name    = name.toLowerCase();
+		String[] _aliases = new String[aliases.length];
 		for (int i = 0; i < aliases.length; i++) {
-			aliases[i] = aliases[i].toLowerCase();
+			_aliases[i] = aliases[i].toLowerCase();
 		}
 		
-		if (executedCommandList.containsKey(name)) {
-			throw new DuplicateMemberException(executedCommandList.get(name).getClass().getCanonicalName());
+		if (executedCommandList.containsKey(_name)) {
+			throw new DuplicateMemberException(executedCommandList.get(_name).getClass().getCanonicalName());
 		}
 		
 		
@@ -173,14 +174,14 @@ public class CommandHandler {
 				} else {
 					temp = categoryList.get(categoryMap);
 				}
-				temp.put(name, command);
+				temp.put(_name, command);
 				categoryList.replace(categoryMap, temp);
 			}
 		}
 		
-		commandList.put(name, command);
-		executedCommandList.put(name, command);
-		for (String alias : aliases) {
+		commandList.put(_name, command);
+		executedCommandList.put(_name, command);
+		for (String alias : _aliases) {
 			executedCommandList.put(alias, command);
 		}
 	}
