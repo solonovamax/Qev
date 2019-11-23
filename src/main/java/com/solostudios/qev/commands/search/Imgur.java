@@ -41,7 +41,7 @@ public class Imgur extends AbstractCommand {
 	public Imgur() {
 		super("imgur");
 		this.setCategory("Search");
-		this.setDescription("Searches (imgur)[https://imgur.com] for a specific image.");
+		this.setDescription("Searches [imgur](https://imgur.com) for a specific image.");
 		this.setArguments(new JSONArray()
 								  .put(new JSONObject()
 											   .put("key", "search")

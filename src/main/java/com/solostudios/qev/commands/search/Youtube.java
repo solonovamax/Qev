@@ -40,7 +40,7 @@ public class Youtube extends AbstractCommand {
 	public Youtube() {
 		super("youtube");
 		this.setCategory("Search");
-		this.setDescription("Searches (youtube)[https://youtube.com] for a specific video.");
+		this.setDescription("Searches [youtube](https://youtube.com) for a specific video.");
 		this.setArguments(new JSONArray()
 								  .put(new JSONObject()
 											   .put("key", "search")

@@ -40,7 +40,7 @@ public class Hentai extends AbstractCommand {
 	public Hentai() {
 		super("hentai");
 		this.setCategory("Search");
-		this.setDescription("Retrieves a hentai image from (danbooru)[https://danboorudonmai.us]. [NSFW]");
+		this.setDescription("Retrieves a hentai image from [danbooru](https://danboorudonmai.us). [NSFW]");
 		this.setIsNSFW(true);
 	}
 	

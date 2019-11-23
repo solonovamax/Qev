@@ -35,7 +35,7 @@ public class Danbooru extends AbstractCommand {
 	public Danbooru() {
 		super("danbooru");
 		this.setCategory("Search");
-		this.setDescription("Searches (danbooru)[https://danboorudonmai.us] for a specific tag. [NSFW]");
+		this.setDescription("Searches [danbooru](https://danboorudonmai.us) for a specific tag. [NSFW]");
 		this.setArguments(new JSONArray()
 								  .put(new JSONObject()
 											   .put("key", "tag")
