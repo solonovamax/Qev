@@ -19,10 +19,7 @@
 
 package com.solostudios.qev.framework.utility;
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,10 +56,8 @@ public class MessageUtils {
 					return member;
 				}
 			}
-			return null;
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	public static User getUserFromMessage(MessageReceivedEvent event, String prefix) {
@@ -86,10 +81,74 @@ public class MessageUtils {
 					return member.getUser();
 				}
 			}
-			return null;
-		} else {
-			return null;
 		}
+		return null;
+	}
+	
+	public static TextChannel getTextChannelFromMessage(MessageReceivedEvent event, String prefix) {
+		if (event.getMessage().getMentionedChannels().size() > 0) {
+			return event.getMessage().getMentionedChannels().get(0);
+		}
+		String channelFetchString =
+				(event.getMessage().getContentRaw().startsWith(prefix) ? event.getMessage().getContentRaw().substring(
+						prefix.length()) : event.getMessage().getContentRaw());
+		
+		if (channelFetchString.length() > 0) {
+			Guild guild = event.getGuild();
+			
+			List<TextChannel> memberList = guild.getTextChannels();
+			
+			for (TextChannel channel : memberList) {
+				String name = channel.getName().toLowerCase();
+				if (name.contains(channelFetchString.toLowerCase())) {
+					return channel;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public static GuildChannel getChannelFromMessage(MessageReceivedEvent event, String prefix) {
+		if (event.getMessage().getMentionedChannels().size() > 0) {
+			return event.getMessage().getMentionedChannels().get(0);
+		}
+		String channelFetchString =
+				(event.getMessage().getContentRaw().startsWith(prefix) ? event.getMessage().getContentRaw().substring(
+						prefix.length()) : event.getMessage().getContentRaw());
+		
+		if (channelFetchString.length() > 0) {
+			Guild guild = event.getGuild();
+			
+			List<GuildChannel> memberList = guild.getChannels();
+			
+			for (GuildChannel channel : memberList) {
+				String name = channel.getName().toLowerCase();
+				if (name.contains(channelFetchString.toLowerCase())) {
+					return channel;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public static VoiceChannel getVoiceChannelFromMessage(MessageReceivedEvent event, String prefix) {
+		String channelFetchString =
+				(event.getMessage().getContentRaw().startsWith(prefix) ? event.getMessage().getContentRaw().substring(
+						prefix.length()) : event.getMessage().getContentRaw());
+		
+		if (channelFetchString.length() > 0) {
+			Guild guild = event.getGuild();
+			
+			List<VoiceChannel> memberList = guild.getVoiceChannels();
+			
+			for (VoiceChannel channel : memberList) {
+				String name = channel.getName().toLowerCase();
+				if (name.contains(channelFetchString.toLowerCase())) {
+					return channel;
+				}
+			}
+		}
+		return null;
 	}
 	
 	public static User getBannedUserFromMessage(MessageReceivedEvent event, String prefix) {
@@ -127,13 +186,9 @@ public class MessageUtils {
 						return bannedUser.getUser();
 					}
 				}
-				return null;
-			} else {
-				return null;
 			}
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	public static Role getRoleFromMessage(MessageReceivedEvent event, String prefix) {
@@ -156,10 +211,8 @@ public class MessageUtils {
 					return role;
 				}
 			}
-			return null;
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	public static Member getMemberFromString(String message, Guild guild) {
@@ -188,10 +241,8 @@ public class MessageUtils {
 					return member;
 				}
 			}
-			return null;
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	public static User getUserFromString(String message, Guild guild) {
@@ -220,10 +271,80 @@ public class MessageUtils {
 					return member.getUser();
 				}
 			}
-			return null;
-		} else {
-			return null;
 		}
+		return null;
+	}
+	
+	public static TextChannel getTextChannelFromString(String message, Guild guild) {
+		
+		Pattern checkMention = Pattern.compile("<#\\d{18}>");
+		
+		if (checkMention.matcher(message.trim()).matches()) {
+			TextChannel channel = null;
+			try {
+				channel = Objects.requireNonNull(
+						guild.getTextChannelById(message.replace("<#", "").replace(">", "")));
+			} catch (NumberFormatException | NullPointerException ignored) {
+			}
+			if (channel != null) {
+				return channel;
+			}
+		}
+		
+		if (message.length() > 0) {
+			List<TextChannel> memberList = guild.getTextChannels();
+			
+			for (TextChannel channel : memberList) {
+				String name = channel.getName().toLowerCase();
+				if (name.contains(message.toLowerCase())) {
+					return channel;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public static VoiceChannel getVoiceChannelFromString(String message, Guild guild) {
+		
+		if (message.length() > 0) {
+			List<VoiceChannel> memberList = guild.getVoiceChannels();
+			
+			for (VoiceChannel channel : memberList) {
+				String name = channel.getName().toLowerCase();
+				if (name.contains(message.toLowerCase())) {
+					return channel;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public static GuildChannel getChannelFromString(String message, Guild guild) {
+		Pattern checkMention = Pattern.compile("<#\\d{18}>");
+		
+		if (checkMention.matcher(message.trim()).matches()) {
+			TextChannel channel = null;
+			try {
+				channel = Objects.requireNonNull(
+						guild.getTextChannelById(message.replace("<#", "").replace(">", "")));
+			} catch (NumberFormatException | NullPointerException ignored) {
+			}
+			if (channel != null) {
+				return channel;
+			}
+		}
+		
+		if (message.length() > 0) {
+			List<GuildChannel> memberList = guild.getChannels();
+			
+			for (GuildChannel channel : memberList) {
+				String name = channel.getName().toLowerCase();
+				if (name.contains(message.toLowerCase())) {
+					return channel;
+				}
+			}
+		}
+		return null;
 	}
 	
 	public static User getBannedUserFromString(String message, Guild guild) {
@@ -293,9 +414,7 @@ public class MessageUtils {
 					return role;
 				}
 			}
-			return null;
-		} else {
-			return null;
 		}
+		return null;
 	}
 }
