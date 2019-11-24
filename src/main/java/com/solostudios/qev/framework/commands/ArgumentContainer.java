@@ -19,9 +19,7 @@
 
 package com.solostudios.qev.framework.commands;
 
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -219,6 +217,30 @@ public class ArgumentContainer {
 			return (Role) object;
 		}
 		throw new NullPointerException("Key \"" + key + "\" is not a role.");
+	}
+	
+	public TextChannel getTextChannel(String key) {
+		Object object = this.get(key);
+		if (object instanceof TextChannel) {
+			return (TextChannel) object;
+		}
+		throw new NullPointerException("Key \"" + key + "\" is not a text channel.");
+	}
+	
+	public GuildChannel getChannel(String key) {
+		Object object = this.get(key);
+		if (object instanceof GuildChannel) {
+			return (GuildChannel) object;
+		}
+		throw new NullPointerException("Key \"" + key + "\" is not a text channel.");
+	}
+	
+	public VoiceChannel getVoiceChannel(String key) {
+		Object object = this.get(key);
+		if (object instanceof VoiceChannel) {
+			return (VoiceChannel) object;
+		}
+		throw new NullPointerException("Key \"" + key + "\" is not a text channel.");
 	}
 	
 	public Class getClass(String key) {

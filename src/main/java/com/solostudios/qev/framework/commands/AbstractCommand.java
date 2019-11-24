@@ -24,13 +24,9 @@ import com.solostudios.qev.framework.commands.errors.IllegalArgumentException;
 import com.solostudios.qev.framework.commands.errors.IllegalInputException;
 import com.solostudios.qev.framework.utility.MessageUtils;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.internal.entities.MemberImpl;
-import net.dv8tion.jda.internal.entities.RoleImpl;
-import net.dv8tion.jda.internal.entities.UserImpl;
+import net.dv8tion.jda.internal.entities.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -136,6 +132,21 @@ public abstract class AbstractCommand {
 					}
 					
 					if (clazz.equals(MemberImpl.class)) {
+						if ((put = MessageUtils.getMemberFromString(args[j++], event.getGuild())) == null) {
+							if (skippable) {
+								temp.setNull(key);
+								continue;
+							}
+							if (defaultable) {
+								continue;
+							}
+							throw new java.lang.IllegalArgumentException(obj.getString("error"));
+						}
+						temp.put(key, put);
+						continue;
+					}
+					
+					if (clazz.equals(TextChannelImpl.class)) {
 						if ((put = MessageUtils.getMemberFromString(args[j++], event.getGuild())) == null) {
 							if (skippable) {
 								temp.setNull(key);
@@ -297,21 +308,30 @@ public abstract class AbstractCommand {
 			}
 			
 			Object c = arg.get("type");
-			if (!(c == String.class || c == int.class || c == double.class || c == Role.class || c == Member.class ||
-				  c == boolean.class || c.equals("BannedUser"))) {
+			if (!(c == String.class || c == int.class || c == double.class || c == Role.class || c == Member.class || c == TextChannel.class || c == VoiceChannel.class ||
+				  c == GuildChannel.class || c == boolean.class || c.equals("BannedUser"))) {
 				return false;
 			}
 			
-			if ((c == int.class)) {
+			if (c == int.class) {
 				args.put(i, arg.put("type", Integer.class));
 			}
-			if ((c == Role.class)) {
+			if (c == Role.class) {
 				args.put(i, arg.put("type", RoleImpl.class));
 			}
-			if ((c == Member.class)) {
+			if (c == Member.class) {
 				args.put(i, arg.put("type", MemberImpl.class));
 			}
-			if ((c == User.class)) {
+			if (c == GuildChannel.class) {
+				args.put(i, arg.put("type", GuildChannel.class));
+			}
+			if (c == TextChannel.class) {
+				args.put(i, arg.put("type", TextChannelImpl.class));
+			}
+			if (c == VoiceChannel.class) {
+				args.put(i, arg.put("type", VoiceChannelImpl.class));
+			}
+			if (c == User.class) {
 				args.put(i, arg.put("type", UserImpl.class));
 			}
 			if (c == double.class) {
