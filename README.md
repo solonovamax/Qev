@@ -77,7 +77,7 @@ If something is in angled brackets (<>), then it is optional. If it is in curly 
     - Ask the magic 8 ball a question! It will give you an answer.
 
 ## Contact
-Contact @solonovamax#3163 on discord or [@solonovamax](https://twitter.com/solonovamax) on twitter. Or you can join my [support discord server](https://discord.gg/YFSQ4cF)
+Contact @solonovamax#3163 or @Lilith#6640 on discord or [@solonovamax](https://twitter.com/solonovamax) on twitter. Or you can join my [support discord server](https://discord.gg/YFSQ4cF)
 
 
 ## Self Hosting
