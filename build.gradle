@@ -23,4 +23,5 @@ dependencies {
     //implementation "org.discordbots:DBL-Java-Library:+"
     implementation "ch.qos.logback:logback-classic:+"
     implementation "org.fusesource.jansi:jansi:+"
+    testCompile "org.mockito:mockito-core:+"
 }
