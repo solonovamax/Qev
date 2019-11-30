@@ -29,235 +29,40 @@ import java.util.Objects;
 import java.util.concurrent.Exchanger;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.regex.Pattern;
 
 
+/**
+ * Generic class that contains methods to use for message manipulation
+ */
 public class MessageUtils {
 	private static Logger logger = LoggerFactory.getLogger(MessageUtils.class);
 	
-	public static Member getMemberFromMessage(MessageReceivedEvent event, String prefix) {
-		if (event.getMessage().getMentionedMembers().size() > 0) {
-			return event.getMessage().getMentionedMembers().get(0);
-		}
-		String userFetchString =
-				(event.getMessage().getContentRaw().startsWith(prefix) ? event.getMessage().getContentRaw().substring(
-						prefix.length()) : event.getMessage().getContentRaw());
-		
-		if (userFetchString.length() > 1) {
-			Guild guild = event.getGuild();
-			
-			List<Member> memberList = guild.getMembers();
-			
-			for (Member member : memberList) {
-				String name          = member.getUser().getName().toLowerCase();
-				String effectiveName = member.getEffectiveName().toLowerCase();
-				if ((effectiveName.contains(userFetchString.toLowerCase())) ||
-					name.contains(userFetchString.toLowerCase())) {
-					return member;
-				}
-			}
-		}
-		return null;
-	}
-	
 	public static User getUserFromMessage(MessageReceivedEvent event, String prefix) {
-		if (event.getMessage().getMentionedMembers().size() > 0) {
-			return event.getMessage().getMentionedMembers().get(0).getUser();
-		}
-		String userFetchString =
-				(event.getMessage().getContentRaw().startsWith(prefix) ? event.getMessage().getContentRaw().substring(
-						prefix.length()) : event.getMessage().getContentRaw());
-		
-		if (userFetchString.length() > 0) {
-			Guild guild = event.getGuild();
-			
-			List<Member> memberList = guild.getMembers();
-			
-			for (Member member : memberList) {
-				String name          = member.getUser().getName().toLowerCase();
-				String effectiveName = member.getEffectiveName().toLowerCase();
-				if ((effectiveName.contains(userFetchString.toLowerCase())) ||
-					name.contains(userFetchString.toLowerCase())) {
-					return member.getUser();
-				}
-			}
-		}
-		return null;
+		Member member = getMemberFromMessage(event, prefix);
+		return (member != null ? member.getUser() : null);
 	}
 	
-	public static TextChannel getTextChannelFromMessage(MessageReceivedEvent event, String prefix) {
-		if (event.getMessage().getMentionedChannels().size() > 0) {
-			return event.getMessage().getMentionedChannels().get(0);
-		}
-		String channelFetchString =
-				(event.getMessage().getContentRaw().startsWith(prefix) ? event.getMessage().getContentRaw().substring(
-						prefix.length()) : event.getMessage().getContentRaw());
-		
-		if (channelFetchString.length() > 0) {
-			Guild guild = event.getGuild();
-			
-			List<TextChannel> memberList = guild.getTextChannels();
-			
-			for (TextChannel channel : memberList) {
-				String name = channel.getName().toLowerCase();
-				if (name.contains(channelFetchString.toLowerCase())) {
-					return channel;
-				}
-			}
-		}
-		return null;
-	}
-	
-	public static GuildChannel getChannelFromMessage(MessageReceivedEvent event, String prefix) {
-		if (event.getMessage().getMentionedChannels().size() > 0) {
-			return event.getMessage().getMentionedChannels().get(0);
-		}
-		String channelFetchString =
-				(event.getMessage().getContentRaw().startsWith(prefix) ? event.getMessage().getContentRaw().substring(
-						prefix.length()) : event.getMessage().getContentRaw());
-		
-		if (channelFetchString.length() > 0) {
-			Guild guild = event.getGuild();
-			
-			List<GuildChannel> memberList = guild.getChannels();
-			
-			for (GuildChannel channel : memberList) {
-				String name = channel.getName().toLowerCase();
-				if (name.contains(channelFetchString.toLowerCase())) {
-					return channel;
-				}
-			}
-		}
-		return null;
-	}
-	
-	public static VoiceChannel getVoiceChannelFromMessage(MessageReceivedEvent event, String prefix) {
-		String channelFetchString =
-				(event.getMessage().getContentRaw().startsWith(prefix) ? event.getMessage().getContentRaw().substring(
-						prefix.length()) : event.getMessage().getContentRaw());
-		
-		if (channelFetchString.length() > 0) {
-			Guild guild = event.getGuild();
-			
-			List<VoiceChannel> memberList = guild.getVoiceChannels();
-			
-			for (VoiceChannel channel : memberList) {
-				String name = channel.getName().toLowerCase();
-				if (name.contains(channelFetchString.toLowerCase())) {
-					return channel;
-				}
-			}
-		}
-		return null;
-	}
-	
-	public static User getBannedUserFromMessage(MessageReceivedEvent event, String prefix) {
-		String userFetchString =
-				(event.getMessage().getContentRaw().startsWith(prefix) ? event.getMessage().getContentRaw().substring(
-						prefix.length()) : event.getMessage().getContentRaw());
-		
-		if (userFetchString.length() > 1) {
-			Guild guild = event.getGuild();
-			
-			Exchanger<List<Guild.Ban>> ex = new Exchanger<>();
-			List<Guild.Ban>            banList;
-			guild.retrieveBanList().queue((bList) -> {
-				try {
-					ex.exchange(bList);
-				} catch (InterruptedException ignored) {
-				}
-			}, (e) -> {
-				try {
-					ex.exchange(null);
-				} catch (InterruptedException ignored) {
-				}
-			});
-			
-			try {
-				banList = ex.exchange(null, 1, TimeUnit.SECONDS);
-			} catch (InterruptedException | TimeoutException ignored) {
-				banList = null;
-			}
-			
-			if (!(banList == null)) {
-				for (Guild.Ban bannedUser : banList) {
-					String name = bannedUser.getUser().getName().toLowerCase();
-					if (name.contains(userFetchString.toLowerCase())) {
-						return bannedUser.getUser();
-					}
-				}
-			}
-		}
-		return null;
-	}
-	
-	public static Role getRoleFromMessage(MessageReceivedEvent event, String prefix) {
-		if (event.getMessage().getMentionedRoles().size() > 0) {
-			return event.getMessage().getMentionedRoles().get(0);
-		}
-		
-		String roleFetchString =
-				(event.getMessage().getContentRaw().startsWith(prefix) ? event.getMessage().getContentRaw().substring(
-						prefix.length()) : event.getMessage().getContentRaw());
-		
-		if (roleFetchString.length() > 0) {
-			Guild guild = event.getGuild();
-			
-			List<Role> roleList = guild.getRoles();
-			
-			for (Role role : roleList) {
-				String name = role.getName().toLowerCase();
-				if (name.contains(roleFetchString.toLowerCase())) {
-					return role;
-				}
-			}
-		}
-		return null;
+	public static Member getMemberFromMessage(MessageReceivedEvent event, String prefix) {
+		return getMemberFromString(event.getMessage().getContentRaw().replaceFirst(prefix, ""), event.getGuild());
 	}
 	
 	public static Member getMemberFromString(String message, Guild guild) {
-		// <@\d{18}>
+		return getMemberFromString(message, guild, 0);
+	}
+	
+	public static Member getMemberFromString(String message, Guild guild, int item) {
 		
-		Pattern checkMention = Pattern.compile("<@\\d{18}>");
+		String[] mentions = message.trim().split("(?!<@)(\\d{18})(?=>)");
 		
-		if (checkMention.matcher(message.trim()).matches()) {
+		if (mentions.length > item) {
 			Member member = null;
 			try {
-				member = guild.getMemberById(message.replace("<@", "").replace(">", ""));
-			} catch (NumberFormatException ignored) {
+				member = Objects.requireNonNull(
+						guild.getMemberById(mentions[item]));
+			} catch (NumberFormatException | NullPointerException ignored) {
 			}
 			if (member != null) {
 				return member;
-			}
-		}
-		
-		if (message.length() > 1) {
-			List<Member> memberList = guild.getMembers();
-			
-			for (Member member : memberList) {
-				String name          = member.getUser().getName().toLowerCase();
-				String effectiveName = member.getEffectiveName().toLowerCase();
-				if ((effectiveName.contains(message.toLowerCase())) || name.contains(message.toLowerCase())) {
-					return member;
-				}
-			}
-		}
-		return null;
-	}
-	
-	public static User getUserFromString(String message, Guild guild) {
-		
-		Pattern checkMention = Pattern.compile("<@\\d{18}>");
-		
-		if (checkMention.matcher(message.trim()).matches()) {
-			User user = null;
-			try {
-				user = Objects.requireNonNull(
-						guild.getMemberById(message.replace("<@", "").replace(">", ""))).getUser();
-			} catch (NumberFormatException | NullPointerException ignored) {
-			}
-			if (user != null) {
-				return user;
 			}
 		}
 		
@@ -268,22 +73,30 @@ public class MessageUtils {
 				String name          = member.getUser().getName().toLowerCase();
 				String effectiveName = member.getEffectiveName().toLowerCase();
 				if ((effectiveName.contains(message.toLowerCase())) || name.contains(message.toLowerCase())) {
-					return member.getUser();
+					return member;
 				}
 			}
 		}
 		return null;
 	}
 	
+	public static TextChannel getTextChannelFromMessage(MessageReceivedEvent event, String prefix) {
+		return getTextChannelFromString(event.getMessage().getContentRaw().replaceFirst(prefix, ""), event.getGuild());
+	}
+	
 	public static TextChannel getTextChannelFromString(String message, Guild guild) {
+		return getTextChannelFromString(message, guild, 0);
+	}
+	
+	public static TextChannel getTextChannelFromString(String message, Guild guild, int item) {
 		
-		Pattern checkMention = Pattern.compile("<#\\d{18}>");
+		String[] channelIDs = message.split("(?!<@)(\\d{18})(?=>)");
 		
-		if (checkMention.matcher(message.trim()).matches()) {
+		if (channelIDs.length > item) {
 			TextChannel channel = null;
 			try {
 				channel = Objects.requireNonNull(
-						guild.getTextChannelById(message.replace("<#", "").replace(">", "")));
+						guild.getTextChannelById(channelIDs[item]));
 			} catch (NumberFormatException | NullPointerException ignored) {
 			}
 			if (channel != null) {
@@ -302,6 +115,47 @@ public class MessageUtils {
 			}
 		}
 		return null;
+	}
+	
+	public static GuildChannel getChannelFromMessage(MessageReceivedEvent event, String prefix) {
+		return getChannelFromString(event.getMessage().getContentRaw().replaceFirst(prefix, ""), event.getGuild());
+	}
+	
+	public static GuildChannel getChannelFromString(String message, Guild guild) {
+		return getChannelFromString(message, guild, 0);
+	}
+	
+	public static GuildChannel getChannelFromString(String message, Guild guild, int item) {
+		
+		String[] channelIDs = message.split("(?!<@)(\\d{18})(?=>)");
+		
+		if (channelIDs.length > item) {
+			TextChannel channel = null;
+			try {
+				channel = Objects.requireNonNull(
+						guild.getTextChannelById(channelIDs[item]));
+			} catch (NumberFormatException | NullPointerException ignored) {
+			}
+			if (channel != null) {
+				return channel;
+			}
+		}
+		
+		if (message.length() > 0) {
+			List<GuildChannel> memberList = guild.getChannels();
+			
+			for (GuildChannel channel : memberList) {
+				String name = channel.getName().toLowerCase();
+				if (name.contains(message.toLowerCase())) {
+					return channel;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public static VoiceChannel getVoiceChannelFromMessage(MessageReceivedEvent event, String prefix) {
+		return getVoiceChannelFromString(event.getMessage().getContentRaw().replaceFirst(prefix, ""), event.getGuild());
 	}
 	
 	public static VoiceChannel getVoiceChannelFromString(String message, Guild guild) {
@@ -319,28 +173,41 @@ public class MessageUtils {
 		return null;
 	}
 	
-	public static GuildChannel getChannelFromString(String message, Guild guild) {
-		Pattern checkMention = Pattern.compile("<#\\d{18}>");
+	public static User getBannedUserFromMessage(MessageReceivedEvent event, String prefix) {
+		return getBannedUserFromString(event.getMessage().getContentRaw().replaceFirst(prefix, ""), event.getGuild());
+	}
+	
+	public static Role getRoleFromMessage(MessageReceivedEvent event, String prefix) {
+		return getRoleFromString(event.getMessage().getContentRaw().replaceFirst(prefix, ""), event.getGuild());
+	}
+	
+	public static Role getRoleFromString(String message, Guild guild) {
+		return getRoleFromString(message, guild, 0);
+	}
+	
+	public static Role getRoleFromString(String message, Guild guild, int item) {
 		
-		if (checkMention.matcher(message.trim()).matches()) {
-			TextChannel channel = null;
+		String[] roleIDs = message.split("(?!<@&)(\\d{18})(?=>)");
+		
+		if (roleIDs.length > item) {
+			Role role = null;
 			try {
-				channel = Objects.requireNonNull(
-						guild.getTextChannelById(message.replace("<#", "").replace(">", "")));
+				role = guild.getRoleById(roleIDs[item]);
 			} catch (NumberFormatException | NullPointerException ignored) {
 			}
-			if (channel != null) {
-				return channel;
+			if (role != null) {
+				return role;
 			}
 		}
 		
-		if (message.length() > 0) {
-			List<GuildChannel> memberList = guild.getChannels();
+		if (message.length() > 1) {
 			
-			for (GuildChannel channel : memberList) {
-				String name = channel.getName().toLowerCase();
+			List<Role> roleList = guild.getRoles();
+			
+			for (Role role : roleList) {
+				String name = role.getName().toLowerCase();
 				if (name.contains(message.toLowerCase())) {
-					return channel;
+					return role;
 				}
 			}
 		}
@@ -387,34 +254,13 @@ public class MessageUtils {
 		}
 	}
 	
-	public static Role getRoleFromString(String message, Guild guild) {
+	public static User getUserFromString(String message, Guild guild) {
+		return getUserFromString(message, guild, 0);
+	}
+	
+	public static User getUserFromString(String message, Guild guild, int item) {
+		Member member = getMemberFromString(message, guild, item);
 		
-		//<@&\d{18}>
-		
-		Pattern checkMention = Pattern.compile("<@&\\d{18}>");
-		
-		if (checkMention.matcher(message.trim()).matches()) {
-			Role role = null;
-			try {
-				role = guild.getRoleById(message.replace("<@&", "").replace(">", ""));
-			} catch (NumberFormatException | NullPointerException ignored) {
-			}
-			if (role != null) {
-				return role;
-			}
-		}
-		
-		if (message.length() > 1) {
-			
-			List<Role> roleList = guild.getRoles();
-			
-			for (Role role : roleList) {
-				String name = role.getName().toLowerCase();
-				if (name.contains(message.toLowerCase())) {
-					return role;
-				}
-			}
-		}
-		return null;
+		return (member != null ? member.getUser() : null);
 	}
 }
