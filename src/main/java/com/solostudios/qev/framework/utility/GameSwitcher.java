@@ -23,13 +23,29 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
 
 
+/**
+ * GameSwitcher is used to switch the presence value of a JDA object.
+ */
 public class GameSwitcher extends Thread {
 	private JDA shard;
 	
+	/**
+	 * Constructs a new game switcher object.
+	 * <p>
+	 * This should be added to a thread scheduler.
+	 *
+	 * @param shard
+	 * 		A reference to the shard object to change the presence of.
+	 */
 	public GameSwitcher(JDA shard) {
 		this.shard = shard;
 	}
 	
+	/**
+	 * run method for the thread.
+	 * <p>
+	 * This gets a random activity from the Presence enum and sets it as the activity for the shard object.
+	 */
 	@Override
 	public void run() {
 		int      index = (int) Math.round(Math.random() * (Presence.values().length - 1));

@@ -294,7 +294,7 @@ public class CommandHandler {
 			}
 		});
 		
-		Qev.threadPool.execute(commandThread);
+		Qev.commandThreadPool.execute(commandThread);
 		
 		
 	}

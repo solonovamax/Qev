@@ -44,48 +44,103 @@ import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("WeakerAccess")
 public class Qev {
-	
+	/**
+	 * This will store all the settings for the bot.
+	 * <p>
+	 * In the future, I may migrate it over to a custom settings store, but i'm currently holding it in a JSON object.
+	 */
 	@Nullable
-	public static final  JSONObject               settings   = Settings.get();
-	//Can be accessed by other classes to allow for global settings check, Cannot be changed though.
-	public static final  ScheduledExecutorService executor   = Executors.newScheduledThreadPool(10);
-	public static final  long                     START_TIME = System.currentTimeMillis();
-	//Might use this for an uptime command.
-	public static final  int                      shardCount = 3;
-	private final static Logger                   logger     = LoggerFactory.getLogger(Qev.class);
+	public static final  JSONObject               settings          = Settings.get();
+	/**
+	 * Stores the start time of the bot, to get uptime.
+	 */
+	public static final  long                     START_TIME        = System.currentTimeMillis();
+	/**
+	 * Stores the amount of shards will be created at runtime.
+	 */
+	public static final  int                      shardCount        = 3;
+	/**
+	 * This executor is used to schedule threads for a GC every 30 minutes and an activity switcher service.
+	 */
+	public static final  ScheduledExecutorService executor          = Executors.newScheduledThreadPool(1 + shardCount);
+	/**
+	 * Logger for the Qev main class. Build using SLF4J libraries
+	 */
+	private final static Logger                   logger            = LoggerFactory.getLogger(Qev.class);
+	/**
+	 * Thread pool used for the execution of commands.
+	 */
 	@NotNull
-	public static        ExecutorService          threadPool = Executors.newFixedThreadPool(10);
-	public static        String                   DEFAULT_STATUS;
+	public static        ExecutorService          commandThreadPool = Executors.newCachedThreadPool();
+	/**
+	 * Stores the default prefix of Qev.
+	 */
 	public static        String                   PREFIX;
+	/**
+	 * Stores if debug mode is enabled.
+	 * <p>
+	 * I'm going to eventually switch much of the logging over to requiring debug to be true.
+	 */
 	public static        boolean                  DEBUG;
+	/**
+	 * Stores the ID of the bot owner
+	 */
 	public static        String                   BOT_OWNER;
+	/**
+	 * Stores the support server invite url.
+	 */
 	public static        String                   SUPPORT_SERVER;
-	public static        String                   VERSION    = "2.0.0";
+	/**
+	 * Stores the current version of the bot.
+	 */
+	public static        String                   VERSION           = "2.0.0";
+	/**
+	 * This is the JDABuilder that is used to create all the shards of the bot.
+	 */
 	@SuppressWarnings("FieldCanBeLocal")
 	private static       JDABuilder               shardBuilder;
 	
-	//public static DiscordBotListAPI dblapi;
-	
+	/**
+	 * Main class where everything is run.
+	 * <p>
+	 * The JDA objects are initialized here. The
+	 *
+	 * @param args
+	 * 		input args from command line. Completely disregarded.
+	 */
 	public static void main(String[] args) {
 		
 		logger.info("Loading classes.");
 		
-		Reflections   categories  = new Reflections("com.solostudios.qev.");
-		Set<Class<?>> Categories  = categories.getSubTypesOf(Object.class);
-		ClassLoader   classLoader = Qev.class.getClassLoader();
+		/*
+		Here I get all the classes and load them.
 		
-		for (Class<?> clazz : Categories) {
+		This is so all the classes are loaded into memory and there is no wait time when I need to call one of their functions.
+		 (This will become more effective as I add more utility classes that aren't in the commands package)
+		 */
+		Reflections classes = new Reflections("com.solostudios");
+		//Get all classes that extend Object.class (Everything)
+		Set<Class<?>> classSet = classes.getSubTypesOf(Object.class);
+		//Construct a new class loader
+		ClassLoader classLoader = Qev.class.getClassLoader();
+		
+		//For through the class list & load them
+		for (Class<?> clazz : classSet) {
 			try {
+				//Debug fact that I'm loading these classes.
 				logger.debug("Attempting to load {}.", clazz.getName());
+				//load class
 				Class klazz = classLoader.loadClass(clazz.getName());
 				logger.info("Class {} successfully loaded.", clazz.getName());
 			} catch (ClassNotFoundException e) {
+				//Could not load class for some odd reason
 				logger.warn("Could not load class " + clazz.getCanonicalName());
 			}
 		}
 		
 		
 		logger.info("Initializing level handler.");
+		//Initializes the level handler/database interface. All functions are static, so there is no need to store it.
 		new MongoDBInterface();
 		
 		//Loads settings from the file.
@@ -95,15 +150,6 @@ public class Qev {
 		DEBUG = settings.getBoolean("debug");
 		SUPPORT_SERVER = settings.getString("supportServer");
 		
-		//logger.info("Registering on DiscordBotList");
-
-        /*
-        dblapi = new DiscordBotListAPI.Builder()
-                .token("")
-                .botId("")
-                .build();
-
-         */
 		
 		logger.debug("Validating Token.");
 		//Check if token exists.
@@ -114,24 +160,32 @@ public class Qev {
 		
 		logger.info("Initializing Bot");
 		logger.info("Constructing JDABuilder");
-		//Build bot using token.
+		//Build bot using token from settings.
 		shardBuilder = new JDABuilder(settings.getString("token"));
 		
 		
-		//Initialize Command Handler.
 		logger.info("Initializing Command Handler");
+		//Initialize Command Handler. No need to store it since all the methods are static
 		new CommandHandler();
 		
-		//Add listeners for commands and assorted events, respectively.
+		
 		logger.info("Attaching Listeners");
+		//Add required listeners to the shards
 		shardBuilder.addEventListeners(new CommandListener(), new EventHandler());
 		
+		/*
+		Begin the sharding process for the bot.
+		
+		The bot will be sharded into $shardCount shards.
+		 */
 		logger.info("--- Sharding Bot ---");
 		for (int i = 0; i < shardCount; i++) {
 			try {
 				logger.info("Constructing Shard " + (i + 1) + "/" + shardCount);
+				//Construct a new JDA object with the shard id $i.
 				JDA shard = shardBuilder.useSharding(i, shardCount)
 										.build();
+				//Schedules a new game switcher object to run. This will change the discord presence every 60 seconds.
 				executor.scheduleAtFixedRate(new GameSwitcher(shard), 0L, 60L, TimeUnit.SECONDS);
 				logger.info("Constructed Shard " + (i + 1) + "/" + shardCount);
 			} catch (LoginException e) {
@@ -140,7 +194,13 @@ public class Qev {
 			}
 		}
 		
-		executor.scheduleAtFixedRate(System::gc, 10L, 10L, TimeUnit.MINUTES);
+		
+		/*
+		Schedule a GC every 30 minutes.
+		
+		This is so that the GC doesn't run only when the memory is close to being fully used.
+		 */
+		executor.scheduleAtFixedRate(System::gc, 30L, 30L, TimeUnit.MINUTES);
 		
 		
 	}

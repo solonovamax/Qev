@@ -23,6 +23,11 @@ import com.solostudios.qev.Qev;
 import net.dv8tion.jda.api.entities.Activity;
 
 
+/**
+ * Enum that holds a bunch of different custom statuses for discord presence.
+ * <p>
+ * Some items are duped so they show up more frequently.
+ */
 public enum Presence {
 	helpI(Activity.ActivityType.DEFAULT, "Type !help for help."),
 	helpII(Activity.ActivityType.DEFAULT, "Type !help for help."),
@@ -49,15 +54,26 @@ public enum Presence {
 	private final Activity.ActivityType gameType;
 	private final String                action;
 	
+	
 	Presence(Activity.ActivityType gameType, String action) {
 		this.gameType = gameType;
 		this.action = action;
 	}
 	
+	/**
+	 * Gets the game type for the enum
+	 *
+	 * @return Returns the game type of the enum
+	 */
 	public Activity.ActivityType getGameType() {
 		return gameType;
 	}
 	
+	/**
+	 * Gets a string that contains what the text will be
+	 *
+	 * @return action
+	 */
 	public String getAction() {
 		return action;
 	}
