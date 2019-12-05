@@ -20,7 +20,10 @@
 package com.solostudios.qev.framework.events;
 
 import com.solostudios.qev.framework.main.MongoDBInterface;
-import net.dv8tion.jda.api.events.*;
+import net.dv8tion.jda.api.events.DisconnectEvent;
+import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.ReconnectedEvent;
+import net.dv8tion.jda.api.events.ResumedEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -35,11 +38,6 @@ import javax.annotation.Nonnull;
 public class EventHandler extends ListenerAdapter {
 	
 	private final static Logger logger = LoggerFactory.getLogger(EventHandler.class);
-	
-	@Override
-	public void onGenericEvent(@NotNull GenericEvent event) {
-		EventLogger.onGenericEvent(event);
-	}
 	
 	@Override
 	public void onReady(@Nonnull ReadyEvent event) {
