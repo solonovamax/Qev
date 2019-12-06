@@ -19,10 +19,9 @@
 
 package com.solostudios.qev.framework.events;
 
+import com.solostudios.qev.framework.utility.GenericUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Category;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.channel.category.CategoryCreateEvent;
 import net.dv8tion.jda.api.events.channel.category.CategoryDeleteEvent;
@@ -41,7 +40,7 @@ import net.dv8tion.jda.api.events.emote.update.EmoteUpdateNameEvent;
 import net.dv8tion.jda.api.events.emote.update.EmoteUpdateRolesEvent;
 import net.dv8tion.jda.api.events.emote.update.GenericEmoteUpdateEvent;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
-import net.dv8tion.jda.api.events.guild.member.GenericGuildMemberEvent;
+import net.dv8tion.jda.api.events.guild.member.*;
 import net.dv8tion.jda.api.events.guild.member.update.GenericGuildMemberUpdateEvent;
 import net.dv8tion.jda.api.events.guild.update.GenericGuildUpdateEvent;
 import net.dv8tion.jda.api.events.guild.voice.GenericGuildVoiceEvent;
@@ -54,6 +53,9 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.StringJoiner;
 
 
@@ -61,6 +63,7 @@ import java.util.StringJoiner;
 public class EventLogger {
 	static Logger logger       = LoggerFactory.getLogger(EventLogger.class);
 	static Color  defaultColor = new Color(40, 150, 255);
+	static Color  greenJoin    = new Color(0, 255, 0);
 	
 	public static void onGenericEvent(GenericEvent event) {
 		if (event instanceof GenericTextChannelEvent) {
@@ -358,7 +361,66 @@ public class EventLogger {
 	}
 	
 	private static void guildMemberEvent(GenericGuildMemberEvent event) {
-	
+		boolean eventCaptured = false;
+		
+		Member member = event.getMember();
+		User   user   = member.getUser();
+		
+		EmbedBuilder embedBuilder = new EmbedBuilder()
+				.setFooter("ID: " + user.getId())
+				.setTimestamp(Instant.now())
+				.setThumbnail(user.getAvatarUrl())
+				.setAuthor(member.getEffectiveName(), null, user.getAvatarUrl());
+		
+		if (event instanceof GuildMemberJoinEvent) {
+			eventCaptured = true;
+			embedBuilder
+					.setColor(Color.GREEN)
+					.setTitle("Member joined!")
+					.addField("Member Count", String.valueOf(event.getGuild().getMembers().size()), true)
+					.addField("User", member.getAsMention(), true);
+			
+			if (user.getTimeCreated().isBefore(OffsetDateTime.now().minusDays(14))) {
+				OffsetDateTime createdDate = user.getTimeCreated();
+				long           seconds     = ChronoUnit.SECONDS.between(createdDate, OffsetDateTime.now()) % 60;
+				long           minutes     = ChronoUnit.MINUTES.between(createdDate, OffsetDateTime.now()) % 60;
+				long           hours       = ChronoUnit.HOURS.between(createdDate, OffsetDateTime.now()) % 24;
+				long           days        = ChronoUnit.DAYS.between(createdDate, OffsetDateTime.now());
+				
+				embedBuilder.addField("New Account!",
+									  "Account Created " +
+									  GenericUtil.getWithPlural((int) days, "day") + " " +
+									  GenericUtil.getWithPlural((int) hours, "hour") + " " +
+									  GenericUtil.getWithPlural((int) minutes, "minute") + " " +
+									  GenericUtil.getWithPlural((int) seconds, "second") + " ago."
+						, false);
+			}
+		}
+		if (event instanceof GuildMemberLeaveEvent) {
+			eventCaptured = true;
+			embedBuilder
+					.setColor(Color.GREEN)
+					.setTitle("Member left. :(")
+					.addField("Member Count", String.valueOf(event.getGuild().getMembers().size()), true)
+					.addField("User", member.getAsMention(), true)
+					.setFooter("ID: " + user.getId());
+		}
+		if (event instanceof GuildMemberRoleAddEvent) {
+			eventCaptured = true;
+			List<Role> rolesList = ((GuildMemberRoleAddEvent) event).getRoles();
+			embedBuilder
+					.setDescription("Role " + rolesList.get(0).getAsMention() + " was given to user " + user.getAsMention() + ".");
+		}
+		if (event instanceof GuildMemberRoleRemoveEvent) {
+			eventCaptured = true;
+			List<Role> rolesList = ((GuildMemberRoleRemoveEvent) event).getRoles();
+			embedBuilder
+					.setDescription("Role " + rolesList.get(0).getAsMention() + " was taken from user " + user.getAsMention() + ".");
+		}
+		
+		if (eventCaptured) {
+			loggingEvent(event.getGuild(), embedBuilder.build());
+		}
 	}
 	
 	private static void genericGuildUpdateEvent(GenericGuildUpdateEvent event) {
@@ -395,12 +457,12 @@ public class EventLogger {
 		EmbedBuilder embedBuilder = new EmbedBuilder()
 				.setFooter(event.getGuild().getName())
 				.setTimestamp(Instant.now())
-				.setColor(defaultColor)
 				.setThumbnail(event.getGuild().getIconUrl());
 		
 		if (event instanceof EmoteUpdateNameEvent) {
 			eventCaptured = true;
 			embedBuilder
+					.setColor(greenJoin)
 					.setAuthor("Name of emote " + event.getEmote().getAsMention() + " changed.")
 					.addField("Old Name", String.valueOf(event.getOldValue()), true)
 					.addField("New Name", String.valueOf(event.getNewValue()), true);
@@ -423,16 +485,6 @@ public class EventLogger {
 		if (eventCaptured) {
 			loggingEvent(event.getGuild(), embedBuilder.build());
 		}
-	}
-	
-	private static void channelUpdateEvent(Guild guild, String eventName, String channelName, String update,
-										   Color color) {
-		loggingEvent(guild, new EmbedBuilder()
-				.setAuthor(eventName)
-				.addField("Channel Name", channelName, true)
-				.addField("Change", update, true)
-				.setColor(color)
-				.build());
 	}
 	
 }

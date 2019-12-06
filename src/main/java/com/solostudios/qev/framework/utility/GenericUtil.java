@@ -1,5 +1,7 @@
 package com.solostudios.qev.framework.utility;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,4 +23,13 @@ public class GenericUtil {
 	public static final List<String>    morse    = Arrays.asList(".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....", "..", ".---", "-.-", ".-..", "--", "-.", "---", ".--.",
 																 "--.-", ".-.", "...", "-", "..-", "...-", ".--", "-..-", "-.--", "--..", "|", ".----", "..---", "...--", "....-",
 																 ".....", "-....", "--...", "---..", "----.", "-----");
+	
+	@NotNull
+	public static String getWithPlural(int x, String name) {
+		if (x == 1) {
+			return x + " " + name;
+		} else {
+			return x + " " + name + "s";
+		}
+	}
 }
