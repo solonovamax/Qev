@@ -19,6 +19,7 @@
 
 package com.solostudios.qev.framework.utility;
 
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -41,25 +42,28 @@ public class WebUtils {
 			urlConnection.setReadTimeout(1000);
 			
 			int responseCode = urlConnection.getResponseCode();
-			logger.info(Integer.toString(responseCode));
 			
-			if (responseCode == HttpsURLConnection.HTTP_OK) {
-				BufferedReader in = new BufferedReader(new InputStreamReader(
-						urlConnection.getInputStream()));
-				String        inputLine;
-				StringBuilder response = new StringBuilder();
-				
-				while ((inputLine = in.readLine()) != null) {
-					response.append(inputLine);
-				}
-				in.close();
-				
-				// print result
-				logger.info(response.toString());
-				
-				return new JSONObject(response.toString());
-			}
+			JSONObject response = getJSONObject(urlConnection, responseCode);
+			if (response != null) { return response; }
 		} catch (IOException ignored) {
+			logger.info("ioexception");
+		}
+		return null;
+	}
+	
+	@Nullable private static JSONObject getJSONObject(HttpsURLConnection urlConnection, int responseCode) throws IOException {
+		if (responseCode == HttpsURLConnection.HTTP_OK) {
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					urlConnection.getInputStream()));
+			String        inputLine;
+			StringBuilder response = new StringBuilder();
+			
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+			
+			return new JSONObject(response.toString());
 		}
 		return null;
 	}
@@ -72,24 +76,9 @@ public class WebUtils {
 			urlConnection.setReadTimeout(1000);
 			
 			int responseCode = urlConnection.getResponseCode();
-			logger.info(Integer.toString(responseCode));
 			
-			if (responseCode == HttpsURLConnection.HTTP_OK) {
-				BufferedReader in = new BufferedReader(new InputStreamReader(
-						urlConnection.getInputStream()));
-				String        inputLine;
-				StringBuilder response = new StringBuilder();
-				
-				while ((inputLine = in.readLine()) != null) {
-					response.append(inputLine);
-				}
-				in.close();
-				
-				// print result
-				logger.info(response.toString());
-				
-				return new JSONObject(response.toString());
-			}
+			JSONObject response = getJSONObject(urlConnection, responseCode);
+			if (response != null) { return response; }
 		} catch (IOException ignored) {
 		}
 		return null;
@@ -102,25 +91,27 @@ public class WebUtils {
 			urlConnection.setReadTimeout(1000);
 			
 			int responseCode = urlConnection.getResponseCode();
-			logger.info(Integer.toString(responseCode));
 			
-			if (responseCode == HttpsURLConnection.HTTP_OK) {
-				BufferedReader in = new BufferedReader(new InputStreamReader(
-						urlConnection.getInputStream()));
-				String        inputLine;
-				StringBuilder response = new StringBuilder();
-				
-				while ((inputLine = in.readLine()) != null) {
-					response.append(inputLine);
-				}
-				in.close();
-				
-				// print result
-				logger.info(response.toString());
-				
-				return new JSONArray(response.toString());
-			}
+			JSONArray response = getJSONArray(urlConnection, responseCode);
+			if (response != null) { return response; }
 		} catch (IOException ignored) {
+		}
+		return null;
+	}
+	
+	@Nullable private static JSONArray getJSONArray(HttpsURLConnection urlConnection, int responseCode) throws IOException {
+		if (responseCode == HttpsURLConnection.HTTP_OK) {
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					urlConnection.getInputStream()));
+			String        inputLine;
+			StringBuilder response = new StringBuilder();
+			
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+			
+			return new JSONArray(response.toString());
 		}
 		return null;
 	}
@@ -133,24 +124,9 @@ public class WebUtils {
 			urlConnection.setReadTimeout(1000);
 			
 			int responseCode = urlConnection.getResponseCode();
-			logger.info(Integer.toString(responseCode));
 			
-			if (responseCode == HttpsURLConnection.HTTP_OK) {
-				BufferedReader in = new BufferedReader(new InputStreamReader(
-						urlConnection.getInputStream()));
-				String        inputLine;
-				StringBuilder response = new StringBuilder();
-				
-				while ((inputLine = in.readLine()) != null) {
-					response.append(inputLine);
-				}
-				in.close();
-				
-				// print result
-				logger.info(response.toString());
-				
-				return new JSONArray(response.toString());
-			}
+			JSONArray response = getJSONArray(urlConnection, responseCode);
+			if (response != null) { return response; }
 		} catch (IOException ignored) {
 		}
 		return null;
