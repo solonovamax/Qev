@@ -44,13 +44,17 @@ public class Urban extends AbstractCommand {
 		
 		JSONObject urbanJSON = WebUtils.readJSONObjectFromUrl(url);
 		if ((urbanJSON != null ? urbanJSON.getJSONArray("list").length() : 0) == 0) {
-			event.getChannel().sendMessage("No results found for search " + args.getString("search")).queue();
+			event.getChannel().sendMessage("No results found for search " + args.getString("search") + ".").queue();
 		} else {
-			urbanJSON = urbanJSON.getJSONArray("list").getJSONObject(0);
+			JSONObject urbanDefinition = urbanJSON.getJSONArray("list").getJSONObject(0);
 			
 			EmbedBuilder em = new EmbedBuilder()
 					.setTitle(args.getString("search"))
-					.addField(":thumbsup:" + urbanJSON.getInt("thumbs_up") + " :thumbsdown:" + urbanJSON.getInt("thumbs_down"), urbanJSON.getString("definition"), false)
+					.addField(
+							"TOP DEFINITION: :thumbsup:" + urbanDefinition.getInt("thumbs_up") + " :thumbsdown:" + urbanDefinition.getInt("thumbs_down"),
+							urbanDefinition.getString(
+									"definition"),
+							false)
 					.setTimestamp(Instant.now())
 					.setColor(new Color(54, 255, 248));
 			
