@@ -22,7 +22,10 @@ package com.solostudios.qev.framework.commands.builtins;
 import com.solostudios.qev.framework.commands.AbstractCommand;
 import com.solostudios.qev.framework.commands.ArgumentContainer;
 import com.solostudios.qev.framework.commands.errors.IllegalInputException;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+
+import java.awt.*;
 
 
 public class PingCommand extends AbstractCommand {
@@ -46,32 +49,18 @@ public class PingCommand extends AbstractCommand {
 	@SuppressWarnings("IntegerDivisionInFloatingPointContext")
 	@Override
 	public void run(MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
+		//Record start time
+		long start = System.nanoTime();
 		
-		event.getChannel().sendMessage("Checking Ping...").queue(pingMessage -> {
-			int    pings = 4;
-			double t;
-			double sum   = 0, min = 999, max = 0;
-			double start = System.nanoTime() / 1000000;
-			for (int i = 0; i < pings; i++) {
-				pingMessage.editMessage(pingMessages[i]).queue();
-				
-				t = (double) System.nanoTime() / 1000000 - start;
-				
-				sum += t;
-				
-				min = Math.min(min, t);
-				max = Math.max(max, t);
-				
-				start = System.nanoTime() / 1000000;
-			}
-			pingMessage.editMessage(":arrow_right: Average ping is "
-									+ (float) Math.round(sum / 4 * 1000) / 1000
-									+ "ms (min: "
-									+ (float) Math.round(min * 1000) / 1000
-									+ "ms, max: "
-									+ (float) Math.round(max * 1000) / 1000
-									+ "ms) :arrow_left:")
-					   .queue();
-		});
+		//Send event to ping API.
+		event.getChannel().sendTyping().complete();
+		
+		//Get ping time
+		long time = System.nanoTime() - start;
+		
+		//Send ping message
+		event.getChannel().sendMessage(new EmbedBuilder().setAuthor("Ping time to discord API: " + ((float) Math.round(time / 100000)) / 10 + " milliseconds.")
+														 .setColor(Color.GREEN)
+														 .build()).queue();
 	}
 }
