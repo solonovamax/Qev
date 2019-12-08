@@ -29,9 +29,5 @@ hs_err_pid*
 **/gradle/
 
 .idea/workspace.xml
-build.gradle
-gradlew
-gradlew.bat
 settings.json
-settings.gradle
 levels.json

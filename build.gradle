@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+    id 'maven'
+}
+
+version '2.0.0'
+
+sourceCompatibility = 1.11
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url 'https://jitpack.io' }
+}
+
+
+dependencies {
+    implementation "org.json:json:+"
+    implementation "net.dv8tion:JDA:+"
+    implementation "org.reflections:reflections:+"
+    implementation "org.mongodb:mongodb-driver-sync:+"
+    //implementation "org.discordbots:DBL-Java-Library:+"
+    implementation "ch.qos.logback:logback-classic:+"
+    implementation "org.fusesource.jansi:jansi:+"
+}
