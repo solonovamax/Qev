@@ -20,6 +20,8 @@
 package com.solostudios.qev.framework.main;
 
 import net.dv8tion.jda.api.entities.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -37,6 +39,8 @@ import java.util.TreeMap;
 
 
 public class LevelCard {
+	
+	private static Logger logger = LoggerFactory.getLogger(LevelCard.class);
 	
 	private static final Stroke barThickness = new BasicStroke(2);
 	private static final Stroke pFPThickness = new BasicStroke(4);
@@ -88,7 +92,8 @@ public class LevelCard {
 	static {
 		try {
 			backgroundPane = ImageIO.read(new File("levelCard.png"));
-		} catch (IOException ignored) {
+		} catch (IOException e) {
+			logger.warn("Error while loading image!", e);
 		}
 		circleBufferGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 											  RenderingHints.VALUE_ANTIALIAS_ON);
@@ -200,7 +205,7 @@ public class LevelCard {
 		levelCardGraphics.setStroke(verticalBarThickness);
 		levelCardGraphics.drawLine(800, 200, 800, 400);
 		
-		System.out.println("render time: " + (System.currentTimeMillis() - startTime) + "ms");
+		logger.debug("render time: " + (System.currentTimeMillis() - startTime) + "ms");
 		
 		return levelCard;
 	}
