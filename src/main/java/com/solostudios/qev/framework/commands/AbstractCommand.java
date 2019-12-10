@@ -97,7 +97,6 @@ public abstract class AbstractCommand {
 					
 					Class clazz = (Class) obj.get("type");
 					
-					logger.info(clazz.getName());
 					
 					Object put;
 					
@@ -247,7 +246,7 @@ public abstract class AbstractCommand {
 	
 	public boolean fitsArguments(ArgumentContainer args) {
 		
-		logger.info("must conform to \n" + arguments.toString(11));
+		logger.debug("Must conform to \n" + arguments.toString(11));
 		
 		for (int i = 0; i < arguments.length(); i++) {
 			
@@ -606,7 +605,7 @@ public abstract class AbstractCommand {
 				return;
 			}
 			
-			logger.info(event.getMessage().getContentRaw());
+			logger.debug(event.getMessage().getContentRaw());
 			
 			
 			if (event.getMessage().getContentRaw().equals("skip") && obj.has("optional") &&
@@ -627,7 +626,7 @@ public abstract class AbstractCommand {
 				
 				Class clazz = (Class) obj.get("type");
 				
-				logger.info(clazz.getName());
+				logger.debug(clazz.getName());
 				
 				try {
 					Object put;

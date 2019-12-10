@@ -50,14 +50,14 @@ public class CommandHandler {
 	
 	public CommandHandler() {
 		
-		logger.info("Adding Categories.");
+		logger.info("Registering Categories.");
 		
 		Reflections                            categories = new Reflections("com.solostudios.qev.categories");
 		Set<Class<? extends AbstractCategory>> Categories = categories.getSubTypesOf(AbstractCategory.class);
 		
 		for (Class<? extends AbstractCategory> category : Categories) {
 			try {
-				logger.debug("Attempting to add {}.", category.getName());
+				logger.debug("Attempting to register {}.", category.getName());
 				
 				if (Modifier.isAbstract(category.getModifiers())) {
 					logger.debug("Rejecting {}, as it is an abstract class.", category.getName());
@@ -68,15 +68,16 @@ public class CommandHandler {
 				
 				logger.debug("Adding {}.", category.getName());
 				categoryList.put(c, new HashMap<>());
-				logger.info("Command {} successfully added.", category.getName());
+				logger.info("Category {} registered.", category.getName());
 				
 			} catch (@NotNull InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 				e.printStackTrace();
 			}
 		}
 		
+		logger.info("Successfully registered categories.");
 		
-		logger.info("Adding built in commands.");
+		logger.info("Registering built in commands.");
 		
 		Reflections builtins =
 				new Reflections("com.solostudios.qev.framework.commands.builtins");
@@ -100,7 +101,7 @@ public class CommandHandler {
 				
 				logger.debug("Adding {}.", command.getName());
 				addCommand(c, c.getName(), c.getAliases());
-				logger.info("Command {} successfully added.", command.getName());
+				logger.debug("Command {} successfully added.", command.getName());
 				
 			} catch (@NotNull InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 				e.printStackTrace();
@@ -112,8 +113,9 @@ public class CommandHandler {
 			}
 		}
 		
+		logger.info("Successfully registered built in commands.");
 		
-		logger.info("Adding user commands");
+		logger.info("Registering user commands.");
 		
 		Reflections                           reflections    = new Reflections("com.solostudios.qev.commands");
 		Set<Class<? extends AbstractCommand>> commandClasses = reflections.getSubTypesOf(AbstractCommand.class);
@@ -130,13 +132,13 @@ public class CommandHandler {
 				AbstractCommand c = command.getConstructor().newInstance();
 				
 				if (!c.isEnabled()) {
-					logger.info("Rejecting {}, as it is not enabled", command.getName());
+					logger.warn("Rejecting {}, as it is not enabled", command.getName());
 					continue;
 				}
 				
 				logger.debug("Adding {}.", command.getName());
 				addCommand(c, c.getName(), c.getAliases());
-				logger.info("Command {} successfully added.", command.getName());
+				logger.debug("Command {} successfully added.", command.getName());
 				
 			} catch (@NotNull InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 				e.printStackTrace();
@@ -147,6 +149,8 @@ public class CommandHandler {
 						command.getName(), e.getMessage());
 			}
 		}
+		
+		logger.info("Successfully registered user commands.");
 		
 		
 	}
