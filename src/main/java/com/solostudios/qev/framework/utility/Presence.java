@@ -47,10 +47,10 @@ public enum Presence {
 	usersII(Activity.ActivityType.WATCHING, GenericUtil.getUserCount() + " users."),
 	usersIII(Activity.ActivityType.WATCHING, GenericUtil.getUserCount() + " users."),
 	usersIV(Activity.ActivityType.WATCHING, GenericUtil.getUserCount() + " users."),
-	usersV(Activity.ActivityType.WATCHING, GenericUtil.getUserCount() + " users."),
-	usersVI(Activity.ActivityType.WATCHING, GenericUtil.getUserCount() + " users."),
-	usersVII(Activity.ActivityType.WATCHING, GenericUtil.getUserCount() + " users."),
-	usersVIII(Activity.ActivityType.WATCHING, GenericUtil.getUserCount() + " users.");
+	guildsI(Activity.ActivityType.WATCHING, GenericUtil.getGuildCount() + " servers."),
+	guildsII(Activity.ActivityType.WATCHING, GenericUtil.getGuildCount() + " servers."),
+	guildsIII(Activity.ActivityType.WATCHING, GenericUtil.getGuildCount() + " servers."),
+	guildsIV(Activity.ActivityType.WATCHING, GenericUtil.getGuildCount() + " servers.");
 	
 	private final Activity.ActivityType gameType;
 	private final String                action;
