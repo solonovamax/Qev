@@ -1,16 +1,34 @@
 plugins {
-    id 'java'
-    id 'maven'
+    id "java"
+    id "maven"
+    id "idea"
+    id "com.github.johnrengelman.shadow" version "5.2.0"
 }
 
-version '1.0-SNAPSHOT'
+version = "2.0.33"
+group = "com.solostudios"
+
+//mainClassName = "com.solostudios.qev"
 
 sourceCompatibility = 1.11
+
+
+jar {
+    manifest {
+        attributes "Implementation-Title": "Qev", "Implementation-Version": version
+        attributes "Main-Class": "com.solostudios.qev.Qev"
+    }
+}
+
+shadowJar {
+    println "Building ${project.group}:${project.name}:${project.version}"
+}
+
 
 repositories {
     mavenCentral()
     jcenter()
-    maven { url 'https://jitpack.io' }
+    maven { url "https://jitpack.io" }
 }
 
 
