@@ -34,4 +34,14 @@ public class GenericUtil {
 		
 		return userCount;
 	}
+	
+	public static int getGuildCount() {
+		int guildCount = 0;
+		
+		for (JDA shard : Qev.shardList) {
+			guildCount += shard.getGuilds().size();
+		}
+		
+		return guildCount;
+	}
 }
