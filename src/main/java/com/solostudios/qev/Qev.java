@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -81,24 +82,28 @@ public class Qev {
 	 * <p>
 	 * I'm going to eventually switch much of the logging over to requiring debug to be true.
 	 */
-	public static        boolean                  DEBUG;
+	public static       boolean         DEBUG;
 	/**
 	 * Stores the ID of the bot owner
 	 */
-	public static        String                   BOT_OWNER;
+	public static       String          BOT_OWNER;
 	/**
 	 * Stores the support server invite url.
 	 */
-	public static        String                   SUPPORT_SERVER;
+	public static       String          SUPPORT_SERVER;
 	/**
 	 * Stores the current version of the bot.
 	 */
-	public static        String                   VERSION           = "2.0.0";
+	public static       String          VERSION   = "2.0.0";
 	/**
 	 * This is the JDABuilder that is used to create all the shards of the bot.
 	 */
 	@SuppressWarnings("FieldCanBeLocal")
-	private static       JDABuilder               shardBuilder;
+	private static      JDABuilder      shardBuilder;
+	/**
+	 * List of shards that can be used to get things like user count.
+	 */
+	public static final LinkedList<JDA> shardList = new LinkedList<>();
 	
 	/**
 	 * Main class where everything is run.
@@ -185,6 +190,7 @@ public class Qev {
 				//Construct a new JDA object with the shard id $i.
 				JDA shard = shardBuilder.useSharding(i, shardCount)
 										.build();
+				shardList.add(shard);
 				//Schedules a new game switcher object to run. This will change the discord presence every 60 seconds.
 				executor.scheduleAtFixedRate(new GameSwitcher(shard), 0L, 60L, TimeUnit.SECONDS);
 				logger.info("Constructed Shard " + (i + 1) + "/" + shardCount);
