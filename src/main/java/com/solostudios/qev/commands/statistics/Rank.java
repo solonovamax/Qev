@@ -69,7 +69,7 @@ public class Rank extends AbstractCommand {
 		User author = event.getAuthor();
 		User user;
 		if (args.has("user")) {
-			user = ((Member) args.get("user")).getUser();
+			user = args.getUser("user");
 		} else {
 			user = author;
 		}
