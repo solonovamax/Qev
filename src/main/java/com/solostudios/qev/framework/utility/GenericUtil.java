@@ -1,5 +1,8 @@
 package com.solostudios.qev.framework.utility;
 
+import com.solostudios.qev.Qev;
+import net.dv8tion.jda.api.JDA;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,4 +24,14 @@ public class GenericUtil {
 	public static final List<String>    morse    = Arrays.asList(".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....", "..", ".---", "-.-", ".-..", "--", "-.", "---", ".--.",
 																 "--.-", ".-.", "...", "-", "..-", "...-", ".--", "-..-", "-.--", "--..", "|", ".----", "..---", "...--", "....-",
 																 ".....", "-....", "--...", "---..", "----.", "-----");
+	
+	public static int getUserCount() {
+		int userCount = 0;
+		
+		for (JDA shard : Qev.shardList) {
+			userCount += shard.getUsers().size();
+		}
+		
+		return userCount;
+	}
 }
