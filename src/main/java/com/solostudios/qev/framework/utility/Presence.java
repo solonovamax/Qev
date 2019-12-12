@@ -41,15 +41,16 @@ public enum Presence {
 	versionII(Activity.ActivityType.DEFAULT, "Version " + Qev.VERSION),
 	versionIII(Activity.ActivityType.DEFAULT, "Version " + Qev.VERSION),
 	versionIV(Activity.ActivityType.DEFAULT, "Version " + Qev.VERSION),
-	anime(Activity.ActivityType.WATCHING, "Anime"),
 	serverI(Activity.ActivityType.DEFAULT, Qev.SUPPORT_SERVER),
 	serverII(Activity.ActivityType.DEFAULT, Qev.SUPPORT_SERVER),
-	videoGames(Activity.ActivityType.DEFAULT, "Video Games"),
-	technoblade(Activity.ActivityType.WATCHING, "Technoblade win minecraft mondays."),
-	minecraft(Activity.ActivityType.DEFAULT, "Minecraft"),
-	urmom(Activity.ActivityType.DEFAULT, "With your mom."),
-	codeI(Activity.ActivityType.DEFAULT, "With some lines of code"),
-	codeII(Activity.ActivityType.DEFAULT, "With some code");
+	usersI(Activity.ActivityType.WATCHING, GenericUtil.getUserCount() + " users."),
+	usersII(Activity.ActivityType.WATCHING, GenericUtil.getUserCount() + " users."),
+	usersIII(Activity.ActivityType.WATCHING, GenericUtil.getUserCount() + " users."),
+	usersIV(Activity.ActivityType.WATCHING, GenericUtil.getUserCount() + " users."),
+	usersV(Activity.ActivityType.WATCHING, GenericUtil.getUserCount() + " users."),
+	usersVI(Activity.ActivityType.WATCHING, GenericUtil.getUserCount() + " users."),
+	usersVII(Activity.ActivityType.WATCHING, GenericUtil.getUserCount() + " users."),
+	usersVIII(Activity.ActivityType.WATCHING, GenericUtil.getUserCount() + " users.");
 	
 	private final Activity.ActivityType gameType;
 	private final String                action;
