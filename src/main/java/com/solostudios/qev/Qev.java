@@ -21,20 +21,20 @@ package com.solostudios.qev;
 
 import com.solostudios.qev.framework.commands.CommandHandler;
 import com.solostudios.qev.framework.commands.CommandListener;
+import com.solostudios.qev.framework.config.AppProperties;
 import com.solostudios.qev.framework.events.EventHandler;
 import com.solostudios.qev.framework.main.MongoDBInterface;
-import com.solostudios.qev.framework.main.Settings;
 import com.solostudios.qev.framework.utility.GameSwitcher;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.json.JSONObject;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,7 +50,7 @@ public class Qev {
 	 * In the future, I may migrate it over to a custom settings store, but i'm currently holding it in a JSON object.
 	 */
 	@Nullable
-	public static final  JSONObject               settings          = Settings.get();
+	public static final  AppProperties            settings          = AppProperties.getProperties();
 	/**
 	 * Stores the start time of the bot, to get uptime.
 	 */
@@ -86,6 +86,7 @@ public class Qev {
 	 * Stores the ID of the bot owner
 	 */
 	public static        String                   BOT_OWNER;
+	public static        List<String>             BOT_ADMINS;
 	/**
 	 * Stores the support server invite url.
 	 */
@@ -93,7 +94,7 @@ public class Qev {
 	/**
 	 * Stores the current version of the bot.
 	 */
-	public static        String                   VERSION           = "2.0.0";
+	public static        String                   VERSION;
 	/**
 	 * This is the JDABuilder that is used to create all the shards of the bot.
 	 */
@@ -145,15 +146,16 @@ public class Qev {
 		
 		//Loads settings from the file.
 		//noinspection ConstantConditions
-		PREFIX = settings.getString("prefix");
-		BOT_OWNER = settings.getString("botOwner");
-		DEBUG = settings.getBoolean("debug");
-		SUPPORT_SERVER = settings.getString("supportServer");
+		PREFIX = settings.defaultPrefix;
+		BOT_OWNER = settings.botOwner;
+		DEBUG = settings.debug;
+		SUPPORT_SERVER = settings.supportServer;
+		VERSION = settings.version;
 		
 		
 		logger.debug("Validating Token.");
 		//Check if token exists.
-		if (settings.getString("token").equals("YOUR-TOKEN-HERE")) {
+		if (settings.botToken.equals("") || settings.botToken == null) {
 			logger.error("Please input a valid token!", new IllegalArgumentException());
 			return;
 		}
@@ -161,7 +163,7 @@ public class Qev {
 		logger.info("Initializing Bot");
 		logger.info("Constructing JDABuilder");
 		//Build bot using token from settings.
-		shardBuilder = new JDABuilder(settings.getString("token"));
+		shardBuilder = new JDABuilder(settings.botToken);
 		
 		
 		logger.info("Initializing Command Handler");

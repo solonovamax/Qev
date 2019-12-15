@@ -64,7 +64,7 @@ public class Imgur extends AbstractCommand {
 		
 		
 		JSONObject imgurJSON =
-				WebUtils.readJSONObjectFromUrl(url, Qev.settings != null ? Qev.settings.getString("imgur") : null);
+				WebUtils.readJSONObjectFromUrl(url, Qev.settings != null ? Qev.settings.tokenList.get("imgur") : null);
 		
 		if ((imgurJSON != null ? imgurJSON.getJSONArray("data").length() : 0) == 0) {
 			event.getChannel().sendMessage("No results found for search " + args.getString("search")).queue();
