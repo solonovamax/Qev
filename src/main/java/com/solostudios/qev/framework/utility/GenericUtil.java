@@ -21,4 +21,11 @@ public class GenericUtil {
 	public static final List<String>    morse    = Arrays.asList(".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....", "..", ".---", "-.-", ".-..", "--", "-.", "---", ".--.",
 																 "--.-", ".-.", "...", "-", "..-", "...-", ".--", "-..-", "-.--", "--..", "|", ".----", "..---", "...--", "....-",
 																 ".....", "-....", "--...", "---..", "----.", "-----");
+	
+	public static boolean getBoolean(String s) {
+		if (s.equalsIgnoreCase("yes") || s.equalsIgnoreCase("true")) { return true; }
+		if (s.equalsIgnoreCase("no") || s.equalsIgnoreCase("false")) { return false; }
+		
+		throw new NullPointerException("Not a boolean");
+	}
 }
