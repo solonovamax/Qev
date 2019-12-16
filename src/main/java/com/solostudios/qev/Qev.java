@@ -30,13 +30,11 @@ import net.dv8tion.jda.api.JDABuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.util.LinkedList;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -114,35 +112,6 @@ public class Qev {
 	 * 		input args from command line. Completely disregarded.
 	 */
 	public static void main(String[] args) {
-		
-		logger.info("Loading classes.");
-		
-		/*
-		Here I get all the classes and load them.
-		
-		This is so all the classes are loaded into memory and there is no wait time when I need to call one of their functions.
-		 (This will become more effective as I add more utility classes that aren't in the commands package)
-		 */
-		Reflections classes = new Reflections("com.solostudios");
-		//Get all classes that extend Object.class (Everything)
-		Set<Class<?>> classSet = classes.getSubTypesOf(Object.class);
-		//Construct a new class loader
-		ClassLoader classLoader = Qev.class.getClassLoader();
-		
-		//For through the class list & load them
-		for (Class<?> clazz : classSet) {
-			try {
-				//Debug fact that I'm loading these classes.
-				logger.debug("Attempting to load {}.", clazz.getName());
-				//load class
-				Class klazz = classLoader.loadClass(clazz.getName());
-				logger.info("Class {} successfully loaded.", clazz.getName());
-			} catch (ClassNotFoundException e) {
-				//Could not load class for some odd reason
-				logger.warn("Could not load class " + clazz.getCanonicalName());
-			}
-		}
-		
 		
 		logger.info("Initializing level handler.");
 		//Initializes the level handler/database interface. All functions are static, so there is no need to store it.
