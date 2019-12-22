@@ -44,7 +44,7 @@ public class Leaderboards extends AbstractCommand {
 	
 	public Leaderboards() {
 		super("leaderboards");
-		this.setAliases("leaderboard", "levels", "top");
+		this.setAliases("leaderboard", "levels", "top", "leaderboards");
 		this.setCategory("Utility");
 		this.setDescription("Gets the leaderboards for this server");
 	}
