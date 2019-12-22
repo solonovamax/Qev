@@ -361,66 +361,7 @@ public class EventLogger {
 	}
 	
 	private static void guildMemberEvent(GenericGuildMemberEvent event) {
-		boolean eventCaptured = false;
-		
-		Member member = event.getMember();
-		User   user   = member.getUser();
-		
-		EmbedBuilder embedBuilder = new EmbedBuilder()
-				.setFooter("ID: " + user.getId())
-				.setTimestamp(Instant.now())
-				.setThumbnail(user.getAvatarUrl())
-				.setAuthor(member.getEffectiveName(), null, user.getAvatarUrl());
-		
-		if (event instanceof GuildMemberJoinEvent) {
-			eventCaptured = true;
-			embedBuilder
-					.setColor(Color.GREEN)
-					.setTitle("Member joined!")
-					.addField("Member Count", String.valueOf(event.getGuild().getMembers().size()), true)
-					.addField("User", member.getAsMention(), true);
-			
-			if (user.getTimeCreated().isBefore(OffsetDateTime.now().minusDays(14))) {
-				OffsetDateTime createdDate = user.getTimeCreated();
-				long           seconds     = ChronoUnit.SECONDS.between(createdDate, OffsetDateTime.now()) % 60;
-				long           minutes     = ChronoUnit.MINUTES.between(createdDate, OffsetDateTime.now()) % 60;
-				long           hours       = ChronoUnit.HOURS.between(createdDate, OffsetDateTime.now()) % 24;
-				long           days        = ChronoUnit.DAYS.between(createdDate, OffsetDateTime.now());
-				
-				embedBuilder.addField("New Account!",
-									  "Account Created " +
-									  GenericUtil.getWithPlural((int) days, "day") + " " +
-									  GenericUtil.getWithPlural((int) hours, "hour") + " " +
-									  GenericUtil.getWithPlural((int) minutes, "minute") + " " +
-									  GenericUtil.getWithPlural((int) seconds, "second") + " ago."
-						, false);
-			}
-		}
-		if (event instanceof GuildMemberLeaveEvent) {
-			eventCaptured = true;
-			embedBuilder
-					.setColor(Color.GREEN)
-					.setTitle("Member left. :(")
-					.addField("Member Count", String.valueOf(event.getGuild().getMembers().size()), true)
-					.addField("User", member.getAsMention(), true)
-					.setFooter("ID: " + user.getId());
-		}
-		if (event instanceof GuildMemberRoleAddEvent) {
-			eventCaptured = true;
-			List<Role> rolesList = ((GuildMemberRoleAddEvent) event).getRoles();
-			embedBuilder
-					.setDescription("Role " + rolesList.get(0).getAsMention() + " was given to user " + user.getAsMention() + ".");
-		}
-		if (event instanceof GuildMemberRoleRemoveEvent) {
-			eventCaptured = true;
-			List<Role> rolesList = ((GuildMemberRoleRemoveEvent) event).getRoles();
-			embedBuilder
-					.setDescription("Role " + rolesList.get(0).getAsMention() + " was taken from user " + user.getAsMention() + ".");
-		}
-		
-		if (eventCaptured) {
-			loggingEvent(event.getGuild(), embedBuilder.build());
-		}
+	
 	}
 	
 	private static void genericGuildUpdateEvent(GenericGuildUpdateEvent event) {

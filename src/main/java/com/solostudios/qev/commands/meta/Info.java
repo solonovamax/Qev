@@ -26,6 +26,7 @@ import com.solostudios.qev.core.command.handler.CommandHandler;
 import com.solostudios.qev.core.database.MongoDBInterface;
 import com.solostudios.qev.core.exceptions.IllegalInputException;
 import com.solostudios.qev.core.utility.GenericUtil;
+import com.solostudios.qev.core.database.MongoDBInterface;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
