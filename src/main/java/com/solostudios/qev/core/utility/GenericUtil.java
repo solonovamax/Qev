@@ -3,6 +3,8 @@ package com.solostudios.qev.core.utility;
 import com.solostudios.qev.Qev;
 import net.dv8tion.jda.api.JDA;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,5 +45,14 @@ public class GenericUtil {
 		}
 		
 		return guildCount;
+	}
+	
+	@NotNull
+	public static String getWithPlural(int x, String name) {
+		if (x == 1) {
+			return x + " " + name;
+		} else {
+			return x + " " + name + "s";
+		}
 	}
 }
