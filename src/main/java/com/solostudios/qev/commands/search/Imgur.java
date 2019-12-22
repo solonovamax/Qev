@@ -20,10 +20,10 @@
 package com.solostudios.qev.commands.search;
 
 import com.solostudios.qev.Qev;
-import com.solostudios.qev.framework.commands.AbstractCommand;
-import com.solostudios.qev.framework.commands.ArgumentContainer;
-import com.solostudios.qev.framework.commands.errors.IllegalInputException;
-import com.solostudios.qev.framework.utility.WebUtils;
+import com.solostudios.qev.core.command.handler.AbstractCommand;
+import com.solostudios.qev.core.command.handler.ArgumentContainer;
+import com.solostudios.qev.core.exceptions.IllegalInputException;
+import com.solostudios.qev.core.utility.WebUtilities;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONArray;
@@ -64,7 +64,7 @@ public class Imgur extends AbstractCommand {
 		
 		
 		JSONObject imgurJSON =
-				WebUtils.readJSONObjectFromUrl(url, Qev.settings != null ? Qev.settings.getString("imgur") : null);
+				WebUtilities.readJSONObjectFromUrl(url, Qev.settings != null ? Qev.settings.getString("imgur") : null);
 		
 		if ((imgurJSON != null ? imgurJSON.getJSONArray("data").length() : 0) == 0) {
 			event.getChannel().sendMessage("No results found for search " + args.getString("search")).queue();

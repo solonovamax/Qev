@@ -19,10 +19,10 @@
 
 package com.solostudios.qev.commands.search;
 
-import com.solostudios.qev.framework.commands.AbstractCommand;
-import com.solostudios.qev.framework.commands.ArgumentContainer;
-import com.solostudios.qev.framework.commands.errors.IllegalInputException;
-import com.solostudios.qev.framework.utility.WebUtils;
+import com.solostudios.qev.core.command.handler.AbstractCommand;
+import com.solostudios.qev.core.command.handler.ArgumentContainer;
+import com.solostudios.qev.core.exceptions.IllegalInputException;
+import com.solostudios.qev.core.utility.WebUtilities;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONArray;
@@ -78,6 +78,6 @@ public class Hentai extends AbstractCommand {
 	}
 	
 	private JSONArray getHentai() {
-		return WebUtils.readJSONArrayFromUrl(url);
+		return WebUtilities.readJSONArrayFromUrl(url);
 	}
 }

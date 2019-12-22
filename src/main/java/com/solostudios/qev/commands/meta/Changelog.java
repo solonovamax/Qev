@@ -19,10 +19,10 @@
 
 package com.solostudios.qev.commands.meta;
 
-import com.solostudios.qev.framework.commands.AbstractCommand;
-import com.solostudios.qev.framework.commands.ArgumentContainer;
-import com.solostudios.qev.framework.commands.errors.IllegalInputException;
-import com.solostudios.qev.framework.utility.WebUtils;
+import com.solostudios.qev.core.command.handler.AbstractCommand;
+import com.solostudios.qev.core.command.handler.ArgumentContainer;
+import com.solostudios.qev.core.exceptions.IllegalInputException;
+import com.solostudios.qev.core.utility.WebUtilities;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONArray;
@@ -41,7 +41,7 @@ public class Changelog extends AbstractCommand {
 	
 	@Override
 	public void run(MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
-		JSONArray gitInfo = WebUtils.readJSONArrayFromUrl("https://api.github.com/repos/solonovamax/Qev/commits");
+		JSONArray gitInfo = WebUtilities.readJSONArrayFromUrl("https://api.github.com/repos/solonovamax/Qev/commits");
 		try {
 			assert gitInfo != null;
 		} catch (NullPointerException e) {

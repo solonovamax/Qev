@@ -20,10 +20,10 @@
 package com.solostudios.qev.commands.search;
 
 import com.solostudios.qev.Qev;
-import com.solostudios.qev.framework.commands.AbstractCommand;
-import com.solostudios.qev.framework.commands.ArgumentContainer;
-import com.solostudios.qev.framework.commands.errors.IllegalInputException;
-import com.solostudios.qev.framework.utility.WebUtils;
+import com.solostudios.qev.core.command.handler.AbstractCommand;
+import com.solostudios.qev.core.command.handler.ArgumentContainer;
+import com.solostudios.qev.core.exceptions.IllegalInputException;
+import com.solostudios.qev.core.utility.WebUtilities;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -63,7 +63,7 @@ public class Youtube extends AbstractCommand {
 		url = urlStart + URLEncoder.encode(urlSearch, StandardCharsets.UTF_8) + urlEnd;
 		
 		
-		JSONObject youtubeJSON = WebUtils.readJSONObjectFromUrl(url);
+		JSONObject youtubeJSON = WebUtilities.readJSONObjectFromUrl(url);
 		logger.debug(youtubeJSON != null ? youtubeJSON.toString(11) : null);
 		if ((youtubeJSON != null ? youtubeJSON.getJSONArray("items").length() : 0) == 0) {
 			event.getChannel().sendMessage("No results found for search " + args.getString("search")).queue();

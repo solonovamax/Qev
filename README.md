@@ -4,7 +4,10 @@
 
 Qev is a bot I made to replace the 5+ bots that most servers seem to have on them. It is meant to be the only bot that you need for your server. I am still adding commands to the bot, and if you have any ideas, (no matter how niche) feel free to suggest them! Please see [my contact info](#contact)
 
+## Credit
 Credit to pikisuperstar for the background used for the !level command.
+
+Credit to AvaIre for making a good, open source, bot so that I can ~~steal~~ take inspiration from their code. I'll leave their licence at the top of any file I use from their bot. 
 
 ## Commands
 

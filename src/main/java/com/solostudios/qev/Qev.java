@@ -19,12 +19,12 @@
 
 package com.solostudios.qev;
 
-import com.solostudios.qev.framework.commands.CommandHandler;
-import com.solostudios.qev.framework.commands.CommandListener;
-import com.solostudios.qev.framework.events.EventHandler;
-import com.solostudios.qev.framework.main.MongoDBInterface;
-import com.solostudios.qev.framework.main.Settings;
-import com.solostudios.qev.framework.utility.GameSwitcher;
+import com.solostudios.qev.core.command.handler.CommandHandler;
+import com.solostudios.qev.core.command.handler.CommandListener;
+import com.solostudios.qev.core.database.MongoDBInterface;
+import com.solostudios.qev.core.events.EventHandler;
+import com.solostudios.qev.core.main.Settings;
+import com.solostudios.qev.core.presence.GameSwitcher;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import org.jetbrains.annotations.NotNull;

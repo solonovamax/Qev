@@ -1,9 +1,9 @@
 package com.solostudios.qev.commands.search;
 
-import com.solostudios.qev.framework.commands.AbstractCommand;
-import com.solostudios.qev.framework.commands.ArgumentContainer;
-import com.solostudios.qev.framework.commands.errors.IllegalInputException;
-import com.solostudios.qev.framework.utility.WebUtils;
+import com.solostudios.qev.core.command.handler.AbstractCommand;
+import com.solostudios.qev.core.command.handler.ArgumentContainer;
+import com.solostudios.qev.core.exceptions.IllegalInputException;
+import com.solostudios.qev.core.utility.WebUtilities;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +42,7 @@ public class Urban extends AbstractCommand {
 		url = urlStart + URLEncoder.encode(urlSearch, StandardCharsets.UTF_8);
 		
 		
-		JSONObject urbanJSON = WebUtils.readJSONObjectFromUrl(url);
+		JSONObject urbanJSON = WebUtilities.readJSONObjectFromUrl(url);
 		if ((urbanJSON != null ? urbanJSON.getJSONArray("list").length() : 0) == 0) {
 			event.getChannel().sendMessage("No results found for search " + args.getString("search") + ".").queue();
 		} else {

@@ -1,9 +1,9 @@
 package com.solostudios.qev.commands.search;
 
-import com.solostudios.qev.framework.commands.AbstractCommand;
-import com.solostudios.qev.framework.commands.ArgumentContainer;
-import com.solostudios.qev.framework.commands.errors.IllegalInputException;
-import com.solostudios.qev.framework.utility.WebUtils;
+import com.solostudios.qev.core.command.handler.AbstractCommand;
+import com.solostudios.qev.core.command.handler.ArgumentContainer;
+import com.solostudios.qev.core.exceptions.IllegalInputException;
+import com.solostudios.qev.core.utility.WebUtilities;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -43,12 +43,12 @@ public class XKCD extends AbstractCommand {
 				.setAuthor("XKCD");
 		try {
 			if (comicNumber == 0) {
-				JSONObject obj = WebUtils.readJSONObjectFromUrl("https://xkcd.com/info.0.json");
+				JSONObject obj = WebUtilities.readJSONObjectFromUrl("https://xkcd.com/info.0.json");
 				em.setTitle(Objects.requireNonNull(obj).getString("safe_title"));
 				em.setImage(obj.getString("img"));
 				em.addField("Alt-Text", obj.getString("alt"), false);
 			} else {
-				JSONObject obj = WebUtils.readJSONObjectFromUrl("https://xkcd.com/" + comicNumber + "/info.0.json");
+				JSONObject obj = WebUtilities.readJSONObjectFromUrl("https://xkcd.com/" + comicNumber + "/info.0.json");
 				em.setTitle(Objects.requireNonNull(obj).getString("safe_title"));
 				em.setImage(obj.getString("img"));
 				em.addField("Alt-Text", obj.getString("alt"), false);

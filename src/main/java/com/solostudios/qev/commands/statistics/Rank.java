@@ -19,12 +19,12 @@
 
 package com.solostudios.qev.commands.statistics;
 
-import com.solostudios.qev.framework.commands.AbstractCommand;
-import com.solostudios.qev.framework.commands.ArgumentContainer;
-import com.solostudios.qev.framework.commands.errors.IllegalInputException;
-import com.solostudios.qev.framework.main.LevelCard;
-import com.solostudios.qev.framework.main.MongoDBInterface;
-import com.solostudios.qev.framework.main.UserStats;
+import com.solostudios.qev.core.command.handler.AbstractCommand;
+import com.solostudios.qev.core.command.handler.ArgumentContainer;
+import com.solostudios.qev.core.database.MongoDBInterface;
+import com.solostudios.qev.core.exceptions.IllegalInputException;
+import com.solostudios.qev.core.main.LevelCard;
+import com.solostudios.qev.core.main.UserStats;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -44,7 +44,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.solostudios.qev.framework.utility.Sort.sortByValue;
+import static com.solostudios.qev.core.utility.Sort.sortByValue;
 
 
 public class Rank extends AbstractCommand {

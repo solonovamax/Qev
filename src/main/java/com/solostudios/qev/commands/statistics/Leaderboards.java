@@ -19,10 +19,10 @@
 
 package com.solostudios.qev.commands.statistics;
 
-import com.solostudios.qev.framework.commands.AbstractCommand;
-import com.solostudios.qev.framework.commands.ArgumentContainer;
-import com.solostudios.qev.framework.commands.errors.IllegalInputException;
-import com.solostudios.qev.framework.main.MongoDBInterface;
+import com.solostudios.qev.core.command.handler.AbstractCommand;
+import com.solostudios.qev.core.command.handler.ArgumentContainer;
+import com.solostudios.qev.core.database.MongoDBInterface;
+import com.solostudios.qev.core.exceptions.IllegalInputException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.bson.Document;
@@ -36,7 +36,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.solostudios.qev.framework.utility.Sort.sortByValue;
+import static com.solostudios.qev.core.utility.Sort.sortByValue;
 
 
 public class Leaderboards extends AbstractCommand {

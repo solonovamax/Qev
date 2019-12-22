@@ -19,10 +19,10 @@
 
 package com.solostudios.qev.commands.search;
 
-import com.solostudios.qev.framework.commands.AbstractCommand;
-import com.solostudios.qev.framework.commands.ArgumentContainer;
-import com.solostudios.qev.framework.commands.errors.IllegalInputException;
-import com.solostudios.qev.framework.utility.WebUtils;
+import com.solostudios.qev.core.command.handler.AbstractCommand;
+import com.solostudios.qev.core.command.handler.ArgumentContainer;
+import com.solostudios.qev.core.exceptions.IllegalInputException;
+import com.solostudios.qev.core.utility.WebUtilities;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONArray;
@@ -67,7 +67,7 @@ public class Anime extends AbstractCommand {
 		url = urlStart + URLEncoder.encode(urlSearch, StandardCharsets.UTF_8) + urlEnd;
 		
 		
-		JSONObject malJSON = WebUtils.readJSONObjectFromUrl(url);
+		JSONObject malJSON = WebUtilities.readJSONObjectFromUrl(url);
 		//logger.info(malJSON != null ? malJSON.toString(11) : null);
 		
 		if ((malJSON != null ? malJSON.getJSONArray("results").length() : 0) == 0) {
@@ -76,7 +76,7 @@ public class Anime extends AbstractCommand {
 			url = "https://api.jikan.moe/v3/anime/" +
 				  malJSON.getJSONArray("results").getJSONObject(0).getInt("mal_id") + "/";
 			
-			JSONObject aniJSON = WebUtils.readJSONObjectFromUrl(url);
+			JSONObject aniJSON = WebUtilities.readJSONObjectFromUrl(url);
 			
 			
 			if (aniJSON != null) {
