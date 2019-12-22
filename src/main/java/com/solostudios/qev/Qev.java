@@ -92,7 +92,7 @@ public class Qev {
 	/**
 	 * Stores the current version of the bot.
 	 */
-	public static       String          VERSION   = "2.0.0";
+	public static       String          VERSION   = "2.0.35";
 	/**
 	 * This is the JDABuilder that is used to create all the shards of the bot.
 	 */
