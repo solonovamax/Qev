@@ -26,8 +26,6 @@ hs_err_pid*
 **/.gradle/
 **/.idea/
 **/build/
-**/gradle/
-
 .idea/workspace.xml
 settings.json
-levels.json
+**/out/
