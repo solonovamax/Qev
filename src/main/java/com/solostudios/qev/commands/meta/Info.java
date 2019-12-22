@@ -26,7 +26,6 @@ import com.solostudios.qev.core.command.handler.CommandHandler;
 import com.solostudios.qev.core.database.MongoDBInterface;
 import com.solostudios.qev.core.exceptions.IllegalInputException;
 import com.solostudios.qev.core.utility.GenericUtil;
-import com.solostudios.qev.core.database.MongoDBInterface;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -103,7 +102,7 @@ public class Info extends AbstractCommand {
 							.addField("Guild Owner", Objects.requireNonNull(
 									event.getGuild().getOwner()).getAsMention(), true)
 							.setThumbnail(jda.getSelfUser().getAvatarUrl())
-							.setFooter("By solonovamax#3163",
+							.setFooter("By solonovamax#6983",
 									   "https://cdn.discordapp.com/avatars/195735703726981120/f6277c9582ee4509be2ab7094b340dec.png")
 							.build()).queue();
 		} catch (NullPointerException e) {

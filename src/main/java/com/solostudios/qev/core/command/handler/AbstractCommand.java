@@ -446,7 +446,7 @@ public abstract class AbstractCommand {
 			if (event.getMember() != null && !event.getMember().hasPermission(perm)) {
 				event.getChannel().sendMessage(
 						"You require the " + perm.getName() + " permission to use this command.\n" +
-						"Please contact the server owner if you think you should have this permission, or contact @solonovamax#3163 if you think this is an error.").queue();
+						"Please contact the server owner if you think you should have this permission, or contact @solonovamax#6983 if you think this is an error.").queue();
 				return;
 			}
 		}

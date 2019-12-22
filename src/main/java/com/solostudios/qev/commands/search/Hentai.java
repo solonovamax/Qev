@@ -70,7 +70,7 @@ public class Hentai extends AbstractCommand {
 		
 		if (counter == 10) {
 			event.getChannel().sendMessage("Sorry, an error occurred while trying to get the image. \n" +
-										   "Please try again or contact @solonovamax#3163 if this is a recurring problem.").queue();
+										   "Please try again or contact @solonovamax#6983 if this is a recurring problem.").queue();
 		} else {
 			event.getChannel().sendMessage(new EmbedBuilder().setImage(fileURL).build()).queue();
 		}
