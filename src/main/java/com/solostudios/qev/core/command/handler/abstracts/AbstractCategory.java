@@ -17,7 +17,7 @@
  *
  */
 
-package com.solostudios.qev.abstracts;
+package com.solostudios.qev.core.command.handler.abstracts;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -19,6 +19,7 @@
 
 package com.solostudios.qev.core.command.handler;
 
+import com.solostudios.qev.core.command.handler.abstracts.AbstractCommand;
 import com.solostudios.qev.core.exceptions.NoMoreArgumentsException;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;

@@ -19,8 +19,8 @@
 
 package com.solostudios.qev.commands.meta;
 
-import com.solostudios.qev.core.command.handler.AbstractCommand;
 import com.solostudios.qev.core.command.handler.ArgumentContainer;
+import com.solostudios.qev.core.command.handler.abstracts.AbstractCommand;
 import com.solostudios.qev.core.exceptions.IllegalInputException;
 import com.solostudios.qev.core.utility.WebUtilities;
 import net.dv8tion.jda.api.EmbedBuilder;

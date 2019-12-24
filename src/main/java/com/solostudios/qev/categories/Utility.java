@@ -19,7 +19,7 @@
 
 package com.solostudios.qev.categories;
 
-import com.solostudios.qev.abstracts.AbstractCategory;
+import com.solostudios.qev.core.command.handler.abstracts.AbstractCategory;
 
 import java.awt.*;
 

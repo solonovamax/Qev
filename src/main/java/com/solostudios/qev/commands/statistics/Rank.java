@@ -19,8 +19,8 @@
 
 package com.solostudios.qev.commands.statistics;
 
-import com.solostudios.qev.core.command.handler.AbstractCommand;
 import com.solostudios.qev.core.command.handler.ArgumentContainer;
+import com.solostudios.qev.core.command.handler.abstracts.AbstractCommand;
 import com.solostudios.qev.core.database.MongoDBInterface;
 import com.solostudios.qev.core.exceptions.IllegalInputException;
 import com.solostudios.qev.core.main.LevelCard;

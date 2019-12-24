@@ -19,8 +19,8 @@
 
 package com.solostudios.qev.commands.search;
 
-import com.solostudios.qev.core.command.handler.AbstractCommand;
 import com.solostudios.qev.core.command.handler.ArgumentContainer;
+import com.solostudios.qev.core.command.handler.abstracts.AbstractCommand;
 import com.solostudios.qev.core.exceptions.IllegalInputException;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONArray;
