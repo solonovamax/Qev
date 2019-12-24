@@ -92,7 +92,7 @@ public class Qev {
 	/**
 	 * Stores the current version of the bot.
 	 */
-	public static       String          VERSION   = "2.0.0";
+	public static       String          VERSION   = "2.0.35";
 	/**
 	 * This is the JDABuilder that is used to create all the shards of the bot.
 	 */
@@ -161,7 +161,7 @@ public class Qev {
 										.build();
 				shardList.add(shard);
 				//Schedules a new game switcher object to run. This will change the discord presence every 60 seconds.
-				executor.scheduleAtFixedRate(new GameSwitcher(shard), 0L, 60L, TimeUnit.SECONDS);
+				executor.scheduleAtFixedRate(new GameSwitcher(shard), 5L, 60L, TimeUnit.SECONDS);
 				logger.info("Constructed Shard " + (i + 1) + "/" + shardCount);
 			} catch (LoginException e) {
 				logger.warn("Error while constructing shard {}/{}", i, shardCount);

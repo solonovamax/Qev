@@ -44,14 +44,14 @@ public enum Presence {
 	versionIV(Activity.ActivityType.DEFAULT, "Version " + Qev.VERSION),
 	serverI(Activity.ActivityType.DEFAULT, Qev.SUPPORT_SERVER),
 	serverII(Activity.ActivityType.DEFAULT, Qev.SUPPORT_SERVER),
-	usersI(Activity.ActivityType.WATCHING, GenericUtil.getUserCount() + " users."),
-	usersII(Activity.ActivityType.WATCHING, GenericUtil.getUserCount() + " users."),
-	usersIII(Activity.ActivityType.WATCHING, GenericUtil.getUserCount() + " users."),
-	usersIV(Activity.ActivityType.WATCHING, GenericUtil.getUserCount() + " users."),
-	guildsI(Activity.ActivityType.WATCHING, GenericUtil.getGuildCount() + " servers."),
-	guildsII(Activity.ActivityType.WATCHING, GenericUtil.getGuildCount() + " servers."),
-	guildsIII(Activity.ActivityType.WATCHING, GenericUtil.getGuildCount() + " servers."),
-	guildsIV(Activity.ActivityType.WATCHING, GenericUtil.getGuildCount() + " servers.");
+	usersI(Activity.ActivityType.WATCHING, "%users% users."),
+	usersII(Activity.ActivityType.WATCHING, "%users% users."),
+	usersIII(Activity.ActivityType.WATCHING, "%users% users."),
+	usersIV(Activity.ActivityType.WATCHING, "%users% users."),
+	guildsI(Activity.ActivityType.WATCHING, "%servers% servers."),
+	guildsII(Activity.ActivityType.WATCHING, "%servers% servers."),
+	guildsIII(Activity.ActivityType.WATCHING, "%servers% servers."),
+	guildsIV(Activity.ActivityType.WATCHING, "%servers% servers.");
 	
 	private final Activity.ActivityType gameType;
 	private final String                action;
@@ -77,7 +77,9 @@ public enum Presence {
 	 * @return action
 	 */
 	public String getAction() {
-		return action;
+		return action
+				.replace("%users%", String.valueOf(GenericUtil.getUserCount()))
+				.replace("%servers%", String.valueOf(GenericUtil.getGuildCount()));
 	}
 	
 }
