@@ -60,22 +60,21 @@ public class MongoDBInterface {
 	@SuppressWarnings("WeakerAccess")
 	public static final  String                    guildDataVersion = "1.1.0";
 	@SuppressWarnings("WeakerAccess")
-	public static final  Document                  newGuildData = new Document()
+	public static final  Document                  newGuildData     = new Document()
 			.append("version", guildDataVersion)
 			.append("guild", 0L)
 			.append("prefix", "!")
 			.append("updateTime", 0L)
 			.append("muteRole", 0L);
-	private static final Logger                    logger       = LoggerFactory.getLogger(MongoDBInterface.class);
+	private static final Logger                    logger           = LoggerFactory.getLogger(MongoDBInterface.class);
 	@NotNull
-	private static final String                    uriString    =
-			"mongodb://bot:tob@solo-serv.local:27017/Qev?authSource=admin";
+	private static final String                    uriString        = "mongodb://bot:tob@solo-serv.local:27017/Qev?authSource=admin";
 	@NotNull
-	private static       MongoClient               mongoClient  = MongoClients.create(uriString);
+	private static       MongoClient               mongoClient      = MongoClients.create(uriString);
 	@NotNull
-	private static       MongoDatabase             botData      = mongoClient.getDatabase("Qev");
+	private static       MongoDatabase             botData          = mongoClient.getDatabase("Qev");
 	@NotNull
-	private static       MongoCollection<Document> userData     = botData.getCollection("UserData");
+	private static       MongoCollection<Document> userData         = botData.getCollection("UserData");
 	
 	public MongoDBInterface() {
 		initialize();
