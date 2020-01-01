@@ -19,9 +19,9 @@
 
 package com.solostudios.qev.core.command.handler;
 
-import com.solostudios.qev.Qev;
 import com.solostudios.qev.core.command.handler.abstracts.AbstractCategory;
 import com.solostudios.qev.core.command.handler.abstracts.AbstractCommand;
+import com.solostudios.qev.core.main.Qev;
 import javassist.bytecode.DuplicateMemberException;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;

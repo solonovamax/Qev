@@ -29,15 +29,6 @@ import java.awt.*;
 
 
 public class PingCommand extends AbstractCommand {
-	
-	private static final String[] pingMessages = new String[]{
-			"First ping",
-			"Second Ping",
-			"Third Ping",
-			"Fourth Ping"
-	};
-	
-	
 	public PingCommand() {
 		super("ping");
 		this.setAliases("p");

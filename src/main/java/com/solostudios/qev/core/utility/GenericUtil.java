@@ -1,8 +1,7 @@
 package com.solostudios.qev.core.utility;
 
-import com.solostudios.qev.Qev;
+import com.solostudios.qev.core.main.Qev;
 import net.dv8tion.jda.api.JDA;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;

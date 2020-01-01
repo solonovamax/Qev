@@ -19,10 +19,10 @@
 
 package com.solostudios.qev.core.command.handler.abstracts;
 
-import com.solostudios.qev.Qev;
 import com.solostudios.qev.core.command.handler.ArgumentContainer;
 import com.solostudios.qev.core.exceptions.IllegalArgumentException;
 import com.solostudios.qev.core.exceptions.IllegalInputException;
+import com.solostudios.qev.core.main.Qev;
 import com.solostudios.qev.core.utility.MessageUtilities;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;

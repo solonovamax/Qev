@@ -19,12 +19,12 @@
 
 package com.solostudios.qev.commands.meta;
 
-import com.solostudios.qev.Qev;
 import com.solostudios.qev.core.command.handler.ArgumentContainer;
 import com.solostudios.qev.core.command.handler.CommandHandler;
 import com.solostudios.qev.core.command.handler.abstracts.AbstractCommand;
 import com.solostudios.qev.core.database.MongoDBInterface;
 import com.solostudios.qev.core.exceptions.IllegalInputException;
+import com.solostudios.qev.core.main.Qev;
 import com.solostudios.qev.core.utility.GenericUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;

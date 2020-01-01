@@ -16,7 +16,7 @@ sourceCompatibility = 1.11
 jar {
     manifest {
         attributes "Implementation-Title": "Qev", "Implementation-Version": version
-        attributes "Main-Class": "com.solostudios.qev.Qev"
+        attributes "Main-Class": "com.solostudios.qev.Main"
     }
 }
 

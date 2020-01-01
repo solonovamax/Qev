@@ -19,7 +19,7 @@
 
 package com.solostudios.qev.core.presence;
 
-import com.solostudios.qev.Qev;
+import com.solostudios.qev.core.main.Qev;
 import com.solostudios.qev.core.utility.GenericUtil;
 import net.dv8tion.jda.api.entities.Activity;
 
