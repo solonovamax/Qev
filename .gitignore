@@ -29,3 +29,5 @@ hs_err_pid*
 .idea/workspace.xml
 settings.json
 **/out/
+/src/main/resources/default.properties
+/src/main/resources/app.properties
