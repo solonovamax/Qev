@@ -14,17 +14,6 @@
  *       You should have received a copy of the GNU General Public License
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-group = "com.solostudios"
-plugins {
-    id "java"
-    id "maven"
-    id "idea"
-    id "com.github.johnrengelman.shadow" version "5.2.0"
-}
-
-version = "2.0.36"
-
-
 plugins {
     id "java"
     id "maven"
