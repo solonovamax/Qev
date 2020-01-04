@@ -64,5 +64,12 @@ processResources {
     ant.propertyfile(
             file: "src/main/resources/default.properties") {
         entry(key: "version", value: version)
+        entry(key: "defaultPrefix", value: "!")
+        entry(key: "supportServer", value: "YFSQ4cF")
+        entry(key: "botOwner", value: 195735703726981120)
+        entry(key: "botAdmins", value: "195735703726981120,525119630470152212")
+        entry(key: "debug", value: false)
+        entry(key: "githubUsername", value: "solonovamax")
+        entry(key: "githubRepository", value: "Qev")
     }
 }
