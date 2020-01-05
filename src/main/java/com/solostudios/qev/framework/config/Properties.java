@@ -23,6 +23,8 @@
 
 package com.solostudios.qev.framework.config;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,22 +37,31 @@ public class Properties {
 	
 	public Properties(String propertyDefault) throws IOException, NullPointerException {
 		java.util.Properties defaultProperties = new java.util.Properties();
-		defaultProperties.load(this.getClass().getClassLoader().getResourceAsStream(propertyDefault));
+		loadNativeProperty(defaultProperties, propertyDefault);
 		
 		properties = new java.util.Properties(defaultProperties);
+	}
+	
+	protected void loadNativeProperty(java.util.Properties propertiesObject, String propertyFileName) throws IOException, NullPointerException {
+		propertiesObject.load(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyFileName)));
 	}
 	
 	public Properties() {
 		properties = new java.util.Properties();
 	}
 	
-	protected void loadProperty(ClassLoader classLoader, String propertyFileName) throws IOException, NullPointerException {
-		properties.load(Objects.requireNonNull(classLoader.getResourceAsStream(propertyFileName)));
+	protected void loadNativeProperty(String propertyFileName) throws IOException, NullPointerException {
+		properties.load(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyFileName)));
+	}
+	
+	protected void loadProperty(String propertyFileName) throws IOException, NullPointerException {
+		properties.load(new FileInputStream(new File(propertyFileName)));
 	}
 	
 	List<String> getPropertyAsList(String property) {
-		return ((property != null) || (property.length() > 0))
-			   ? Arrays.asList(property.split("\\s*,\\s*"))
+		String propertyList = properties.getProperty(property);
+		return (propertyList != null && propertyList.length() > 0)
+			   ? Arrays.asList(propertyList.split("\\s*,\\s*"))
 			   : Collections.emptyList();
 	}
 }

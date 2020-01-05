@@ -44,7 +44,8 @@ public class AppProperties extends Properties {
 	private AppProperties() throws IOException {
 		
 		super("default.properties");
-		loadProperty(getClass().getClassLoader(), "app.properties");
+		loadProperty("app.properties");
+		
 		
 		version = getProperty("version");
 		defaultPrefix = getProperty("defaultPrefix");
@@ -52,8 +53,10 @@ public class AppProperties extends Properties {
 		botAdminList = getPropertyAsList("botAdmins");
 		botOwner = getProperty("botOwner");
 		supportServer = getProperty("supportServer");
-		github = getProperty("github");
+		github = getProperty("githubUsername") + "/" + getProperty("githubRepository");
 		debug = GenericUtil.getBoolean(getProperty("debug"));
+		
+		logger.info(botAdminList.toString());
 		
 		
 		for (String stringPropertyName : properties.stringPropertyNames()) {
