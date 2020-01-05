@@ -27,15 +27,12 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.json.JSONObject;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -64,6 +61,10 @@ public class Qev {
 	 */
 	public static final  ScheduledExecutorService executor          = Executors.newScheduledThreadPool(1 + shardCount);
 	/**
+	 * List of shards that can be used to get things like user count.
+	 */
+	public static final  LinkedList<JDA>          shardList         = new LinkedList<>();
+	/**
 	 * Logger for the Qev main class. Build using SLF4J libraries
 	 */
 	private final static Logger                   logger            = LoggerFactory.getLogger(Qev.class);
@@ -81,17 +82,16 @@ public class Qev {
 	 * <p>
 	 * I'm going to eventually switch much of the logging over to requiring debug to be true.
 	 */
-	public static       boolean         DEBUG;
+	public static        boolean                  DEBUG;
 	/**
 	 * Stores the ID of the bot owner
 	 */
 	public static        String                   BOT_OWNER;
 	public static        List<String>             BOT_ADMINS;
-	public static       String          BOT_OWNER;
 	/**
 	 * Stores the support server invite url.
 	 */
-	public static       String          SUPPORT_SERVER;
+	public static        String                   SUPPORT_SERVER;
 	/**
 	 * Stores the current version of the bot.
 	 */
@@ -100,11 +100,7 @@ public class Qev {
 	 * This is the JDABuilder that is used to create all the shards of the bot.
 	 */
 	@SuppressWarnings("FieldCanBeLocal")
-	private static      JDABuilder      shardBuilder;
-	/**
-	 * List of shards that can be used to get things like user count.
-	 */
-	public static final LinkedList<JDA> shardList = new LinkedList<>();
+	private static       JDABuilder               shardBuilder;
 	
 	/**
 	 * Main class where everything is run.
