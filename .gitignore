@@ -31,3 +31,4 @@ settings.json
 **/out/
 /src/main/resources/default.properties
 /src/main/resources/app.properties
+/app.properties
