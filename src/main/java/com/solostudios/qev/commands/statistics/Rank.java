@@ -1,6 +1,5 @@
 /*
- *
- * Copyright 2016 2019 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2020 solonovamax <solonovamax@12oclockpoint.com>
  *
  *       This program is free software: you can redistribute it and/or modify
  *       it under the terms of the GNU General Public License as published by
@@ -14,16 +13,15 @@
  *
  *       You should have received a copy of the GNU General Public License
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 package com.solostudios.qev.commands.statistics;
 
 import com.solostudios.qev.core.command.handler.ArgumentContainer;
 import com.solostudios.qev.core.command.handler.abstracts.AbstractCommand;
-import com.solostudios.qev.core.database.MongoDBInterface;
 import com.solostudios.qev.core.exceptions.IllegalInputException;
 import com.solostudios.qev.core.main.LevelCard;
+import com.solostudios.qev.core.main.Qev;
 import com.solostudios.qev.core.main.UserStats;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -75,7 +73,7 @@ public class Rank extends AbstractCommand {
 		}
 		
 		@SuppressWarnings("unchecked")
-		LinkedHashMap<String, Integer> leaderboard = (LinkedHashMap) MongoDBInterface.get((guild, ignore, ex) -> {
+		LinkedHashMap<String, Integer> leaderboard = (LinkedHashMap) Qev.databaseInterface.get((guild, ignore, ex) -> {
 			LinkedHashMap<String, Integer> leaderBoard = new LinkedHashMap<>();
 			for (Map.Entry<String, Object> entry : guild.entrySet()) {
 				if (!(entry.getValue() instanceof Document)) {
@@ -109,7 +107,7 @@ public class Rank extends AbstractCommand {
 			}
 			
 			
-			UserStats u = new UserStats(MongoDBInterface.getGuildDocument(event.getGuild().getIdLong()), user);
+			UserStats u = new UserStats(Qev.databaseInterface.getGuildDocument(event.getGuild().getIdLong()), user);
 			
 			try {
 				levelCard = LevelCard.makeLevelCard(user, u.getLevelXP(), u.getXpToNextLevel(), u.getLevel(), nOfUsers,

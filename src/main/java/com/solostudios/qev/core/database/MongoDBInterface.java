@@ -1,6 +1,5 @@
 /*
- *
- * Copyright 2016 2019 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2020 solonovamax <solonovamax@12oclockpoint.com>
  *
  *       This program is free software: you can redistribute it and/or modify
  *       it under the terms of the GNU General Public License as published by
@@ -14,7 +13,6 @@
  *
  *       You should have received a copy of the GNU General Public License
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 package com.solostudios.qev.core.database;
@@ -25,6 +23,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.model.UpdateOptions;
+import com.solostudios.qev.core.main.Qev;
 import com.solostudios.qev.core.main.UserStats;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
@@ -42,6 +41,7 @@ import java.util.concurrent.Exchanger;
 
 
 public class MongoDBInterface {
+	public static final  String                    guildDataVersion = "1.1.0";
 	public static final  String                    userDataVersion  = "1.1.1";
 	public static final  Document                  newUserData      = new Document()
 			.append("version", userDataVersion)
@@ -57,9 +57,6 @@ public class MongoDBInterface {
 			.append("softBanLength", 0L)
 			.append("muteTime", 0L)
 			.append("muteLength", 0L);
-	@SuppressWarnings("WeakerAccess")
-	public static final  String                    guildDataVersion = "1.1.0";
-	@SuppressWarnings("WeakerAccess")
 	public static final  Document                  newGuildData     = new Document()
 			.append("version", guildDataVersion)
 			.append("guild", 0L)
@@ -76,86 +73,26 @@ public class MongoDBInterface {
 	@NotNull
 	private static       MongoCollection<Document> userData         = botData.getCollection("UserData");
 	
-	public MongoDBInterface() {
+	MongoJobQueue jobQueue;
+	
+	Qev qev;
+	
+	public MongoDBInterface(Qev qev) {
+		this.qev = qev;
 		initialize();
 	}
 	
-	public static void set(MongoSetOperation op, Long guild, Long userID) {
-		MongoJobQueue.add(op, userData, guild, userID);
-	}
-	
-	public static void set(MongoSetOperation op, Long guildID, Long userID, Exchanger ex) {
-		MongoJobQueue.add(op, userData, guildID, userID, ex);
-	}
-	
-	public static Object get(MongoGetOperation op, Long guildID, Long userID) {
-		try {
-			return op.run(getGuildDocument(guildID), userID, new Exchanger());
-		} catch (InterruptedException e) {
-			return null;
-		}
-	}
-	
-	public static Document getGuildDocument(Long guildID) {
-		if (!guildExists(guildID)) {
-			addGuild(guildID);
-		}
-		return userData.find(new Document("guild", guildID)).first();
-	}
-	
-	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
-	private static boolean guildExists(Long guildID) {
-		try {
-			updateGuild(guildID);
-		} catch (InterruptedException ignored) {
-		}
-		return userData.find(new Document("guild", guildID)).first() != null;
-	}
-	
-	private static void addGuild(Long guild) {
-		MongoDBInterface.set((collection, guildID, ignore, ex) -> {
-			Document futureGuild = new Document(MongoDBInterface.newGuildData);
-			futureGuild.replace("guild", guild);
-			collection.insertOne(futureGuild);
-		}, guild, 0L);
-	}
-	
 	private void initialize() {
-		new MongoJobQueue();
+		jobQueue = new MongoJobQueue(qev);
+		
 		try {
-			updateGuild(0L);
+			this.updateGuild(0L);
 		} catch (InterruptedException ignored) {
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static <T> T get(MongoGetOperation op, Long guildID, Long userID, Class<T> clazz) {
-		try {
-			return (T) op.run(getGuildDocument(guildID), userID, new Exchanger());
-		} catch (InterruptedException | ClassCastException e) {
-			return null;
-		}
-	}
-	
-	public static Object get(MongoGetOperation op, Long guildID, Long userID, Exchanger ex) {
-		try {
-			return op.run(getGuildDocument(guildID), userID, ex);
-		} catch (InterruptedException e) {
-			return null;
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static <T> T get(MongoGetOperation op, Long guildID, Long userID, Exchanger ex, Class<T> clazz) {
-		try {
-			return (T) op.run(getGuildDocument(guildID), userID, ex);
-		} catch (InterruptedException e) {
-			return null;
 		}
 	}
 	
 	@SuppressWarnings({"unchecked", "UnusedReturnValue"})
-	private static Document updateGuild(Long guildID) throws InterruptedException {
+	private Document updateGuild(Long guildID) throws InterruptedException {
 		Exchanger<? extends Document> exchanger = new Exchanger<>();
 		MongoJobQueue.update((userData, gID, uID, ex) -> {
 			Document nGData = newGuildData;
@@ -204,7 +141,7 @@ public class MongoDBInterface {
 		
 		Guild     guild     = messageReceivedEvent.getGuild();
 		User      author    = messageReceivedEvent.getAuthor();
-		UserStats userStats = new UserStats(getGuildDocument(guild.getIdLong()), author.getIdLong());
+		UserStats userStats = new UserStats(Qev.databaseInterface.getGuildDocument(guild.getIdLong()), author.getIdLong());
 		
 		if (System.currentTimeMillis() > (userStats.getLastMessageTime() + (1000 * 60))) {
 			logger.debug("Adding random amount of xp to user {}", author.getAsTag());
@@ -216,23 +153,89 @@ public class MongoDBInterface {
 	}
 	
 	public static void guildJoinEvent(@NotNull GuildJoinEvent guildJoinEvent) {
-		if (!guildExists(guildJoinEvent.getGuild().getIdLong())) {
-			addGuild(guildJoinEvent.getGuild().getIdLong());
+		if (!Qev.databaseInterface.guildExists(guildJoinEvent.getGuild().getIdLong())) {
+			Qev.databaseInterface.addGuild(guildJoinEvent.getGuild().getIdLong());
 		}
 	}
 	
 	public static void guildReadyEvent(@NotNull GuildReadyEvent guildReadyEvent) {
-		if (!guildExists(guildReadyEvent.getGuild().getIdLong())) {
-			addGuild(guildReadyEvent.getGuild().getIdLong());
+		if (!Qev.databaseInterface.guildExists(guildReadyEvent.getGuild().getIdLong())) {
+			Qev.databaseInterface.addGuild(guildReadyEvent.getGuild().getIdLong());
 		}
 	}
 	
-	public static String getPrefix(Long guild) {
-		return getGuildDocument(guild).getString("prefix");
+	public void set(MongoSetOperation op, Long guildID, Long userID, Exchanger ex) {
+		MongoJobQueue.add(op, userData, guildID, userID, ex);
 	}
 	
-	public static void setPrefix(Long guild, String prefix) {
-		MongoDBInterface.set((userData, guildID, userID, ex) -> {
+	public Object get(MongoGetOperation op, Long guildID, Long userID) {
+		try {
+			return op.run(this.getGuildDocument(guildID), userID, new Exchanger());
+		} catch (InterruptedException e) {
+			return null;
+		}
+	}
+	
+	public Document getGuildDocument(Long guildID) {
+		if (!this.guildExists(guildID)) {
+			this.addGuild(guildID);
+		}
+		return userData.find(new Document("guild", guildID)).first();
+	}
+	
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
+	private boolean guildExists(Long guildID) {
+		try {
+			this.updateGuild(guildID);
+		} catch (InterruptedException ignored) {
+		}
+		return userData.find(new Document("guild", guildID)).first() != null;
+	}
+	
+	private void addGuild(Long guild) {
+		this.set((collection, guildID, ignore, ex) -> {
+			Document futureGuild = new Document(MongoDBInterface.newGuildData);
+			futureGuild.replace("guild", guild);
+			collection.insertOne(futureGuild);
+		}, guild, 0L);
+	}
+	
+	public void set(MongoSetOperation op, Long guild, Long userID) {
+		MongoJobQueue.add(op, userData, guild, userID, new Exchanger());
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T get(MongoGetOperation op, Long guildID, Long userID, Class<T> clazz) {
+		try {
+			return (T) op.run(this.getGuildDocument(guildID), userID, new Exchanger());
+		} catch (InterruptedException | ClassCastException e) {
+			return null;
+		}
+	}
+	
+	public Object get(MongoGetOperation op, Long guildID, Long userID, Exchanger ex) {
+		try {
+			return op.run(this.getGuildDocument(guildID), userID, ex);
+		} catch (InterruptedException e) {
+			return null;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T get(MongoGetOperation op, Long guildID, Long userID, Exchanger ex, Class<T> clazz) {
+		try {
+			return (T) op.run(this.getGuildDocument(guildID), userID, ex);
+		} catch (InterruptedException e) {
+			return null;
+		}
+	}
+	
+	public String getPrefix(Long guild) {
+		return this.getGuildDocument(guild).getString("prefix");
+	}
+	
+	public void setPrefix(Long guild, String prefix) {
+		this.set((userData, guildID, userID, ex) -> {
 			Document newGuildData = userData.find(new Document("guild", guildID)).first();
 			if (newGuildData != null) {
 				newGuildData.put("prefix", prefix);

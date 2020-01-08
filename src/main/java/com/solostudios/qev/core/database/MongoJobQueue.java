@@ -1,6 +1,5 @@
 /*
- *
- * Copyright 2016 2019 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2020 solonovamax <solonovamax@12oclockpoint.com>
  *
  *       This program is free software: you can redistribute it and/or modify
  *       it under the terms of the GNU General Public License as published by
@@ -14,13 +13,13 @@
  *
  *       You should have received a copy of the GNU General Public License
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 package com.solostudios.qev.core.database;
 
 import com.mongodb.client.MongoCollection;
 import com.solostudios.qev.core.main.Job;
+import com.solostudios.qev.core.main.Qev;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +37,12 @@ public class MongoJobQueue {
 	private static Queue<Job<MongoSetOperation>> jobQueue = new PriorityQueue<>(20);
 	private final  Logger                        logger   = LoggerFactory.getLogger(this.getClass());
 	
+	Qev qev;
+	
 	@SuppressWarnings("WeakerAccess")
-	public MongoJobQueue() {
+	public MongoJobQueue(Qev qev) {
+		this.qev = qev;
+		
 		Runnable task = () -> {
 			try {
 				if (jobQueue.size() > 0) {
@@ -62,10 +65,6 @@ public class MongoJobQueue {
 	public static void add(MongoSetOperation op, MongoCollection<Document> userData, Long guildID, Long userID,
 						   Exchanger exchanger) {
 		jobQueue.add(new Job<>(op, Job.Priority.MEDIUM, userData, guildID, userID, exchanger));
-	}
-	
-	public static void add(MongoSetOperation op, MongoCollection<Document> userData, Long guildID, Long userID) {
-		jobQueue.add(new Job<>(op, Job.Priority.MEDIUM, userData, guildID, userID, new Exchanger()));
 	}
 	
 	public static void update(MongoSetOperation op, MongoCollection<Document> userData, Long guildID, Long userID,

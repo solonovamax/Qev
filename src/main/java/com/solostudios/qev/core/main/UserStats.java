@@ -1,6 +1,5 @@
 /*
- *
- * Copyright 2016 2019 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2020 solonovamax <solonovamax@12oclockpoint.com>
  *
  *       This program is free software: you can redistribute it and/or modify
  *       it under the terms of the GNU General Public License as published by
@@ -14,7 +13,6 @@
  *
  *       You should have received a copy of the GNU General Public License
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 package com.solostudios.qev.core.main;
@@ -103,7 +101,7 @@ public class UserStats {
 	@SuppressWarnings("unchecked")
 	private void save() {
 		Exchanger e = new Exchanger();
-		MongoDBInterface.set((userData, guildID, userID, ex) -> {
+		Qev.databaseInterface.set((userData, guildID, userID, ex) -> {
 			try {
 				Document newData   = (Document) ex.exchange(null);
 				Document guildData = userData.find(new Document("guild", guildID)).first();
@@ -151,7 +149,7 @@ public class UserStats {
 		userData.put("xp", getXP() + xp);
 		userData.put("levelXp", getLevelXP() + xp);
 		updateXp();
-		MongoDBInterface.set((collection, guildID, userID, ex) -> {
+		Qev.databaseInterface.set((collection, guildID, userID, ex) -> {
 			
 			Document guildData = collection.find(new Document("guild", guildID)).first();
 			

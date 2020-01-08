@@ -66,10 +66,12 @@ public class Qev {
 	@SuppressWarnings("FieldCanBeLocal")
 	private static       JDABuilder               shardBuilder;
 	
+	public static MongoDBInterface databaseInterface;
+	
 	public Qev() {
 		
 		logger.info("Initializing level handler.");
-		new MongoDBInterface();
+		databaseInterface = new MongoDBInterface(this);
 		
 		//Loads settings from the file.
 		PREFIX = settings.defaultPrefix;
