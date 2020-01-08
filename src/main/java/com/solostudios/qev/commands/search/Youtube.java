@@ -57,7 +57,7 @@ public class Youtube extends AbstractCommand {
 		String urlStart  = "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&order=viewCount&q=";
 		String urlSearch = args.getString("search");
 		String urlEnd = "&type=video&videoDefinition=high&key=" +
-						(Qev.settings != null ? Qev.settings.getString("youtube") : null);
+						(Qev.settings != null ? Qev.settings.tokenList.get("youtube") : null);
 		
 		String url;
 		url = urlStart + URLEncoder.encode(urlSearch, StandardCharsets.UTF_8) + urlEnd;

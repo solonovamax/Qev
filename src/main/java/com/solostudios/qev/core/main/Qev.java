@@ -1,6 +1,5 @@
 /*
- *
- * Copyright 2016 2019 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2020 solonovamax <solonovamax@12oclockpoint.com>
  *
  *       This program is free software: you can redistribute it and/or modify
  *       it under the terms of the GNU General Public License as published by
@@ -14,26 +13,25 @@
  *
  *       You should have received a copy of the GNU General Public License
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 package com.solostudios.qev.core.main;
 
 import com.solostudios.qev.core.command.handler.CommandHandler;
 import com.solostudios.qev.core.command.handler.CommandListener;
+import com.solostudios.qev.core.config.AppProperties;
 import com.solostudios.qev.core.database.MongoDBInterface;
 import com.solostudios.qev.core.events.EventHandler;
 import com.solostudios.qev.core.presence.GameSwitcher;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -42,8 +40,8 @@ import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("WeakerAccess")
 public class Qev {
-	@Nullable
-	public static final  JSONObject               settings              = Settings.get();
+	
+	public static final  AppProperties            settings              = AppProperties.getProperties();
 	public static final  long                     START_TIME            = System.currentTimeMillis();
 	public static final  int                      shardCount            = 3;
 	public static final  ScheduledExecutorService shardPresenceExecutor = Executors.newScheduledThreadPool(shardCount);
@@ -63,7 +61,8 @@ public class Qev {
 	 */
 	public static        String                   BOT_OWNER;
 	public static        String                   SUPPORT_SERVER;
-	public static        String                   VERSION               = "2.0.35";
+	public static        String                   VERSION;
+	public static        List<String>             BOT_ADMINS;
 	@SuppressWarnings("FieldCanBeLocal")
 	private static       JDABuilder               shardBuilder;
 	
@@ -72,22 +71,26 @@ public class Qev {
 		logger.info("Initializing level handler.");
 		new MongoDBInterface();
 		
-		//noinspection ConstantConditions
-		PREFIX = settings.getString("prefix");
-		BOT_OWNER = settings.getString("botOwner");
-		DEBUG = settings.getBoolean("debug");
-		SUPPORT_SERVER = settings.getString("supportServer");
+		//Loads settings from the file.
+		PREFIX = settings.defaultPrefix;
+		BOT_OWNER = settings.botOwner;
+		DEBUG = settings.debug;
+		SUPPORT_SERVER = settings.supportServer;
+		VERSION = settings.version;
+		BOT_ADMINS = settings.botAdminList;
 		
 		
 		logger.debug("Validating Token.");
-		if (settings.getString("token").equals("YOUR-TOKEN-HERE")) {
+		//Check if token exists.
+		if (settings.botToken == null || settings.botToken.equals("")) {
 			logger.error("Please input a valid token!", new IllegalArgumentException());
 			return;
 		}
+		logger.info("Valid Token!");
 		
 		logger.info("Initializing Bot");
 		logger.info("Constructing JDABuilder");
-		shardBuilder = new JDABuilder(settings.getString("token"));
+		shardBuilder = new JDABuilder(settings.botToken);
 		
 		
 		logger.info("Initializing Command Handler");
