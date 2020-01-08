@@ -60,8 +60,8 @@ public class AppProperties extends Properties {
 		
 		
 		for (String stringPropertyName : properties.stringPropertyNames()) {
-			if (stringPropertyName.startsWith("token")) {
-				tokenList.put(stringPropertyName.replaceFirst("token", ""), getProperty(stringPropertyName));
+			if (stringPropertyName.startsWith("token_")) {
+				tokenList.put(stringPropertyName.replaceFirst("token_", ""), getProperty(stringPropertyName));
 			}
 		}
 	}
