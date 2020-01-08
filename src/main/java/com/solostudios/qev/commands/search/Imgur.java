@@ -1,6 +1,5 @@
 /*
- *
- * Copyright 2016 2019 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2020 solonovamax <solonovamax@12oclockpoint.com>
  *
  *       This program is free software: you can redistribute it and/or modify
  *       it under the terms of the GNU General Public License as published by
@@ -14,7 +13,6 @@
  *
  *       You should have received a copy of the GNU General Public License
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 package com.solostudios.qev.commands.search;
@@ -64,7 +62,7 @@ public class Imgur extends AbstractCommand {
 		
 		
 		JSONObject imgurJSON =
-				WebUtilities.readJSONObjectFromUrl(url, Qev.settings != null ? Qev.settings.getString("imgur") : null);
+				WebUtilities.readJSONObjectFromUrl(url, Qev.settings.tokenList.get("imgur"));
 		
 		if ((imgurJSON != null ? imgurJSON.getJSONArray("data").length() : 0) == 0) {
 			event.getChannel().sendMessage("No results found for search " + args.getString("search")).queue();
