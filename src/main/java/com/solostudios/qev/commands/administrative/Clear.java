@@ -1,6 +1,5 @@
 /*
- *
- * Copyright 2016 2019 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2020 solonovamax <solonovamax@12oclockpoint.com>
  *
  *       This program is free software: you can redistribute it and/or modify
  *       it under the terms of the GNU General Public License as published by
@@ -14,13 +13,12 @@
  *
  *       You should have received a copy of the GNU General Public License
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 package com.solostudios.qev.commands.administrative;
 
-import com.solostudios.qev.core.command.handler.ArgumentContainer;
 import com.solostudios.qev.core.command.handler.abstracts.AbstractCommand;
+import com.solostudios.qev.core.command.handler.old.ArgumentContainer;
 import com.solostudios.qev.core.exceptions.IllegalInputException;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;

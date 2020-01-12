@@ -17,8 +17,8 @@
 
 package com.solostudios.qev.core.main;
 
-import com.solostudios.qev.core.command.handler.CommandHandler;
-import com.solostudios.qev.core.command.handler.CommandListener;
+import com.solostudios.qev.core.command.handler.old.CommandHandler;
+import com.solostudios.qev.core.command.handler.old.CommandListener;
 import com.solostudios.qev.core.config.AppProperties;
 import com.solostudios.qev.core.database.MongoDBInterface;
 import com.solostudios.qev.core.events.EventHandler;

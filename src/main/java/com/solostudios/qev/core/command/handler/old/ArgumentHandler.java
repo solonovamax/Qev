@@ -15,27 +15,10 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.commands.administrative;
+package com.solostudios.qev.core.command.handler.old;
 
-import com.solostudios.qev.core.command.handler.abstracts.AbstractCommand;
-import com.solostudios.qev.core.command.handler.old.ArgumentContainer;
-import com.solostudios.qev.core.exceptions.IllegalInputException;
-import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-
-
-public class Mute extends AbstractCommand {
-	public Mute() {
-		super("mute");
-		this.setCategory("Moderation");
-		this.setDescription("Mutes a user.");
-		this.setIsEnabled(false);
-		this.setClientPermissions(Permission.MANAGE_ROLES);
-		this.setUserPermissions(Permission.MANAGE_ROLES);
-	}
-	
-	@Override
-	public void run(MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
+public class ArgumentHandler {
+	public ArgumentHandler() {
 	
 	}
 }
