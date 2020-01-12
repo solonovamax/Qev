@@ -1,6 +1,5 @@
 /*
- *
- * Copyright 2016 2019 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2020 solonovamax <solonovamax@12oclockpoint.com>
  *
  *       This program is free software: you can redistribute it and/or modify
  *       it under the terms of the GNU General Public License as published by
@@ -14,15 +13,14 @@
  *
  *       You should have received a copy of the GNU General Public License
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 package com.solostudios.qev.commands.utility;
 
 import com.solostudios.qev.core.command.handler.abstracts.AbstractCommand;
 import com.solostudios.qev.core.command.handler.old.ArgumentContainer;
-import com.solostudios.qev.core.database.MongoDBInterface;
 import com.solostudios.qev.core.exceptions.IllegalInputException;
+import com.solostudios.qev.core.main.Qev;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -48,12 +46,12 @@ public class Prefix extends AbstractCommand {
 	@Override
 	public void run(MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
 		if (args.has("prefix")) {
-			MongoDBInterface.setPrefix(event.getGuild().getIdLong(), args.getString("prefix"));
+			Qev.databaseInterface.setPrefix(event.getGuild().getIdLong(), args.getString("prefix"));
 		} else {
 			event.getChannel().sendMessage(new EmbedBuilder()
 												   .setTitle(event.getGuild().getName())
 												   .addField("Prefix",
-															 MongoDBInterface.getPrefix(event.getGuild().getIdLong()),
+															 Qev.databaseInterface.getPrefix(event.getGuild().getIdLong()),
 															 false)
 												   .build()).queue();
 		}

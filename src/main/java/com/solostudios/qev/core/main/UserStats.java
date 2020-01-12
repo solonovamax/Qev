@@ -18,7 +18,7 @@
 package com.solostudios.qev.core.main;
 
 import com.mongodb.client.model.ReplaceOptions;
-import com.solostudios.qev.core.database.MongoDBInterface;
+import com.solostudios.qev.core.database.old.MongoDBInterface;
 import net.dv8tion.jda.api.entities.User;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;

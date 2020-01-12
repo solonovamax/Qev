@@ -17,7 +17,7 @@
 
 package com.solostudios.qev.core.events;
 
-import com.solostudios.qev.core.database.MongoDBInterface;
+import com.solostudios.qev.core.database.old.MongoDBInterface;
 import net.dv8tion.jda.api.events.DisconnectEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.ReconnectedEvent;

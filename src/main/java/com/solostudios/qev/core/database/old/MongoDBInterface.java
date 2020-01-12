@@ -15,7 +15,7 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.database;
+package com.solostudios.qev.core.database.old;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;

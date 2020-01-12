@@ -17,7 +17,7 @@
 
 package com.solostudios.qev.core.command.handler.old;
 
-import com.solostudios.qev.core.database.MongoDBInterface;
+import com.solostudios.qev.core.main.Qev;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
@@ -44,7 +44,7 @@ public class CommandListener extends ListenerAdapter {
 			return;
 		}
 		if ((!message.getContentRaw().startsWith("<@" + message.getGuild().getSelfMember().getId() + ">") &&
-			 !message.getContentDisplay().startsWith(MongoDBInterface.getPrefix(event.getGuild().getIdLong())))) {
+			 !message.getContentDisplay().startsWith(Qev.databaseInterface.getPrefix(event.getGuild().getIdLong())))) {
 			return;
 		}
 		
@@ -66,7 +66,7 @@ public class CommandListener extends ListenerAdapter {
 		if (message.getContentRaw().startsWith("<@" + message.getGuild().getSelfMember().getId() + "> ")) {
 			args = message.getContentRaw().toLowerCase().replaceFirst(
 					"<@" + message.getGuild().getSelfMember().getId() + "> ", "").split(" ");
-			args[0] = args[0].replace(MongoDBInterface.getPrefix(event.getGuild().getIdLong()), "").trim();
+			args[0] = args[0].replace(Qev.databaseInterface.getPrefix(event.getGuild().getIdLong()), "").trim();
 			if (args[0].equals("info")) {
 				CommandHandler.parseMessage(event, message, args);
 			} else {
@@ -77,7 +77,7 @@ public class CommandListener extends ListenerAdapter {
 			args = message.getContentRaw().toLowerCase().split(" ");
 		}
 		
-		args[0] = args[0].replace(MongoDBInterface.getPrefix(event.getGuild().getIdLong()), "");
+		args[0] = args[0].replace(Qev.databaseInterface.getPrefix(event.getGuild().getIdLong()), "");
 		
 		CommandHandler.parseMessage(event, message, args);
 	}

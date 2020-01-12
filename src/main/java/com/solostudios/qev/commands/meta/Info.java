@@ -1,6 +1,5 @@
 /*
- *
- * Copyright 2016 2019 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2020 solonovamax <solonovamax@12oclockpoint.com>
  *
  *       This program is free software: you can redistribute it and/or modify
  *       it under the terms of the GNU General Public License as published by
@@ -14,7 +13,6 @@
  *
  *       You should have received a copy of the GNU General Public License
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 package com.solostudios.qev.commands.meta;
@@ -22,7 +20,6 @@ package com.solostudios.qev.commands.meta;
 import com.solostudios.qev.core.command.handler.abstracts.AbstractCommand;
 import com.solostudios.qev.core.command.handler.old.ArgumentContainer;
 import com.solostudios.qev.core.command.handler.old.CommandHandler;
-import com.solostudios.qev.core.database.MongoDBInterface;
 import com.solostudios.qev.core.exceptions.IllegalInputException;
 import com.solostudios.qev.core.main.Qev;
 import com.solostudios.qev.core.utility.GenericUtil;
@@ -77,7 +74,7 @@ public class Info extends AbstractCommand {
 											"[Support Server](" + Qev.SUPPORT_SERVER + ")\n" +
 											"**Commands:** " + CommandHandler.getExecutedCommandList().size())
 							.addField("Prefix",
-									  MongoDBInterface.getPrefix(event.getGuild().getIdLong()),
+									  Qev.databaseInterface.getPrefix(event.getGuild().getIdLong()),
 									  true)
 							.addField("Guild Name", event.getGuild().getName(), true)
 							.addField("Guild Region", event.getGuild().getRegion().getName(),
