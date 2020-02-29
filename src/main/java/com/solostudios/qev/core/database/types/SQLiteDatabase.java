@@ -15,10 +15,15 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.command.handler.old;
+package com.solostudios.qev.core.database.types;
 
-public class ArgumentHandler {
-	public ArgumentHandler() {
-	
-	}
+import com.solostudios.qev.core.database.abstracts.AbstractDatabase;
+
+
+/**
+ * I don't know how to use SQL databases, but I guess I'll have to figure that shit out to make this thing work.
+ * <p>
+ * This is currently just a placeholder class because I'm too lazy to implement it myself/
+ */
+public class SQLiteDatabase implements AbstractDatabase {
 }

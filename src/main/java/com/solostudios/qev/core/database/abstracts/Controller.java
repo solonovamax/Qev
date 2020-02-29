@@ -17,6 +17,6 @@
 
 package com.solostudios.qev.core.database.abstracts;
 
-public interface DatabaseGetOperation {
-	DataContainer get(Long id, DataContainer data);
+public abstract class Controller {
+
 }
