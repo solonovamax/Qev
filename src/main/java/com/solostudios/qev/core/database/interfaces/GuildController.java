@@ -17,13 +17,13 @@
 
 package com.solostudios.qev.core.database.interfaces;
 
+import com.avairebot.utilities.CacheUtil;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import com.solostudios.qev.core.database.abstracts.AbstractDatabase;
 import com.solostudios.qev.core.database.entities.Guild;
-import com.solostudios.qev.core.utility.CacheUtil;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;

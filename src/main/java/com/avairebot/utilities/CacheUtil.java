@@ -19,7 +19,7 @@
  *
  */
 
-package com.solostudios.qev.core.utility;
+package com.avairebot.utilities;
 
 import com.google.common.base.Throwables;
 import com.google.common.cache.Cache;
