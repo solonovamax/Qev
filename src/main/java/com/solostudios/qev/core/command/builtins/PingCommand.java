@@ -1,6 +1,5 @@
 /*
- *
- * Copyright 2016 2019 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2020 solonovamax <solonovamax@12oclockpoint.com>
  *
  *       This program is free software: you can redistribute it and/or modify
  *       it under the terms of the GNU General Public License as published by
@@ -14,7 +13,6 @@
  *
  *       You should have received a copy of the GNU General Public License
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 package com.solostudios.qev.core.command.builtins;
@@ -29,29 +27,23 @@ import java.awt.*;
 
 
 public class PingCommand extends AbstractCommand {
-	public PingCommand() {
-		super("ping");
-		this.setAliases("p");
-		this.setCategory("Utility");
-		this.setDescription("Used to ping the bot to test if it is working.\n" +
-							"Can also be used to see response times of the bot.");
-	}
-	
-	@SuppressWarnings("IntegerDivisionInFloatingPointContext")
-	@Override
-	public void run(MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
-		//Record start time
-		long start = System.nanoTime();
-		
-		//Send event to ping API.
-		event.getChannel().sendTyping().complete();
-		
-		//Get ping time
-		long time = System.nanoTime() - start;
-		
-		//Send ping message
-		event.getChannel().sendMessage(new EmbedBuilder().setAuthor("Ping time to discord API: " + ((float) Math.round(time / 100000)) / 10 + " milliseconds.")
-														 .setColor(Color.GREEN)
-														 .build()).queue();
-	}
+    public PingCommand() {
+        super("ping");
+        this.setAliases("p");
+        this.setCategory("Utility");
+        this.setDescription("Used to ping the bot to test if it is working.\n" +
+                            "Can also be used to see response times of the bot.");
+    }
+    
+    @SuppressWarnings("IntegerDivisionInFloatingPointContext")
+    @Override
+    public void run(MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
+        //Send ping message
+        event.getChannel().sendMessage(new EmbedBuilder().setAuthor("Ping time to discord API: " + ((float) Math.round(
+                event.getJDA().getRestPing().complete() / 100000)) / 10 + " milliseconds.\n" +
+                                                                    "Discord API heartbeat: " + ((float) Math.round(
+                event.getJDA().getGatewayPing() / 100000)) / 10)
+                                                         .setColor(Color.GREEN)
+                                                         .build()).queue();
+    }
 }
