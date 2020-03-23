@@ -15,8 +15,9 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.database.entities;
+package com.solostudios.qev.core.database.impl.entities;
 
+import com.solostudios.qev.core.database.api.GuildData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -24,36 +25,36 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 
-public class Guild implements DataEntity, Iterable<User> {
-    private final long                id;
-    private final long                timeCreated;
-    private final long                timeSaved;
-    private final Map<String, Object> configMap = new HashMap<>();
-    private final Map<Long, User>     userMap   = new HashMap<>();
+public class GuildDataImpl implements GuildData, Iterable<UserDataImpl> {
+    private final long                    id;
+    private final long                    timeCreated;
+    private final long                    timeSaved;
+    private final Map<String, Object>     configMap = new HashMap<>();
+    private final Map<Long, UserDataImpl> userMap   = new HashMap<>();
     
-    public Guild(long id, long timeCreated) {
+    public GuildDataImpl(long id, long timeCreated) {
         this.id = id;
         this.timeCreated = timeCreated;
         this.timeSaved = System.currentTimeMillis();
     }
     
-    public Guild(long id, long timeCreated, long timeSaved) {
+    public GuildDataImpl(long id, long timeCreated, long timeSaved) {
         this.id = id;
         this.timeCreated = timeCreated;
         this.timeSaved = timeSaved;
     }
     
-    public CompletableFuture<User> getUser(long id) {
-    
+    public CompletableFuture<UserDataImpl> getUser(long id) {
+        return null;
     }
     
-    public CompletableFuture<List<User>> getUsers() {
-    
+    public CompletableFuture<List<UserDataImpl>> getUsers() {
+        return null;
     }
     
-    public CompletableFuture<List<User>> getUsersByName(String name) {
-        CompletableFuture<List<User>> userListFuture = new CompletableFuture<>();
-        userListFuture.completeAsync()
+    public CompletableFuture<List<UserDataImpl>> getUsersByName(String name) {
+        CompletableFuture<List<UserDataImpl>> userListFuture = new CompletableFuture<>();
+        //userListFuture.completeAsync();
         return userListFuture;
     }
     
@@ -79,17 +80,17 @@ public class Guild implements DataEntity, Iterable<User> {
     
     @Override
     @NotNull
-    public Iterator<User> iterator() {
+    public Iterator<UserDataImpl> iterator() {
         return userMap.values().iterator();
     }
     
     @Override
-    public void forEach(Consumer<? super User> action) {
+    public void forEach(Consumer<? super UserDataImpl> action) {
         userMap.values().forEach(action);
     }
     
     @Override
-    public Spliterator<User> spliterator() {
+    public Spliterator<UserDataImpl> spliterator() {
         return userMap.values().spliterator();
     }
 }

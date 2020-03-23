@@ -22,23 +22,23 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
-import com.solostudios.qev.core.database.abstracts.AbstractDatabase;
-import com.solostudios.qev.core.database.entities.Guild;
+import com.solostudios.qev.core.database.api.Database;
+import com.solostudios.qev.core.database.api.GuildData;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 
 public class GuildController {
-    public static final Cache<Long, Guild> cache = CacheBuilder.newBuilder()
-                                                               .expireAfterAccess(600,
-                                                                                  TimeUnit.SECONDS) // 10
-                                                               // minutes
-                                                               .removalListener(new GuildRemovalListener())
-                                                               .build();
-    private final       AbstractDatabase   database;
+    public static final Cache<Long, GuildData> cache = CacheBuilder.newBuilder()
+                                                                   .expireAfterAccess(600,
+                                                                                      TimeUnit.SECONDS) // 10
+                                                                   // minutes
+                                                                   .removalListener(new GuildRemovalListener())
+                                                                   .build();
+    private final       Database               database;
     
-    public GuildController(AbstractDatabase database) {
+    public GuildController(Database database) {
         this.database = database;
     }
     
@@ -50,23 +50,23 @@ public class GuildController {
      *
      * @return Returns a future with the guild.
      */
-    public CompletableFuture<Guild> getGuild(long id) {
-        CompletableFuture<Guild> guildFuture = new CompletableFuture<>();
+    public CompletableFuture<GuildData> getGuild(long id) {
+        CompletableFuture<GuildData> guildFuture = new CompletableFuture<>();
         guildFuture.completeAsync(() -> CacheUtil.getUncheckedUnwrapped(cache, id, () -> database.getGuild(id).get()));
         return guildFuture;
     }
     
-    private Guild getGuildIfExists(long id) {
+    private GuildData getGuildIfExists(long id) {
     
     }
     
     
-    private static class GuildRemovalListener implements RemovalListener<Long, Guild> {
+    private static class GuildRemovalListener implements RemovalListener<Long, GuildData> {
         
         @Override
-        public void onRemoval(RemovalNotification<Long, Guild> notification) {
-            Long  guildId = notification.getKey();
-            Guild guild   = notification.getValue();
+        public void onRemoval(RemovalNotification<Long, GuildData> notification) {
+            Long      guildId = notification.getKey();
+            GuildData guild   = notification.getValue();
         }
     }
 }

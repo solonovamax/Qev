@@ -15,29 +15,7 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.database.entities;
+package com.solostudios.qev.core.database.api;
 
-public class Role implements DataEntity {
-    private final long id;
-    private final long timeCreated;
-    
-    public Role(long id, long timeCreated) {
-        this.id = id;
-        this.timeCreated = timeCreated;
-    }
-    
-    @Override
-    public String getId() {
-        return id + "_R";
-    }
-    
-    @Override
-    public long getIdLong() {
-        return id;
-    }
-    
-    @Override
-    public long getTimeCreated() {
-        return timeCreated;
-    }
+public interface UserData extends DataEntity {
 }

@@ -15,17 +15,14 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.database.abstracts;
-
-import com.solostudios.qev.core.database.entities.Guild;
-import com.solostudios.qev.core.database.entities.User;
+package com.solostudios.qev.core.database.api;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 
-public interface AbstractDatabase {
+public interface Database {
     void setConnectionURL(String connectionURL);
     
     /**
@@ -55,7 +52,7 @@ public interface AbstractDatabase {
      *
      * @return Future containing the user.
      */
-    CompletableFuture<User> getUser(long guild, long user);
+    CompletableFuture<UserData> getUser(long guild, long user);
     
     /**
      * Checks to see if the database contains the specified user.
@@ -77,7 +74,7 @@ public interface AbstractDatabase {
      *
      * @return Future with the list of users.
      */
-    CompletableFuture<List<User>> getUsers(long guild);
+    CompletableFuture<List<UserData>> getUsers(long guild);
     
     /**
      * Gets a guild from the database
@@ -87,7 +84,7 @@ public interface AbstractDatabase {
      *
      * @return Future with the guild
      */
-    CompletableFuture<Guild> getGuild(long guild);
+    CompletableFuture<GuildData> getGuild(long guild);
     
     /**
      * Checks if the database contains the specified guild.
@@ -107,7 +104,7 @@ public interface AbstractDatabase {
      * @param user
      *         The user object that is to be saved to the database.
      */
-    void saveUser(long guild, User user);
+    void saveUser(long guild, UserData user);
     
     /**
      * Saves a guild to the database.
@@ -115,12 +112,12 @@ public interface AbstractDatabase {
      * @param guild
      *         The guild that is to be saved to the database.
      */
-    void saveGuild(Guild guild);
+    void saveGuild(GuildData guild);
     
     /**
      * Complete dump of the guild - user pairing in the database.
      *
      * @return Future with all the guild data in the database.
      */
-    CompletableFuture<Map<Guild, List<User>>> dumpData();
+    CompletableFuture<Map<GuildData, List<UserData>>> dumpData();
 }

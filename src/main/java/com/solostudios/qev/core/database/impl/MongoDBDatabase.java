@@ -15,22 +15,12 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.database.entities;
+package com.solostudios.qev.core.database.impl;
 
-public class Settings implements DataEntity {
-    @Override public String getId() {
-        return null;
-    }
-    
-    @Override public long getIdLong() {
-        return 0;
-    }
-    
-    @Override public long getTimeCreated() {
-        return 0;
-    }
-    
-    @Override public long lastTimeSaved() {
-        return 0;
-    }
+import com.mongodb.client.MongoClient;
+import com.solostudios.qev.core.database.api.Database;
+
+
+public class MongoDBDatabase implements Database<MongoClient> {
+
 }

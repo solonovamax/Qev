@@ -15,12 +15,15 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.database.types;
+package com.solostudios.qev.core.database.impl;
 
-import com.mongodb.client.MongoClient;
-import com.solostudios.qev.core.database.abstracts.AbstractDatabase;
+import com.solostudios.qev.core.database.api.Database;
 
 
-public class MongoDBDatabase implements AbstractDatabase<MongoClient> {
-
+/**
+ * I don't know how to use SQL databases, but I guess I'll have to figure that shit out to make this thing work.
+ * <p>
+ * This is currently just a placeholder class because I'm too lazy to implement it myself/
+ */
+public class SQLiteDatabase implements Database {
 }

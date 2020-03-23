@@ -15,36 +15,25 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.database.entities;
+package com.solostudios.qev.core.database.impl.entities;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import com.solostudios.qev.core.database.api.DataEntity;
 
 
-public class User implements DataEntity {
-    private final long                id;
-    private final long                timeCreated;
-    private final Map<String, Object> configMap = new LinkedHashMap<>();
-    private       int                 rawXp;
-    private       long                lastMessageTime;
-    
-    public User(long id, long timeCreated) {
-        this.id = id;
-        this.timeCreated = timeCreated;
+public class Settings implements DataEntity {
+    @Override public String getId() {
+        return null;
     }
     
-    @Override
-    public String getId() {
-        return id + "_U";
+    @Override public long getIdLong() {
+        return 0;
     }
     
-    @Override
-    public long getIdLong() {
-        return id;
+    @Override public long getTimeCreated() {
+        return 0;
     }
     
-    @Override
-    public long getTimeCreated() {
-        return timeCreated;
+    @Override public long lastTimeSaved() {
+        return 0;
     }
 }

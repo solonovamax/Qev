@@ -17,8 +17,8 @@
 
 package com.solostudios.qev.core.database;
 
-import com.solostudios.qev.core.database.abstracts.AbstractDatabase;
-import com.solostudios.qev.core.database.entities.Guild;
+import com.solostudios.qev.core.database.api.Database;
+import com.solostudios.qev.core.database.impl.entities.GuildDataImpl;
 import com.solostudios.qev.core.database.interfaces.GuildController;
 
 import java.util.List;
@@ -26,11 +26,11 @@ import java.util.concurrent.CompletableFuture;
 
 
 public class DatabaseController {
-    private final AbstractDatabase database;
-    private final GuildController  guildController;
+    private final Database        database;
+    private final GuildController guildController;
     
     
-    public DatabaseController(AbstractDatabase database) {
+    public DatabaseController(Database database) {
         this.database = database;
         this.guildController = new GuildController(database);
     }
@@ -43,7 +43,7 @@ public class DatabaseController {
      *
      * @return Returns a future with the guild.
      */
-    public CompletableFuture<Guild> getGuild(long id) {
+    public CompletableFuture<GuildDataImpl> getGuild(long id) {
         return guildController.getGuild(id);
     }
     
@@ -52,7 +52,7 @@ public class DatabaseController {
      *
      * @return Future with a list of all the guilds in the database.
      */
-    public CompletableFuture<List<Guild>> getGuilds() {
+    public CompletableFuture<List<GuildDataImpl>> getGuilds() {
     
     }
     
