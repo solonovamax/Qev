@@ -35,15 +35,15 @@ public class PingCommand extends AbstractCommand {
                             "Can also be used to see response times of the bot.");
     }
     
-    @SuppressWarnings("IntegerDivisionInFloatingPointContext")
     @Override
     public void run(MessageReceivedEvent event, ArgumentContainer args) throws IllegalInputException {
         //Send ping message
-        event.getChannel().sendMessage(new EmbedBuilder().setAuthor("Ping time to discord API: " + ((float) Math.round(
-                event.getJDA().getRestPing().complete() / 100000)) / 10 + " milliseconds.\n" +
-                                                                    "Discord API heartbeat: " + ((float) Math.round(
-                event.getJDA().getGatewayPing() / 100000)) / 10)
-                                                         .setColor(Color.GREEN)
-                                                         .build()).queue();
+        event.getChannel()
+             .sendMessage(new EmbedBuilder().setAuthor("Ping time to discord API: " +
+                                                       event.getJDA().getRestPing().complete() + " milliseconds.\n" +
+                                                       "Ping time for last discord heartbeat: " +
+                                                       event.getJDA().getGatewayPing())
+                                            .setColor(Color.GREEN)
+                                            .build()).queue();
     }
 }

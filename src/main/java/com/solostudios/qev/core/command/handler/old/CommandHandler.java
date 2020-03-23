@@ -79,7 +79,7 @@ public class CommandHandler {
         logger.info("Registering built in commands.");
         
         Reflections builtins =
-                new Reflections("com.solostudios.qev.framework.commands.builtins");
+                new Reflections("com.solostudios.qev.core.command.builtins");
         Set<Class<? extends AbstractCommand>> builtIns = builtins.getSubTypesOf(AbstractCommand.class);
         
         for (Class<? extends AbstractCommand> command : builtIns) {
