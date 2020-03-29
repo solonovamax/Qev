@@ -18,6 +18,12 @@
 package com.solostudios.qev.core.database.impl;
 
 import com.solostudios.qev.core.database.api.Database;
+import com.solostudios.qev.core.entities.InternalGuild;
+import com.solostudios.qev.core.entities.User;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 
 /**
@@ -26,4 +32,63 @@ import com.solostudios.qev.core.database.api.Database;
  * This is currently just a placeholder class because I'm too lazy to implement it myself/
  */
 public class SQLiteDatabase implements Database {
+    @Override
+    public void setConnectionURL(String connectionURL) {
+    
+    }
+    
+    @Override
+    public void init() {
+    
+    }
+    
+    @Override
+    public void openConnection() {
+    
+    }
+    
+    @Override
+    public Object getClient() {
+        return null;
+    }
+    
+    @Override
+    public CompletableFuture<User> getUser(long guild, long user) {
+        return null;
+    }
+    
+    @Override
+    public boolean hasUser(long guild, long user) {
+        return false;
+    }
+    
+    @Override
+    public CompletableFuture<List<User>> getUsers(long guild) {
+        return null;
+    }
+    
+    @Override
+    public CompletableFuture<InternalGuild> getGuild(long guild) {
+        return null;
+    }
+    
+    @Override
+    public boolean hasGuild(long id) {
+        return false;
+    }
+    
+    @Override
+    public void saveUser(long guild, User user) {
+    
+    }
+    
+    @Override
+    public void saveGuild(InternalGuild internalGuild) {
+    
+    }
+    
+    @Override
+    public CompletableFuture<Map<InternalGuild, List<User>>> dumpData() {
+        return null;
+    }
 }

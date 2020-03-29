@@ -15,25 +15,9 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.database.impl.entities;
-
-import com.solostudios.qev.core.database.api.DataEntity;
+package com.solostudios.qev.core.database.api;
 
 
-public class Settings implements DataEntity {
-    @Override public String getId() {
-        return null;
-    }
-    
-    @Override public long getIdLong() {
-        return 0;
-    }
-    
-    @Override public long getTimeCreated() {
-        return 0;
-    }
-    
-    @Override public long lastTimeSaved() {
-        return 0;
-    }
+public interface Saveable {
+    DataContainer toDataContainer();
 }

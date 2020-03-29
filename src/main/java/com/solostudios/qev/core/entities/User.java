@@ -15,7 +15,21 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.database.api;
+package com.solostudios.qev.core.entities;
 
-public class DatabaseInterface {
+import com.solostudios.qev.core.database.api.DataContainer;
+import com.solostudios.qev.core.database.api.Saveable;
+import net.dv8tion.jda.api.JDA;
+
+
+public class User implements Saveable {
+    
+    public User(JDA jda, InternalGuild internalGuild, long userID) {
+    
+    }
+    
+    @Override
+    public DataContainer toDataContainer() {
+        return null;
+    }
 }

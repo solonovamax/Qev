@@ -15,7 +15,21 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.database.api;
+package com.solostudios.qev.core.entities;
 
-public interface UserData extends DataEntity {
+public interface Entity {
+    /**
+     * This is the numerical ID of the object with an identifier at the end for different types of objects.
+     *
+     * @return The ID of the object + _[identifier]
+     */
+    String getId();
+    
+    /**
+     * This is the raw, un altered id of the object.
+     *
+     * @return The numerical ID of the object. It will contain an ID resulting from the discord API, or 0.
+     */
+    long getIdLong();
+    
 }

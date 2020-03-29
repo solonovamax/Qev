@@ -15,54 +15,50 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.database.abstracts;
+package com.solostudios.qev.core.database.api;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 
-public class DataContainer {
-    private final Map<String, Object> dataMap;
-    
+public class DataContainer extends HashMap<String, Object> {
     public DataContainer() {
-        dataMap = new LinkedHashMap<String, Object>();
-    }
-    
-    public DataContainer(String key, final Object value) {
-        dataMap = new LinkedHashMap<String, Object>();
-        dataMap.put(key, value);
+        super();
     }
     
     public DataContainer(Map<String, Object> map) {
-        dataMap = new LinkedHashMap<String, Object>(map);
-    }
-    
-    public DataContainer(Set<Map.Entry<String, Object>> entrySet) {
-        dataMap = new LinkedHashMap<>();
-        entrySet.forEach((entry) -> {
-            dataMap.put(entry.getKey(), entry.getValue());
-        });
-    }
-    
-    public DataContainer append(final String key, final Object value) {
-        dataMap.put(key, value);
-        return this;
+        super(map);
     }
     
     public <T> T get(final String key, final Class<T> clazz) {
         if (clazz == null) {
             throw new IllegalArgumentException("Class cannot be null!");
         }
-        return clazz.cast(dataMap.get(key));
+        return clazz.cast(get(key));
     }
     
     public Integer getInteger(final String key) {
         return (Integer) get(key);
     }
     
-    public Object get(String key) {
-        return dataMap.get(key);
+    public Object put(String key, Object value) {
+        if (value instanceof Saveable) {
+            value = ((Saveable) value).toDataContainer();
+        }
+        return super.put(key, value);
+    }
+    
+    public DataContainer getDataContainer(final String key) {
+        return (DataContainer) get(key);
+    }
+    
+    public <T, V> Map<T, V> getMap(final String key) {
+        return (Map<T, V>) get(key);
+    }
+    
+    public <T> Set<T> getSet(final String key) {
+        return (Set<T>) get(key);
     }
     
     public Long getLong(final String key) {
@@ -80,13 +76,4 @@ public class DataContainer {
     public Boolean getBoolean(final String key) {
         return (Boolean) get(key);
     }
-    
-    public boolean containsValue(final Object value) {
-        return dataMap.containsValue(value);
-    }
-    
-    public boolean containsKey(final Object key) {
-        return dataMap.containsKey(key);
-    }
-    
 }

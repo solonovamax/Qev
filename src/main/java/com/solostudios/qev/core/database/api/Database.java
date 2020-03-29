@@ -17,6 +17,9 @@
 
 package com.solostudios.qev.core.database.api;
 
+import com.solostudios.qev.core.entities.InternalGuild;
+import com.solostudios.qev.core.entities.User;
+
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -52,7 +55,7 @@ public interface Database {
      *
      * @return Future containing the user.
      */
-    CompletableFuture<UserData> getUser(long guild, long user);
+    CompletableFuture<User> getUser(long guild, long user);
     
     /**
      * Checks to see if the database contains the specified user.
@@ -74,7 +77,7 @@ public interface Database {
      *
      * @return Future with the list of users.
      */
-    CompletableFuture<List<UserData>> getUsers(long guild);
+    CompletableFuture<List<User>> getUsers(long guild);
     
     /**
      * Gets a guild from the database
@@ -84,7 +87,7 @@ public interface Database {
      *
      * @return Future with the guild
      */
-    CompletableFuture<GuildData> getGuild(long guild);
+    CompletableFuture<InternalGuild> getGuild(long guild);
     
     /**
      * Checks if the database contains the specified guild.
@@ -104,20 +107,20 @@ public interface Database {
      * @param user
      *         The user object that is to be saved to the database.
      */
-    void saveUser(long guild, UserData user);
+    void saveUser(long guild, User user);
     
     /**
      * Saves a guild to the database.
      *
-     * @param guild
+     * @param internalGuild
      *         The guild that is to be saved to the database.
      */
-    void saveGuild(GuildData guild);
+    void saveGuild(InternalGuild internalGuild);
     
     /**
      * Complete dump of the guild - user pairing in the database.
      *
      * @return Future with all the guild data in the database.
      */
-    CompletableFuture<Map<GuildData, List<UserData>>> dumpData();
+    CompletableFuture<Map<InternalGuild, List<User>>> dumpData();
 }

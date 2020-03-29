@@ -15,29 +15,27 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.database.interfaces;
+package com.solostudios.qev.core.database.api;
 
 import com.avairebot.utilities.CacheUtil;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
-import com.solostudios.qev.core.database.api.Database;
 import com.solostudios.qev.core.entities.InternalGuild;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 
-public class GuildController implements Cloneable {
-    public static final Cache<Long, InternalGuild> cache = CacheBuilder.newBuilder()
-                                                                       .expireAfterAccess(600, TimeUnit.SECONDS)
-                                                                       .removalListener(
-                                                                               new GuildRemovalListener())
-                                                                       .build();
+public class DatabaseAPI {
+    public static final Cache<Long, InternalGuild> guildCache = CacheBuilder.newBuilder()
+                                                                            .expireAfterAccess(600, TimeUnit.SECONDS)
+                                                                            .removalListener(new GuildRemovalListener())
+                                                                            .build();
     private final       Database                   database;
     
-    public GuildController(Database database) {
+    public DatabaseAPI(Database database) {
         this.database = database;
     }
     
@@ -51,12 +49,9 @@ public class GuildController implements Cloneable {
      */
     public CompletableFuture<InternalGuild> getGuild(long id) {
         CompletableFuture<InternalGuild> guildFuture = new CompletableFuture<>();
-        guildFuture.completeAsync(() -> CacheUtil.getUncheckedUnwrapped(cache, id, () -> database.getGuild(id).get()));
+        guildFuture.completeAsync(
+                () -> CacheUtil.getUncheckedUnwrapped(guildCache, id, () -> database.getGuild(id).get()));
         return guildFuture;
-    }
-    
-    public void saveGuild(long id) {
-    
     }
     
     private InternalGuild getGuildIfExists(long id) {
