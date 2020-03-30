@@ -20,22 +20,21 @@ package com.solostudios.qev.core.entities;
 import com.solostudios.qev.core.database.api.DataContainer;
 import com.solostudios.qev.core.database.api.Saveable;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Guild;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 
-public class InternalGuild implements Saveable {
-    private final JDA             jda;
-    private final long            id;
-    private final Guild           jdaGuild;
-    private final Map<Long, User> userMap;
-    private final Map<Long, Role> roleMap;
-    private       String          prefix;
+public class Guild implements Saveable {
+    private final JDA                                jda;
+    private final long                               id;
+    private final net.dv8tion.jda.api.entities.Guild jdaGuild;
+    private final Map<Long, User>                    userMap;
+    private final Map<Long, Role>                    roleMap;
+    private       String                             prefix;
     
-    private InternalGuild(JDA jda, Guild guild, Long id, DataContainer container) {
+    private Guild(JDA jda, net.dv8tion.jda.api.entities.Guild guild, Long id, DataContainer container) {
         this.jda = jda;
         this.id = id;
         this.jdaGuild = guild;
@@ -44,11 +43,11 @@ public class InternalGuild implements Saveable {
         this.roleMap = new HashMap<>();
         
         container.<Long, DataContainer>getMap("users").forEach((userID, userData) -> {
-            
+        
         });
     }
     
-    private InternalGuild(JDA jda, Long id) {
+    private Guild(JDA jda, Long id) {
         this.jda = jda;
         this.id = id;
         
@@ -57,21 +56,22 @@ public class InternalGuild implements Saveable {
         this.roleMap = new HashMap<>();
     }
     
-    public static InternalGuild guildFromDataContainer(JDA jda, Long id, DataContainer container) {
-        Guild         jdaGuild      = jda.getGuildById(id);
-        InternalGuild internalGuild = new InternalGuild(jda, jdaGuild, id, container);
-        return internalGuild;
+    public static Guild guildFromDataContainer(JDA jda, Long id, DataContainer container) {
+        net.dv8tion.jda.api.entities.Guild jdaGuild = jda.getGuildById(id);
+        Guild                              guild    = new Guild(jda, jdaGuild, id, container);
+        return guild;
     }
     
-    public static InternalGuild guildFromDataContainer(JDA jda, Guild jdaGuild, Long id, DataContainer container) {
-        InternalGuild internalGuild = new InternalGuild(jda, jdaGuild, id, container);
-        return internalGuild;
+    public static Guild guildFromDataContainer(JDA jda, net.dv8tion.jda.api.entities.Guild jdaGuild, Long id,
+                                               DataContainer container) {
+        Guild guild = new Guild(jda, jdaGuild, id, container);
+        return guild;
     }
     
-    public static InternalGuild initNewGuild(JDA jda, Long id) {
-        InternalGuild internalGuild = new InternalGuild(jda, id);
+    public static Guild initNewGuild(JDA jda, Long id) {
+        Guild guild = new Guild(jda, id);
         
-        return internalGuild;
+        return guild;
     }
     
     @Override

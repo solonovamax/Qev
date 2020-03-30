@@ -24,7 +24,7 @@ import net.dv8tion.jda.api.JDA;
 
 public class User implements Saveable {
     
-    public User(JDA jda, InternalGuild internalGuild, long userID) {
+    public User(JDA jda, Guild guild, long userID) {
     
     }
     

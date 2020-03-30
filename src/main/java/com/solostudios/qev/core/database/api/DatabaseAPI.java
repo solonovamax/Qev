@@ -22,18 +22,18 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
-import com.solostudios.qev.core.entities.InternalGuild;
+import com.solostudios.qev.core.entities.Guild;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 
 public class DatabaseAPI {
-    public static final Cache<Long, InternalGuild> guildCache = CacheBuilder.newBuilder()
-                                                                            .expireAfterAccess(600, TimeUnit.SECONDS)
-                                                                            .removalListener(new GuildRemovalListener())
-                                                                            .build();
-    private final       Database                   database;
+    public static final Cache<Long, Guild> guildCache = CacheBuilder.newBuilder()
+                                                                    .expireAfterAccess(600, TimeUnit.SECONDS)
+                                                                    .removalListener(new GuildRemovalListener())
+                                                                    .build();
+    private final       Database           database;
     
     public DatabaseAPI(Database database) {
         this.database = database;
@@ -47,24 +47,24 @@ public class DatabaseAPI {
      *
      * @return Returns a future with the guild.
      */
-    public CompletableFuture<InternalGuild> getGuild(long id) {
-        CompletableFuture<InternalGuild> guildFuture = new CompletableFuture<>();
+    public CompletableFuture<Guild> getGuild(long id) {
+        CompletableFuture<Guild> guildFuture = new CompletableFuture<>();
         guildFuture.completeAsync(
                 () -> CacheUtil.getUncheckedUnwrapped(guildCache, id, () -> database.getGuild(id).get()));
         return guildFuture;
     }
     
-    private InternalGuild getGuildIfExists(long id) {
+    private Guild getGuildIfExists(long id) {
         return null;
     }
     
     
-    private static class GuildRemovalListener implements RemovalListener<Long, InternalGuild> {
+    private static class GuildRemovalListener implements RemovalListener<Long, Guild> {
         
         @Override
-        public void onRemoval(RemovalNotification<Long, InternalGuild> notification) {
-            Long          guildId       = notification.getKey();
-            InternalGuild internalGuild = notification.getValue();
+        public void onRemoval(RemovalNotification<Long, Guild> notification) {
+            Long  guildId = notification.getKey();
+            Guild guild   = notification.getValue();
         }
     }
 }

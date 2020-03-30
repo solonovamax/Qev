@@ -17,7 +17,7 @@
 
 package com.solostudios.qev.core.database.api;
 
-import com.solostudios.qev.core.entities.InternalGuild;
+import com.solostudios.qev.core.entities.Guild;
 import com.solostudios.qev.core.entities.User;
 
 import java.util.List;
@@ -87,7 +87,7 @@ public interface Database {
      *
      * @return Future with the guild
      */
-    CompletableFuture<InternalGuild> getGuild(long guild);
+    CompletableFuture<Guild> getGuild(long guild);
     
     /**
      * Checks if the database contains the specified guild.
@@ -112,15 +112,15 @@ public interface Database {
     /**
      * Saves a guild to the database.
      *
-     * @param internalGuild
+     * @param guild
      *         The guild that is to be saved to the database.
      */
-    void saveGuild(InternalGuild internalGuild);
+    void saveGuild(Guild guild);
     
     /**
      * Complete dump of the guild - user pairing in the database.
      *
      * @return Future with all the guild data in the database.
      */
-    CompletableFuture<Map<InternalGuild, List<User>>> dumpData();
+    CompletableFuture<Map<Guild, List<User>>> dumpData();
 }
