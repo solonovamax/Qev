@@ -1,5 +1,7 @@
 # Qev
 
+**THE DEFAULT BRANCH IS CURRENTLY THE DEV BRANCH (FRAMEWORKV2 BRANCH). THIS IS BECAUSE EVERYTHING IS CURRENTLY BEING REWRITTEN.**
+
 ## Info
 
 Qev is a bot I made to replace the 5+ bots that most servers seem to have on them. It is meant to be the only bot that you need for your server. I am still adding commands to the bot, and if you have any ideas, (no matter how niche) feel free to suggest them! Please see [my contact info](#contact)

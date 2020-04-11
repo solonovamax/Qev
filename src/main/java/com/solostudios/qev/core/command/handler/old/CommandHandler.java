@@ -56,7 +56,7 @@ public class CommandHandler {
         
         for (Class<? extends AbstractCategory> category : Categories) {
             try {
-                logger.debug("Attempting to register {}.", category.getName());
+                logger.debug("Attempting to registerStatic {}.", category.getName());
                 
                 if (Modifier.isAbstract(category.getModifiers())) {
                     logger.debug("Rejecting {}, as it is an abstract class.", category.getName());
