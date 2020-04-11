@@ -18,9 +18,45 @@
 package com.solostudios.qev.core.internal;
 
 import com.solostudios.qev.core.api.Client;
+import com.solostudios.qev.core.database.api.Database;
+import net.dv8tion.jda.api.JDA;
 
 
 public class AutoShardedClient implements Client {
+    @Override
+    public void init() {
+    
+    }
+    
+    @Override
+    public Status getStatus() {
+        return null;
+    }
+    
+    @Override
+    public JDA getJDA() {
+        return null;
+    }
+    
+    @Override
+    public Database getDatabase() {
+        return null;
+    }
+    
+    @Override
+    public long getDatabasePing() {
+        return 0;
+    }
+    
+    @Override
+    public long getDiscordHeartbeat() {
+        return 0;
+    }
+    
+    @Override
+    public long getDiscordRestPing() {
+        return 0;
+    }
     
     //TODO: code here
 }

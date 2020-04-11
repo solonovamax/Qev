@@ -20,15 +20,95 @@ package com.solostudios.qev.core.internal.events;
 import com.solostudios.qev.core.api.events.Event;
 import com.solostudios.qev.core.api.events.EventListener;
 import com.solostudios.qev.core.api.events.EventManager;
+import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.jodah.typetools.TypeResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Consumer;
 
 
 public class DefaultEventManager implements EventManager {
-    Set<Object>                                                  listenerObjects;
-    Map<Class<? extends Event>, List<Consumer<? extends Event>>> listeners;
+    private final Logger      logger = LoggerFactory.getLogger(DefaultEventManager.class);
+    private       Set<Object> listenerObjects;
+    
+    private Map<Class<? extends Event>, List<Consumer<? extends Event>>> listeners;
+    
+    private void buildListeners() {
+        logger.debug("Rebuilding the listener list...");
+        listeners.clear();
+        for (Object listener : listenerObjects) {
+            boolean isClass      = listener instanceof Class;
+            boolean isConsumer   = listener instanceof Consumer;
+            boolean isInterfaced = listener instanceof EventListener;
+            if (isClass) {
+                //noinspection unchecked
+                Class<? extends EventListener> clazz = (Class<? extends EventListener>) listener;
+                /*
+                The following code snipped was taken from the forge EventBus class.
+                It is under the GNU Lesser General Public License.
+                 */
+                Arrays.stream(clazz.getMethods())
+                      .filter(method -> Modifier.isStatic(method.getModifiers()))
+                      .filter(method -> method.isAnnotationPresent(SubscribeEvent.class))
+                      .forEach(method -> {
+                          Class<?>[] parameterTypes = method.getParameterTypes();
+                          if (parameterTypes.length != 1) {
+                              throw new IllegalArgumentException(
+                                      "Method " + method + " has @SubscribeEvent annotation. " +
+                                      "It has " + parameterTypes.length + " arguments, " +
+                                      "but event handler methods require a single argument only."
+                              );
+                          }
+                    
+                          Class<?> eventType = parameterTypes[0];
+                          if (!Event.class.isAssignableFrom(eventType)) {
+                              throw new IllegalArgumentException(
+                                      "Method " + method + " has @SubscribeEvent annotation, " +
+                                      "but takes an argument that is not an Event subtype : " + eventType);
+                          }
+                    
+                          //noinspection unchecked
+                          addListener((Class<? extends Event>) eventType, method);
+                      });
+                /*
+                Okay, the rest of the code probably isn't stolen from anywhere. (I hope)
+                 */
+            } else if (isConsumer) {
+                //noinspection unchecked
+                Consumer<? extends Event> consumer = (Consumer<? extends Event>) listener;
+                //noinspection rawtypes
+                Class resolvedArgument = TypeResolver.resolveRawArguments(Consumer.class,
+                                                                          consumer.getClass())[0];
+                
+                if (resolvedArgument == null || resolvedArgument.equals(TypeResolver.Unknown.class)) {
+                    throw new IllegalStateException(
+                            "Could not resolve argument type for " + consumer.getClass().toString());
+                }
+                //noinspection unchecked
+                if (!resolvedArgument.isAssignableFrom(Object.class)) {//Ignore java.lang.Object.
+                    if (Event.class.isAssignableFrom(resolvedArgument)) {//Check it is a subtype of Event.
+                        addListener(resolvedArgument, consumer);
+                    }
+                }
+            } else if (isInterfaced) {
+                EventListener eventInterface = (EventListener) listener;
+                addListener(Event.class, eventInterface::onEvent);
+            } else {
+                throw new IllegalStateException("If you are seeing this, then something has gone very, very wrong.\n" +
+                                                "Any object in the listenerObjects set should either be a Consumer<? " +
+                                                "extends Event>, the EventListener interface, or a Class<? extends " +
+                                                "EventListener>.");
+            }
+        }
+    }
+    
+    public <T extends Event> void addListener(Class<T> eventClass, Method method) {
+    
+    }
     
     @Override
     public void init() {
@@ -80,7 +160,7 @@ public class DefaultEventManager implements EventManager {
         if ((Class<?>) eventClass == TypeResolver.Unknown.class) {
             throw new IllegalStateException("Failed to resolve consumer event type: " + consumer.toString());
         }
-        registerStatic(eventClass, consumer);
+        addListener(eventClass, consumer);
     }
     
     @Override
@@ -110,7 +190,7 @@ public class DefaultEventManager implements EventManager {
     
     @Override
     public <T extends EventListener> void registerStatic(Class<T> listeners) {
-        
+    
     }
     
     @Override
@@ -119,7 +199,7 @@ public class DefaultEventManager implements EventManager {
     }
     
     @Override
-    public <T extends Event> void registerStatic(Class<T> eventClass, Consumer<T> consumer) {
+    public <T extends Event> void addListener(Class<T> eventClass, Consumer<T> consumer) {
     
     }
     
@@ -136,5 +216,6 @@ public class DefaultEventManager implements EventManager {
     public <T extends Event> void castLambda(Class<T> eventClass, Consumer<T> consumer, Event e) {
         T cast = (T) e;
         consumer.accept(cast);
+    
     }
 }

@@ -49,7 +49,7 @@ public interface EventManager {
     
     <T extends EventListener> void unregisterStatic(Class<T> listeners);
     
-    <T extends Event> void registerStatic(Class<T> eventClass, Consumer<T> consumer);
+    <T extends Event> void addListener(Class<T> eventClass, Consumer<T> consumer);
     
     Map<Class<? extends Event>, List<Consumer<? extends Event>>> getRegisteredEventListeners();
     

@@ -72,5 +72,6 @@ public class ClientBuilder {
     public Client build() {
         if (type == AutoShardedClient.class) {
         }
+        return null;
     }
 }

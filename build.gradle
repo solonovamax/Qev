@@ -24,12 +24,11 @@ plugins {
 
 gradleLint.rules = ['all-dependency']
 
-version = "3.0.0-SNAPSHOT-20.0"
+version = "3.0.0-SNAPSHOT-21.0"
 group = "com.solostudios"
 
 
 sourceCompatibility = 1.11
-
 
 jar {
     manifest {
@@ -42,7 +41,6 @@ shadowJar {
     classifier = "full"
     println("Building ${project.group}:${project.name}:${project.version}")
 }
-
 
 repositories {
     mavenCentral()

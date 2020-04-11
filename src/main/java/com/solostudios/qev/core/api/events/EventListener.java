@@ -18,4 +18,5 @@
 package com.solostudios.qev.core.api.events;
 
 public interface EventListener {
+    void onEvent(Event event);
 }
