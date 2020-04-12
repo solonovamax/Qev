@@ -15,11 +15,21 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.api.events;
+package com.solostudios.qev.core.api.database.structure.usable;
 
-import com.solostudios.qev.core.api.Client;
-
-
-public interface Event {
-    Client getClient();
+public interface Entity {
+    /**
+     * This is the numerical ID of the object with an identifier at the end for different types of objects.
+     *
+     * @return The ID of the object + _[identifier]
+     */
+    String getId();
+    
+    /**
+     * This is the raw, un altered id of the object.
+     *
+     * @return The numerical ID of the object. It will contain an ID resulting from the discord API, or 0.
+     */
+    long getIdLong();
+    
 }

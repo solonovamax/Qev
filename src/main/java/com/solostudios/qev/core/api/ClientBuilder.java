@@ -17,7 +17,7 @@
 
 package com.solostudios.qev.core.api;
 
-import com.solostudios.qev.core.internal.AutoShardedClient;
+import com.solostudios.qev.core.internal.clients.AutoShardedClient;
 import net.dv8tion.jda.api.JDABuilder;
 
 import java.util.Map;

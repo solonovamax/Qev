@@ -15,11 +15,7 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.api.events;
+package com.solostudios.qev.core.api.database.structure.raw;
 
-import com.solostudios.qev.core.api.Client;
-
-
-public interface Event {
-    Client getClient();
+public interface Collection {
 }

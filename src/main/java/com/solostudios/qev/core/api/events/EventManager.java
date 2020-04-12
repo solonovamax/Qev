@@ -17,6 +17,8 @@
 
 package com.solostudios.qev.core.api.events;
 
+import net.dv8tion.jda.api.hooks.IEventManager;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -57,4 +59,6 @@ public interface EventManager {
     Map<Class<? extends Event>, Set<Consumer<? extends Event>>> getRegisteredEventListeners();
     
     void dispatch(Event e);
+    
+    IEventManager getJDAEventManager();
 }

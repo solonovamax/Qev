@@ -22,6 +22,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
+import com.solostudios.qev.core.api.database.Database;
 import com.solostudios.qev.core.entities.Guild;
 
 import java.util.concurrent.CompletableFuture;

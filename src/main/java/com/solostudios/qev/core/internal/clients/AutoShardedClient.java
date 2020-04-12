@@ -15,21 +15,48 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.entities;
+package com.solostudios.qev.core.internal.clients;
 
-public interface Entity {
-    /**
-     * This is the numerical ID of the object with an identifier at the end for different types of objects.
-     *
-     * @return The ID of the object + _[identifier]
-     */
-    String getId();
+import com.solostudios.qev.core.api.Client;
+import com.solostudios.qev.core.api.database.Database;
+import net.dv8tion.jda.api.JDA;
+
+
+public class AutoShardedClient implements Client {
+    @Override
+    public void init() {
     
-    /**
-     * This is the raw, un altered id of the object.
-     *
-     * @return The numerical ID of the object. It will contain an ID resulting from the discord API, or 0.
-     */
-    long getIdLong();
+    }
     
+    @Override
+    public Status getStatus() {
+        return null;
+    }
+    
+    @Override
+    public JDA getJDA() {
+        return null;
+    }
+    
+    @Override
+    public Database getDatabase() {
+        return null;
+    }
+    
+    @Override
+    public long getDatabasePing() {
+        return 0;
+    }
+    
+    @Override
+    public long getDiscordHeartbeat() {
+        return 0;
+    }
+    
+    @Override
+    public long getDiscordRestPing() {
+        return 0;
+    }
+    
+    //TODO: code here
 }

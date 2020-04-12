@@ -17,9 +17,11 @@
 
 package com.solostudios.qev.core.internal.events;
 
+import com.solostudios.qev.core.api.Client;
 import com.solostudios.qev.core.api.events.Event;
 import com.solostudios.qev.core.api.events.EventListener;
 import com.solostudios.qev.core.api.events.EventManager;
+import net.dv8tion.jda.api.hooks.IEventManager;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.jodah.typetools.TypeResolver;
 import org.slf4j.Logger;
@@ -35,6 +37,12 @@ public class DefaultEventManager implements EventManager {
     private       Set<Object> listenerObjects;
     
     private Map<Class<? extends Event>, Set<Consumer<? extends Event>>> listeners;
+    
+    private final Client client;
+    
+    private DefaultEventManager(Client client) {
+        this.client = client;
+    }
     
     @Override
     public void init() {
@@ -142,6 +150,11 @@ public class DefaultEventManager implements EventManager {
         if (eventSet == null) { return;}
         
         eventSet.forEach((Consumer<? extends Event> c) -> castLambda(c, e));
+    }
+    
+    @Override
+    public IEventManager getJDAEventManager() {
+        return client.getJDA().getEventManager();
     }
     
     public final <T extends Event> void castLambda(Consumer<T> consumer, Event e) {

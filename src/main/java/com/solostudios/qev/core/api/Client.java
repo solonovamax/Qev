@@ -17,24 +17,79 @@
 
 package com.solostudios.qev.core.api;
 
-import com.solostudios.qev.core.database.api.Database;
+import com.solostudios.qev.core.api.database.Database;
+import com.solostudios.qev.core.api.events.Event;
+import com.solostudios.qev.core.api.events.EventListener;
+import com.solostudios.qev.core.api.events.EventManager;
+import com.solostudios.qev.core.entities.Guild;
+import com.solostudios.qev.core.entities.User;
 import net.dv8tion.jda.api.JDA;
+
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 
 //TODO: rename client to an interesting name (whatever I decide to name the project)
 public interface Client {
+    
+    /**
+     * Gets the token for your discord bot.
+     *
+     * @return The token for your discord bot.
+     */
+    String getToken();
+    
+    /**
+     * All general initialization is performed within this event.
+     * <p>
+     * This will be called automatically when the client object is constructed.
+     */
     void init();
     
-    /*
-    Possibly remove this? It might not be needed to have a status return.
-    Maybe switch out to event-based system where you can only get the status though the events.
-     */
-    Status getStatus();
+    Client.Status getStatus();
     
+    /**
+     * Method blocks until it reaches the specified status.
+     *
+     * @param status
+     */
+    void awaitStatus(Client.Status status);
+    
+    /**
+     * <b>!!!</b>
+     * Javadoc for this command was copied from the JDA Javadoc, as this just forwards to a JDA method.
+     * <b>!!!</b>
+     * <p>
+     * This method will block until the {@link JDA} has reached the specified connection status.
+     * <p>
+     * Please see {@link JDA#awaitStatus(JDA.Status)} or {@link JDA#awaitStatus(JDA.Status, JDA.Status...)} for more.
+     *
+     * @param status
+     *         The init status to wait for, once JDA has reached the specified stage of the startup cycle this method
+     *         will return.
+     */
+    void awaitJDAStatus(JDA.Status status);
+    
+    /**
+     * This will execute an action when the Client reaches the {@link Client.Status#RUNNING} status.
+     *
+     * @param action
+     *         Consumer to be run when the Client reaches the {@link Client.Status#RUNNING} status.
+     */
+    void onRunning(Consumer<Event> action);
+    
+    /**
+     * This will execute an action when the Client is in the {@link Client.Status#SHUTTING_DOWN} phase.
+     *
+     * @param action
+     *         Consumer to be run when the Client reaches the {@link Client.Status#RUNNING} status.
+     */
+    void onShutdown(Consumer<Event> action);
+    
+    boolean isThreaded();
     
     JDA getJDA();
-    
-    Database getDatabase();
     
     long getDatabasePing();
     
@@ -43,12 +98,75 @@ public interface Client {
     long getDiscordRestPing();
     
     
+    /**
+     * Gets the event manager.
+     *
+     * @return The event manager.
+     */
+    EventManager getEventManager();
+    
+    <T extends EventListener> void addEventListeners(T... listeners);
+    
+    <T extends EventListener> void removeEventListeners(T... listeners);
+    
+    <T extends EventListener> void addEventListener(T listener);
+    
+    <T extends EventListener> void removeEventListener(T listener);
+    
+    <T extends Event> void dispatchEvent(T e);
+    
+    /**
+     * Gets the database.
+     *
+     * @return The database.
+     */
+    Database getDatabase();
+    
+    CompletableFuture<Set<Guild>> getGuilds();
+    
+    CompletableFuture<Set<Guild>> getGuildCache();
+    
+    CompletableFuture<Set<Guild>> getGuildsByName(String name);
+    
+    CompletableFuture<Set<Guild>> getGuildsByName(String name, boolean ignoreCase);
+    
+    CompletableFuture<Guild> getGuildByID(long id);
+    
+    CompletableFuture<Guild> getGuildByID(String id);
+    
+    CompletableFuture<Set<Guild>> getMutualGuilds(User user);
+    
+    CompletableFuture<Set<User>> getUsers();
+    
+    CompletableFuture<Set<User>> getUserCache();
+    
+    CompletableFuture<Set<User>> getUsersByName(String name);
+    
+    CompletableFuture<Set<User>> getUsersByName(String name, boolean ignoreCase);
+    
+    CompletableFuture<User> getUserByID(long id);
+    
+    CompletableFuture<User> getUserByID(String id);
+    
+    CompletableFuture<User> getUserByTag(String username, String discriminator);
+    
+    /**
+     * Checks if the Client is shut down.
+     *
+     * @return
+     */
+    boolean isShutdown();
+    
+    /**
+     * Shuts down the client. <b>ALWAYS</b> call this method before you shut down the bot, or else you may lose some
+     * guild data due to the caches not being saved.
+     */
+    void shutdown();
+    
     enum Status {
         INITIALIZING(true),
-        LOADING_DATABASES(true),
-        LOGGING_IN(true),
+        INITIALIZING_SUBSYSTEMS(true),
         REGISTERING_COMMANDS(true),
-        FINALIZING_INIT(true),
         RUNNING,
         SHUTTING_DOWN,
         HANDLING_CRITICAL_ERROR;
@@ -77,5 +195,6 @@ public interface Client {
         - - - Everything after this is my own code and is under GPLv3 - - -
          */
     }
+    
     
 }
