@@ -17,11 +17,12 @@
 
 package com.solostudios.qev.core.api.events;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 
+@SuppressWarnings({"unused", "unchecked"})
 public interface EventManager {
     void init();
     
@@ -31,7 +32,7 @@ public interface EventManager {
     
     <T extends EventListener> void register(T listener);
     
-    <T extends EventListener> void unregister(T listeners);
+    <T extends EventListener> void unregister(T listener);
     
     <T extends Event> void register(Consumer<T>... consumer);
     
@@ -45,13 +46,15 @@ public interface EventManager {
     
     <T extends EventListener> void unregisterStatic(Class<T>... listeners);
     
-    <T extends EventListener> void registerStatic(Class<T> listeners);
+    <T extends EventListener> void registerStatic(Class<T> listener);
     
-    <T extends EventListener> void unregisterStatic(Class<T> listeners);
+    <T extends EventListener> void unregisterStatic(Class<T> listener);
     
-    <T extends Event> void addListener(Class<T> eventClass, Consumer<T> consumer);
+    //<T extends Event> void addListener(Class<T> eventClass, Consumer<T> consumer); //possibly remove
     
-    Map<Class<? extends Event>, List<Consumer<? extends Event>>> getRegisteredEventListeners();
+    //<T extends Event> void addListener(Class<T> eventClass, Method method); //possibly remove
+    
+    Map<Class<? extends Event>, Set<Consumer<? extends Event>>> getRegisteredEventListeners();
     
     void dispatch(Event e);
 }

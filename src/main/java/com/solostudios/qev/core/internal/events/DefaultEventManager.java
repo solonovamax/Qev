@@ -25,7 +25,6 @@ import net.jodah.typetools.TypeResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Consumer;
@@ -35,9 +34,123 @@ public class DefaultEventManager implements EventManager {
     private final Logger      logger = LoggerFactory.getLogger(DefaultEventManager.class);
     private       Set<Object> listenerObjects;
     
-    private Map<Class<? extends Event>, List<Consumer<? extends Event>>> listeners;
+    private Map<Class<? extends Event>, Set<Consumer<? extends Event>>> listeners;
     
-    private void buildListeners() {
+    @Override
+    public void init() {
+        listeners = new HashMap<>();
+        listenerObjects = new HashSet<>();
+    }
+    
+    @Override
+    public void register(EventListener... listeners) {
+        for (EventListener eventListener : listeners) {
+            register(eventListener);
+        }
+    }
+    
+    @Override
+    public void unregister(EventListener... listeners) {
+        for (EventListener eventListener : listeners) {
+            unregister(eventListener);
+        }
+    }
+    
+    @Override
+    public <T extends EventListener> void register(T listener) {
+        listenerObjects.add(listener);
+        rebuildListeners();
+    }
+    
+    @Override
+    public <T extends EventListener> void unregister(T listener) {
+        listenerObjects.remove(listener);
+        rebuildListeners();
+    }
+    
+    @SafeVarargs
+    @Override
+    public final <T extends Event> void register(Consumer<T>... consumers) {
+        for (Consumer<T> consumer : consumers) {
+            register(consumer);
+        }
+    }
+    
+    @SafeVarargs
+    @Override
+    public final <T extends Event> void unregister(Consumer<T>... consumers) {
+        for (Consumer<T> consumer : consumers) {
+            unregister(consumer);
+        }
+    }
+    
+    @Override
+    public <T extends Event> void register(Consumer<T> consumer) {
+        listenerObjects.add(consumer);
+        rebuildListeners();
+    }
+    
+    @Override
+    public <T extends Event> void unregister(Consumer<T> consumer) {
+        listenerObjects.remove(consumer);
+        rebuildListeners();
+    }
+    
+    @SafeVarargs
+    @Override
+    public final <T extends EventListener> void registerStatic(Class<T>... listeners) {
+        for (Class<T> eventListenerClass : listeners) {
+            if (!EventListener.class.isAssignableFrom(eventListenerClass)) {
+                throw new IllegalStateException("Listeners must extend the EventListener class!");
+            }
+            registerStatic(eventListenerClass);
+        }
+    }
+    
+    @SafeVarargs
+    @Override
+    public final <T extends EventListener> void unregisterStatic(Class<T>... listeners) {
+        for (Class<T> eventListenerClass : listeners) {
+            if (!EventListener.class.isAssignableFrom(eventListenerClass)) {
+                throw new IllegalStateException("Listeners must extend the EventListener class!");
+            }
+            unregisterStatic(eventListenerClass);
+        }
+    }
+    
+    @Override
+    public <T extends EventListener> void registerStatic(Class<T> listener) {
+        listenerObjects.add(listener);
+        rebuildListeners();
+    }
+    
+    @Override
+    public <T extends EventListener> void unregisterStatic(Class<T> listener) {
+        listenerObjects.remove(listener);
+        rebuildListeners();
+    }
+    
+    @Override
+    public Map<Class<? extends Event>, Set<Consumer<? extends Event>>> getRegisteredEventListeners() {
+        return new HashMap<>(listeners);
+    }
+    
+    @Override
+    public void dispatch(Event e) {
+        Class<? extends Event>         eventClass = e.getClass();
+        Set<Consumer<? extends Event>> eventSet   = listeners.get(eventClass);
+        if (eventSet == null) { return;}
+        
+        eventSet.forEach((Consumer<? extends Event> c) -> castLambda(c, e));
+    }
+    
+    public final <T extends Event> void castLambda(Consumer<T> consumer, Event e) {
+        //noinspection unchecked
+        T cast = (T) e;
+        consumer.accept(cast);
+    }
+    
+    private void rebuildListeners() {
         logger.debug("Rebuilding the listener list...");
         listeners.clear();
         for (Object listener : listenerObjects) {
@@ -72,7 +185,13 @@ public class DefaultEventManager implements EventManager {
                           }
                     
                           //noinspection unchecked
-                          addListener((Class<? extends Event>) eventType, method);
+                          addListener((Class<? extends Event>) eventType, event -> {
+                              try {
+                                  method.invoke(event);
+                              } catch (Exception e) {
+                                  throw new RuntimeException("Failed to run method::invoke on an annotated method.", e);
+                              }
+                          });
                       });
                 /*
                 Okay, the rest of the code probably isn't stolen from anywhere. (I hope)
@@ -85,12 +204,15 @@ public class DefaultEventManager implements EventManager {
                                                                           consumer.getClass())[0];
                 
                 if (resolvedArgument == null || resolvedArgument.equals(TypeResolver.Unknown.class)) {
-                    throw new IllegalStateException(
-                            "Could not resolve argument type for " + consumer.getClass().toString());
+                    logger.warn("Could not resolve argument type for " + consumer.getClass().toString() +
+                                ". Assuming default Event class.", new IllegalArgumentException());
+                    resolvedArgument = Event.class;
                 }
+                
                 //noinspection unchecked
                 if (!resolvedArgument.isAssignableFrom(Object.class)) {//Ignore java.lang.Object.
                     if (Event.class.isAssignableFrom(resolvedArgument)) {//Check it is a subtype of Event.
+                        //noinspection unchecked
                         addListener(resolvedArgument, consumer);
                     }
                 }
@@ -98,124 +220,19 @@ public class DefaultEventManager implements EventManager {
                 EventListener eventInterface = (EventListener) listener;
                 addListener(Event.class, eventInterface::onEvent);
             } else {
-                throw new IllegalStateException("If you are seeing this, then something has gone very, very wrong.\n" +
-                                                "Any object in the listenerObjects set should either be a Consumer<? " +
-                                                "extends Event>, the EventListener interface, or a Class<? extends " +
-                                                "EventListener>.");
+                throw new IllegalStateException("If you are seeing this, then something has gone very, very wrong. " +
+                                                "May god have mercy on your soul.\n" +
+                                                "Any object in the listenerObjects set should either be a " +
+                                                "Consumer<? extends Event>, the EventListener interface, or a " +
+                                                "Class<? extends EventListener>.");
             }
         }
     }
     
-    public <T extends Event> void addListener(Class<T> eventClass, Method method) {
-    
-    }
-    
-    @Override
-    public void init() {
-        listeners = new HashMap<>();
-        listenerObjects = new HashSet<>();
-    }
-    
-    @Override
-    public void register(EventListener... listeners) {
-        for (EventListener eventListener : listeners) {
-            register(eventListener);
-        }
-    }
-    
-    @Override
-    public void unregister(EventListener... listeners) {
-        for (EventListener eventListener : listeners) {
-            unregister(eventListener);
-        }
-    }
-    
-    @Override
-    public <T extends EventListener> void register(T listener) {
-    
-    }
-    
-    @Override
-    public <T extends EventListener> void unregister(T listeners) {
-    
-    }
-    
-    @Override
-    public <T extends Event> void register(Consumer<T>... consumers) {
-        for (Consumer<T> consumer : consumers) {
-            register(consumer);
-        }
-    }
-    
-    @Override
-    public <T extends Event> void unregister(Consumer<T>... consumers) {
-        for (Consumer<T> consumer : consumers) {
-            unregister(consumer);
-        }
-    }
-    
-    @Override
-    public <T extends Event> void register(Consumer<T> consumer) {
-        Class<T> eventClass = (Class<T>) TypeResolver.resolveRawArgument(Consumer.class, consumer.getClass());
-        if ((Class<?>) eventClass == TypeResolver.Unknown.class) {
-            throw new IllegalStateException("Failed to resolve consumer event type: " + consumer.toString());
-        }
-        addListener(eventClass, consumer);
-    }
-    
-    @Override
-    public <T extends Event> void unregister(Consumer<T> consumer) {
-    
-    }
-    
-    @Override
-    public <T extends EventListener> void registerStatic(Class<T>... listeners) {
-        for (Class<T> eventListenerClass : listeners) {
-            if (!EventListener.class.isAssignableFrom(eventListenerClass)) {
-                throw new IllegalStateException("Listeners must extend the EventListener class!");
-            }
-            registerStatic(eventListenerClass);
-        }
-    }
-    
-    @Override
-    public <T extends EventListener> void unregisterStatic(Class<T>... listeners) {
-        for (Class<T> eventListenerClass : listeners) {
-            if (!EventListener.class.isAssignableFrom(eventListenerClass)) {
-                throw new IllegalStateException("Listeners must extend the EventListener class!");
-            }
-            unregisterStatic(eventListenerClass);
-        }
-    }
-    
-    @Override
-    public <T extends EventListener> void registerStatic(Class<T> listeners) {
-    
-    }
-    
-    @Override
-    public <T extends EventListener> void unregisterStatic(Class<T> listeners) {
-    
-    }
-    
-    @Override
-    public <T extends Event> void addListener(Class<T> eventClass, Consumer<T> consumer) {
-    
-    }
-    
-    @Override
-    public Map<Class<? extends Event>, List<Consumer<? extends Event>>> getRegisteredEventListeners() {
-        return new HashMap<>(listeners);
-    }
-    
-    @Override
-    public void dispatch(Event e) {
-    
-    }
-    
-    public <T extends Event> void castLambda(Class<T> eventClass, Consumer<T> consumer, Event e) {
-        T cast = (T) e;
-        consumer.accept(cast);
-    
+    private <T extends Event> void addListener(Class<T> eventClass, Consumer<T> consumer) {
+        Set<Consumer<? extends Event>> eventSet = listeners.getOrDefault(eventClass,
+                                                                         new HashSet<>()); //default to HashSet
+        eventSet.add(consumer);
+        listeners.put(eventClass, eventSet);
     }
 }
