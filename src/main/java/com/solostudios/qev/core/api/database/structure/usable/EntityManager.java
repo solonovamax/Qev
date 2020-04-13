@@ -15,8 +15,22 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.api.database;
+package com.solostudios.qev.core.api.database.structure.usable;
 
-public interface DatabaseController {
+import java.util.List;
+import java.util.function.Function;
 
+
+public interface EntityManager<E extends Entity<? extends EntityManager<E>>> {
+    
+    boolean usesCaching();
+    
+    
+    void save(E t);
+    
+    E getEntityByID(long id);
+    
+    E getEntityByFilter(Function<E, Boolean> filter);
+    
+    List<E> getEntitiesByFilter(Function<E, Boolean> filter);
 }

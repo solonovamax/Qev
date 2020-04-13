@@ -15,8 +15,7 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.api.database;
+package com.solostudios.qev.core.api.database.structure.usable;
 
-public interface DatabaseController {
-
+public abstract class GuildManager implements EntityManager<Guild> {
 }

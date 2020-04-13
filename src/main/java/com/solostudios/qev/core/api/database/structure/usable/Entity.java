@@ -17,7 +17,7 @@
 
 package com.solostudios.qev.core.api.database.structure.usable;
 
-public interface Entity {
+public interface Entity<M extends EntityManager<? extends Entity<M>>> {
     /**
      * This is the numerical ID of the object with an identifier at the end for different types of objects.
      *
@@ -31,5 +31,7 @@ public interface Entity {
      * @return The numerical ID of the object. It will contain an ID resulting from the discord API, or 0.
      */
     long getIdLong();
+    
+    M getManager();
     
 }

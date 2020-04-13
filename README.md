@@ -5,12 +5,6 @@
 ## Info
 
 Qev is a bot I made to replace the 5+ bots that most servers seem to have on them. It is meant to be the only bot that you need for your server. I am still adding commands to the bot, and if you have any ideas, (no matter how niche) feel free to suggest them! Please see [my contact info](#contact)
-
-## Credit
-Credit to pikisuperstar for the background used for the !level command.
-
-Credit to AvaIre for making a good, open source, bot so that I can ~~steal~~ take inspiration from their code. I'll leave their licence at the top of any file I use from their bot. 
-
 ## Commands
 
 If something is in angled brackets (<>), then it is optional. If it is in curly brackets ({}), then it is required.
@@ -82,18 +76,18 @@ If something is in angled brackets (<>), then it is optional. If it is in curly 
     - Ask the magic 8 ball a question! It will give you an answer.
 
 ## Contact
-Contact @solonovamax#6983 or @Lilith#6640 on discord or [@solonovamax](https://twitter.com/solonovamax) on twitter. Or you can join my [support discord server](https://discord.gg/YFSQ4cF)
+Contact @solonovamax#6983 on discord or [@solonovamax](https://twitter.com/solonovamax) on twitter. Or you can join the [support discord server](https://discord.gg/YFSQ4cF).
+
+## Credit
+Credit to pikisuperstar for the background used for the !level command.
+
+Credit to AvaIre for making a good, open source, bot so that I can ~~steal~~ take inspiration from their code. I'll leave their licence at the top of any file I use from their bot. 
+
+Credit to Minecraft Forge and JDA for being a good inspiration for how to write good code.
 
 
 ## Self Hosting
 1. Clone the github. This can be done by running `git clone https://github.com/solonovamax/Qev.git`
-2. Import into IntelliJ or your IDE of choice.
-3. Run the gradle dependencies task. This will install all the required libraries
-4. Create a new artifact that contains the following files:
-    - The manifest file (.\src\main\resources\META-INF\MANIFEST.MF)
-    - Everything within the resources folder (.\src\main\resources)
-    - All the libraries installed by gradle
-5. Build the artifact that you have just created.
-6. Run this artifact.
-    - The first time you run it, with will generate a file where you need to input information. It requires your discord bot token, the id of the owner of the bot, the default prefix, a YouTube api key, an imgur API key, and the support server.
+2. Pull the dependencies and build the project. This can be done by running `gradlew dependencies` and then `gradlew shadowJar`.
+3. Next, you need to take the jar (generated in `./libs/`)
 7. After adding all the required things, run the bot again and it will start. You can then invite it like any normal bot.

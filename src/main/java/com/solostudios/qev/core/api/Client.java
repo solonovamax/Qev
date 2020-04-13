@@ -18,6 +18,7 @@
 package com.solostudios.qev.core.api;
 
 import com.solostudios.qev.core.api.database.Database;
+import com.solostudios.qev.core.api.database.DatabaseController;
 import com.solostudios.qev.core.api.events.Event;
 import com.solostudios.qev.core.api.events.EventListener;
 import com.solostudios.qev.core.api.events.EventManager;
@@ -121,6 +122,13 @@ public interface Client {
      * @return The database.
      */
     Database getDatabase();
+    
+    /**
+     * Gets the database controller.
+     *
+     * @return The database controller.
+     */
+    DatabaseController getDatabaseController();
     
     CompletableFuture<Set<Guild>> getGuilds();
     
