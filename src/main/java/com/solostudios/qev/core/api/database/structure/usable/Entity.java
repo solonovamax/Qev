@@ -17,7 +17,11 @@
 
 package com.solostudios.qev.core.api.database.structure.usable;
 
-public interface Entity<M extends EntityManager<? extends Entity<M>>> {
+import com.solostudios.qev.core.api.database.structure.raw.DataObject;
+import com.solostudios.qev.core.internal.utils.EntityUtil;
+
+
+public interface Entity<M extends EntityManager<E, M>, E extends Entity<M, E>> {
     /**
      * This is the numerical ID of the object with an identifier at the end for different types of objects.
      *
@@ -26,12 +30,17 @@ public interface Entity<M extends EntityManager<? extends Entity<M>>> {
     String getId();
     
     /**
-     * This is the raw, un altered id of the object.
+     * Every entity MUST have a UNIQUE id that is a 64 bit integer (long).
+     * <p>
+     * You can generate ids using {@link EntityUtil#generateUniqueID()}. This class will generate a unique id in a similar way to how the
+     * discord and twitter snowflake-ids work.
      *
      * @return The numerical ID of the object. It will contain an ID resulting from the discord API, or 0.
      */
     long getIdLong();
     
     M getManager();
+    
+    DataObject toDataObject();
     
 }

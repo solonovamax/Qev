@@ -17,38 +17,57 @@
 
 package com.solostudios.qev.core.internal.utils;
 
+import com.solostudios.qev.core.api.database.structure.usable.Entity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.time.Instant;
+
+
 public class EntityUtil {
-    private static long previosTime = 0;
-    private static int  sequence;
+    private static final Logger logger       = LoggerFactory.getLogger(Entity.class);
+    private static       long   previousTime = 0;
+    private static       int    sequence;
     
     /**
-     * Method that can generate unique ids. This is
+     * Method that can generate unique ids. This is thread safe and can be called as many times per second as needed.
+     * <p>
+     * The ids are generated in a similar method to Twitter's Snowflake-id method.
+     * <p>
+     * NOTE: if you are using this same method on other computers, then storing those objects in the same database, there may be 2 ids that
+     * are the same. This method can only be used if you have a single client.
      *
-     * @return
+     * @return Unique snowflake-like id.
      */
     public static synchronized long generateUniqueID() {
-        long currentTime = System.currentTimeMillis();
-        if (currentTime < previosTime) {
-            throw new IllegalStateException("bruh");
+        long currentTime = Instant.now().toEpochMilli();
+        if (currentTime < previousTime) {
+            logger.warn(
+                    "System clock is running backwards. This is either because the crystal that your computer is using is not functioning" +
+                    " properly, or because you did something bad.");
+            throw new IllegalStateException(
+                    "System clock is running backwards. This is either because the crystal that your computer is using is not functioning" +
+                    " properly, or because you did something bad.");
         }
-        if (currentTime == previosTime) {
-            sequence = (sequence + 1) & 16;
+        if (currentTime == previousTime) {
+            sequence = (sequence + 1) & 4095;
             if (sequence == 0) {
-                currentTime = waitNextMillisecond(currentTime);
+                currentTime = waitNextMillis(currentTime);
             }
         } else {
             sequence = 0;
         }
-        
-        previosTime = currentTime;
-        
-        return (currentTime << 48) | sequence;
+    
+        previousTime = currentTime;
+    
+        return ((currentTime - 1586740912452L) << 12) | sequence;
     }
     
-    private static long waitNextMillisecond(long currentTime) {
-        while (currentTime == previosTime) {
-            currentTime = System.currentTimeMillis();
+    // Block and wait till next millisecond
+    static private long waitNextMillis(long currentTimestamp) {
+        while (currentTimestamp == previousTime) {
+            currentTimestamp = Instant.now().toEpochMilli();
         }
-        return currentTime;
+        return currentTimestamp;
     }
 }

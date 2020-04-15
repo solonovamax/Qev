@@ -15,7 +15,21 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.api.database.structure.usable;
+package com.solostudios.qev.core.api.entities;
 
-public abstract class User implements Entity<UserManager> {
+import com.solostudios.qev.core.api.database.structure.usable.Entity;
+
+
+public abstract class CachedEntity<M extends CachedEntityManager<E, M>, E extends CachedEntity<M, E>> implements Entity<M, E> {
+    private final M manager;
+    
+    public CachedEntity(M manager) {
+        this.manager = manager;
+    }
+    
+    @Override
+    public M getManager() {
+        return manager;
+    }
+    
 }

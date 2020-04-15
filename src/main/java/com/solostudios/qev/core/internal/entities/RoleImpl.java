@@ -15,7 +15,29 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.api.database.structure.usable;
+package com.solostudios.qev.core.internal.entities;
 
-public abstract class RoleManager implements EntityManager<Role> {
+import com.solostudios.qev.core.api.database.structure.raw.DataObject;
+import com.solostudios.qev.core.api.entities.CachedEntity;
+
+
+public class RoleImpl extends CachedEntity<RoleManagerImpl, RoleImpl> {
+    public RoleImpl(RoleManagerImpl manager, DataObject object) {
+        super(manager);
+    }
+    
+    @Override
+    public String getId() {
+        return null;
+    }
+    
+    @Override
+    public long getIdLong() {
+        return 0;
+    }
+    
+    @Override
+    public DataObject toDataObject() {
+        return null;
+    }
 }

@@ -15,8 +15,22 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.api.database.structure.usable;
+package com.solostudios.qev.core.internal.entities;
 
-public abstract class Guild implements Entity<GuildManager> {
+import com.solostudios.qev.core.api.database.structure.raw.DataObject;
+import com.solostudios.qev.core.api.entities.CachedEntityManager;
 
+import java.util.Collection;
+
+
+public class RoleManagerImpl extends CachedEntityManager<RoleImpl, RoleManagerImpl> {
+    @Override
+    public RoleImpl fromDataObject(DataObject object) {
+        return new RoleImpl(this, object);
+    }
+    
+    @Override
+    public Collection<RoleImpl> getAllEntities() {
+        return null;
+    }
 }

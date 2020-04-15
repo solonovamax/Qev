@@ -15,7 +15,11 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.api.database.structure.usable;
+package com.solostudios.qev.core.api.entities;
 
-public abstract class Role implements Entity<RoleManager> {
+public abstract class Guild extends CachedEntity<GuildManager, Guild> {
+    
+    public Guild(GuildManager manager) {
+        super(manager);
+    }
 }

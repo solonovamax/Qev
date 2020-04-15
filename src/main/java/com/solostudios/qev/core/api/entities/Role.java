@@ -15,26 +15,10 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.api.database.structure.usable;
+package com.solostudios.qev.core.api.entities;
 
-import com.solostudios.qev.core.api.database.structure.raw.DataObject;
-
-import java.util.Collection;
-import java.util.function.Predicate;
-
-
-public interface EntityManager<E extends Entity<M, E>, M extends EntityManager<E, M>> {
-    
-    boolean usesCaching();
-    
-    
-    void save(E t);
-    
-    E getEntityById(long id);
-    
-    E getEntityByFilter(Predicate<E> filter);
-    
-    Collection<E> getEntitiesByFilter(Predicate<E> filter);
-    
-    E fromDataObject(DataObject object);
+public abstract class Role extends CachedEntity<RoleManager, Role> {
+    public Role(RoleManager manager) {
+        super(manager);
+    }
 }

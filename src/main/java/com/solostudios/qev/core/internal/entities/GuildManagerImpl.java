@@ -15,26 +15,22 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.api.database.structure.usable;
+package com.solostudios.qev.core.internal.entities;
 
 import com.solostudios.qev.core.api.database.structure.raw.DataObject;
+import com.solostudios.qev.core.api.entities.CachedEntityManager;
 
 import java.util.Collection;
-import java.util.function.Predicate;
 
 
-public interface EntityManager<E extends Entity<M, E>, M extends EntityManager<E, M>> {
+public class GuildManagerImpl extends CachedEntityManager<GuildImpl, GuildManagerImpl> {
+    @Override
+    public GuildImpl fromDataObject(DataObject object) {
+        return new GuildImpl(this, object);
+    }
     
-    boolean usesCaching();
-    
-    
-    void save(E t);
-    
-    E getEntityById(long id);
-    
-    E getEntityByFilter(Predicate<E> filter);
-    
-    Collection<E> getEntitiesByFilter(Predicate<E> filter);
-    
-    E fromDataObject(DataObject object);
+    @Override
+    public Collection<GuildImpl> getAllEntities() {
+        return null;
+    }
 }

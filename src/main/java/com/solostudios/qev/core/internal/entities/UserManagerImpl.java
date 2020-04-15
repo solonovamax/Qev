@@ -15,7 +15,22 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.api.database.structure.usable;
+package com.solostudios.qev.core.internal.entities;
 
-public abstract class UserManager implements EntityManager<User> {
+import com.solostudios.qev.core.api.database.structure.raw.DataObject;
+import com.solostudios.qev.core.api.entities.CachedEntityManager;
+
+import java.util.Collection;
+
+
+public class UserManagerImpl extends CachedEntityManager<UserImpl, UserManagerImpl> {
+    @Override
+    public UserImpl fromDataObject(DataObject object) {
+        return new UserImpl(this, object);
+    }
+    
+    @Override
+    public Collection<UserImpl> getAllEntities() {
+        return null;
+    }
 }
