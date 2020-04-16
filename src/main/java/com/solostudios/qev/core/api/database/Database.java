@@ -17,6 +17,9 @@
 
 package com.solostudios.qev.core.api.database;
 
+import com.solostudios.qev.core.api.database.structure.raw.Table;
+
+
 public interface Database {
     void setConnectionURL(String connectionURL);
     
@@ -33,14 +36,14 @@ public interface Database {
     /**
      * Gets a <strike>collection</strike> table from the database, based on name.
      * <p>
-     * I come from a MongoDB background, so I included this function along with the {@link Database#getTable(String)}
-     * method. This method just calls that method; they are identical.
+     * I come from a MongoDB background, so I included this function along with the {@link Database#getTable(String)} method. This method
+     * just calls that method; they are identical.
      *
      * @param name
      *         Name of the collection you want to get.
      */
-    default void getCollection(String name) {
-        getTable(name);
+    default Table getCollection(String name) {
+        return getTable(name);
     }
     
     /**
@@ -49,5 +52,9 @@ public interface Database {
      * @param name
      *         Name of the table you want to get.
      */
-    void getTable(String name);
+    Table getTable(String name);
+    
+    default Table getGuild(long id) {
+        return getTable(Long.toString(id));
+    }
 }

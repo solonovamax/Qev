@@ -15,29 +15,22 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.internal.entities;
+package com.solostudios.qev.core.api.database.structure.raw;
 
-import com.solostudios.qev.core.api.database.structure.raw.DataObject;
-import com.solostudios.qev.core.api.entities.CachedEntity;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 
-public class RoleImpl extends CachedEntity<RoleManagerImpl, RoleImpl> {
-    public RoleImpl(RoleManagerImpl manager, DataObject object) {
-        super(manager);
+public interface Table extends Iterable<DataObject> {
+    DataObject get(long id);
+    
+    @NotNull
+    @Override
+    default Iterator<DataObject> iterator() {
+        return getData().iterator();
     }
     
-    @Override
-    public String getId() {
-        return null;
-    }
-    
-    @Override
-    public long getIdLong() {
-        return 0;
-    }
-    
-    @Override
-    public DataObject toDataObject() {
-        return null;
-    }
+    Collection<DataObject> getData();
 }

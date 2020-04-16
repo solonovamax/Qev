@@ -15,22 +15,10 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.internal.entities;
+package com.solostudios.qev.core.internal.database.mongo;
 
 import com.solostudios.qev.core.api.database.structure.raw.DataObject;
-import com.solostudios.qev.core.api.entities.CachedEntityManager;
-
-import java.util.Collection;
 
 
-public class GuildManagerImpl extends CachedEntityManager<GuildImpl, GuildManagerImpl> {
-    @Override
-    public GuildImpl fromDataObject(DataObject object) {
-        return new GuildImpl(this, object);
-    }
-    
-    @Override
-    public Collection<GuildImpl> getAllEntities() {
-        return null;
-    }
+public class MongoData implements DataObject {
 }

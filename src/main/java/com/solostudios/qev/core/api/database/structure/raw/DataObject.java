@@ -17,5 +17,9 @@
 
 package com.solostudios.qev.core.api.database.structure.raw;
 
-public interface DataObject {
+import java.util.Map;
+
+
+public interface DataObject extends Map<String, Object> {
+    long getId();
 }

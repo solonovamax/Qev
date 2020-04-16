@@ -17,5 +17,20 @@
 
 package com.solostudios.qev.core.internal.utils;
 
+import com.google.common.cache.Cache;
+
+import javax.annotation.Nonnull;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+
+
 public class CacheUtil {
+    public static <K, V> V filterCacheWithLoader(@Nonnull Cache<K, V> cache, @Nonnull K key, @Nonnull Callable<V> loader)
+            throws ExecutionException {
+        return cache
+                .asMap()
+                .values()
+                .stream()
+                .filter(filter);
+    }
 }

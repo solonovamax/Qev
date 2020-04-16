@@ -18,8 +18,27 @@
 package com.solostudios.qev.core.api.entities;
 
 
-public abstract class User extends CachedEntity<UserManager, User> {
-    public User(UserManager manager) {
-        super(manager);
+import com.solostudios.qev.core.api.database.structure.raw.DataObject;
+import com.solostudios.qev.core.api.database.structure.usable.Entity;
+
+
+public class User extends Entity<UserManager, User> {
+    public User(UserManager manager, DataObject data) {
+        super(manager, data);
+    }
+    
+    @Override
+    public String getId() {
+        return null;
+    }
+    
+    @Override
+    public long getIdLong() {
+        return 0;
+    }
+    
+    @Override
+    public DataObject toDataObject() {
+        return null;
     }
 }

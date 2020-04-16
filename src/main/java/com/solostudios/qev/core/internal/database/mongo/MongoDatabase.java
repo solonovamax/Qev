@@ -15,21 +15,30 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.api.entities;
+package com.solostudios.qev.core.internal.database.mongo;
 
-import com.solostudios.qev.core.api.database.structure.usable.Entity;
+import com.solostudios.qev.core.api.database.Database;
+import com.solostudios.qev.core.api.database.structure.raw.Table;
 
 
-public abstract class CachedEntity<M extends CachedEntityManager<E, M>, E extends CachedEntity<M, E>> implements Entity<M, E> {
-    private final M manager;
+public class MongoDatabase implements Database {
+    @Override
+    public void setConnectionURL(String connectionURL) {
     
-    public CachedEntity(M manager) {
-        this.manager = manager;
     }
     
     @Override
-    public M getManager() {
-        return manager;
+    public void init() {
+    
     }
     
+    @Override
+    public void openConnection() {
+    
+    }
+    
+    @Override
+    public Table getTable(String name) {
+        return null;
+    }
 }

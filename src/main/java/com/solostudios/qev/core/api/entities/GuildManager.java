@@ -17,5 +17,35 @@
 
 package com.solostudios.qev.core.api.entities;
 
-public abstract class GuildManager extends CachedEntityManager<Guild, GuildManager> {
+import com.solostudios.qev.core.api.database.Database;
+import com.solostudios.qev.core.api.database.structure.raw.DataObject;
+
+import java.util.Collection;
+
+
+public class GuildManager extends ConcurrentCachedEntityManager<Guild, GuildManager> {
+    
+    public GuildManager(Database database) {
+        super(database);
+    }
+    
+    @Override
+    protected void createNew(long id) {
+    
+    }
+    
+    @Override
+    public Collection<Guild> getAllEntities() {
+        return null;
+    }
+    
+    @Override
+    protected Guild getEntityFromSave(long id) {
+        return null;
+    }
+    
+    @Override
+    public Guild fromDataObject(DataObject object) {
+        return new Guild(object, this, new UserManager(database, object.getId()), new RoleManager(database, object.getId()));
+    }
 }

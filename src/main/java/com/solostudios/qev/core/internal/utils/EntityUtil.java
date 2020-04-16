@@ -17,7 +17,7 @@
 
 package com.solostudios.qev.core.internal.utils;
 
-import com.solostudios.qev.core.api.database.structure.usable.Entity;
+import com.solostudios.qev.core.api.database.structure.usable.GenericEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +25,7 @@ import java.time.Instant;
 
 
 public class EntityUtil {
-    private static final Logger logger       = LoggerFactory.getLogger(Entity.class);
+    private static final Logger logger       = LoggerFactory.getLogger(GenericEntity.class);
     private static       long   previousTime = 0;
     private static       int    sequence;
     

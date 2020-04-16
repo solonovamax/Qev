@@ -15,22 +15,31 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.internal.entities;
+package com.solostudios.qev.core.internal.database.mongo;
 
-import com.solostudios.qev.core.api.database.structure.raw.DataObject;
-import com.solostudios.qev.core.api.entities.CachedEntityManager;
+import com.solostudios.qev.core.api.database.structure.raw.Table;
+import org.bson.Document;
 
 import java.util.Collection;
+import java.util.Map;
 
 
-public class UserManagerImpl extends CachedEntityManager<UserImpl, UserManagerImpl> {
+public class MongoCollection implements Table<MongoData> {
+    
+    
     @Override
-    public UserImpl fromDataObject(DataObject object) {
-        return new UserImpl(this, object);
+    public MongoData get(long id) {
+        return null;
     }
     
     @Override
-    public Collection<UserImpl> getAllEntities() {
+    public Collection<MongoData> getData() {
+        Document document = new Document();
+        
+        
+        for (Map.Entry<String, Object> entry : document.entrySet()) {
+        
+        }
         return null;
     }
 }

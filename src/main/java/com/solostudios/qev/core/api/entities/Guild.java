@@ -17,9 +17,69 @@
 
 package com.solostudios.qev.core.api.entities;
 
-public abstract class Guild extends CachedEntity<GuildManager, Guild> {
+import com.solostudios.qev.core.api.database.structure.raw.DataObject;
+import com.solostudios.qev.core.api.database.structure.usable.Entity;
+
+import java.util.Map;
+import java.util.Objects;
+
+
+public class Guild extends Entity<GuildManager, Guild> {
+    private final UserManager userManager;
+    private final RoleManager roleManager;
+    private       long        id;
     
-    public Guild(GuildManager manager) {
-        super(manager);
+    
+    protected Guild(DataObject object, GuildManager manager, UserManager userManager, RoleManager roleManager) {
+        super(manager, object);
+        this.userManager = userManager;
+        this.roleManager = roleManager;
+    }
+    
+    public UserManager getUserManager() {
+        return userManager;
+    }
+    
+    @Override
+    public final void forceSave() {
+        manager.save(this);
+    }
+    
+    public RoleManager getRoleManager() {
+        return roleManager;
+    }
+    
+    @Override
+    public String getId() {
+        return null;
+    }
+    
+    @Override
+    public long getIdLong() {
+        return id;
+    }
+    
+    @Override
+    public DataObject toDataObject() {
+        return null;
+    }
+    
+    @Override
+    public Guild fromDataObject(DataObject data) {
+        throw new UnsupportedOperationException(
+                "You must use Guild#fromDataObject(DataObject, Map)! A Guild always requires a config map!");
+    }
+    
+    @Override
+    public Guild fromDataObject(DataObject data, Map<String, Object> config) {
+        GuildManager guildManager = (GuildManager) config.get("guildManager");
+        UserManager  userManager  = (UserManager) config.get("userManager");
+        RoleManager  roleManager  = (RoleManager) config.get("roleManager");
+        Objects.requireNonNull(guildManager);
+        Objects.requireNonNull(userManager);
+        Objects.requireNonNull(roleManager);
+        
+        
+        return new Guild(data, guildManager, userManager, roleManager);
     }
 }

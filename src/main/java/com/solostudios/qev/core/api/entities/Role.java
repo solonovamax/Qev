@@ -17,8 +17,39 @@
 
 package com.solostudios.qev.core.api.entities;
 
-public abstract class Role extends CachedEntity<RoleManager, Role> {
-    public Role(RoleManager manager) {
-        super(manager);
+import com.solostudios.qev.core.api.database.structure.raw.DataObject;
+import com.solostudios.qev.core.api.database.structure.usable.Entity;
+
+import java.util.Map;
+
+
+public class Role extends Entity<RoleManager, Role> {
+    public Role(RoleManager manager, DataObject data) {
+        super(manager, data);
+    }
+    
+    @Override
+    public String getId() {
+        return null;
+    }
+    
+    @Override
+    public long getIdLong() {
+        return 0;
+    }
+    
+    @Override
+    public DataObject toDataObject() {
+        return null;
+    }
+    
+    @Override
+    public Role fromDataObject(DataObject data) {
+        return null;
+    }
+    
+    @Override
+    public Role fromDataObject(DataObject data, Map<String, Object> config) {
+        return null;
     }
 }
