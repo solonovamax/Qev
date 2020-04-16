@@ -20,8 +20,6 @@ package com.solostudios.qev.core.api.entities;
 import com.solostudios.qev.core.api.database.Database;
 import com.solostudios.qev.core.api.database.structure.raw.DataObject;
 
-import java.util.Collection;
-
 
 public class GuildManager extends ConcurrentCachedEntityManager<Guild, GuildManager> {
     
@@ -35,12 +33,7 @@ public class GuildManager extends ConcurrentCachedEntityManager<Guild, GuildMana
     }
     
     @Override
-    public Collection<Guild> getAllEntities() {
-        return null;
-    }
-    
-    @Override
-    protected Guild getEntityFromSave(long id) {
+    protected Guild loadEntity(long id) {
         return null;
     }
     

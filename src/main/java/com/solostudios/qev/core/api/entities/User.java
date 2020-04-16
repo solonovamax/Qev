@@ -17,9 +17,10 @@
 
 package com.solostudios.qev.core.api.entities;
 
-
 import com.solostudios.qev.core.api.database.structure.raw.DataObject;
 import com.solostudios.qev.core.api.database.structure.usable.Entity;
+
+import java.util.Map;
 
 
 public class User extends Entity<UserManager, User> {
@@ -28,8 +29,8 @@ public class User extends Entity<UserManager, User> {
     }
     
     @Override
-    public String getId() {
-        return null;
+    public void forceSave() {
+    
     }
     
     @Override
@@ -39,6 +40,16 @@ public class User extends Entity<UserManager, User> {
     
     @Override
     public DataObject toDataObject() {
+        return null;
+    }
+    
+    @Override
+    public User fromDataObject(DataObject data) {
+        return null;
+    }
+    
+    @Override
+    public User fromDataObject(DataObject data, Map<String, Object> config) {
         return null;
     }
 }

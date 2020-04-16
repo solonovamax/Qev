@@ -20,26 +20,29 @@ package com.solostudios.qev.core.api.entities;
 import com.solostudios.qev.core.api.database.Database;
 import com.solostudios.qev.core.api.database.structure.raw.DataObject;
 
-import java.util.Collection;
 
-
-public class UserManager extends ConcurrentCachedEntityManager<User, UserManager> {
+public class UserManager extends InMemoryManager<User, UserManager> {
     public UserManager(Database database, long id) {
         super(database);
     }
     
     @Override
-    public Collection<User> getAllEntities() {
-        return null;
+    protected void save(User user) {
+    
     }
     
     @Override
-    protected User getEntityFromSave(long id) {
-        return null;
+    protected void createNew(long id) {
+    
     }
     
     @Override
     public User fromDataObject(DataObject object) {
         return null;
+    }
+    
+    @Override
+    public boolean isConcurrent() {
+        return false;
     }
 }

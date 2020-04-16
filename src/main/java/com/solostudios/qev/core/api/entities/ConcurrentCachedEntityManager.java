@@ -26,15 +26,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 
 public abstract class ConcurrentCachedEntityManager<E extends Entity<M, E>, M extends ConcurrentCachedEntityManager<E, M>>
         extends EntityManager<E, M> {
-    protected final Cache<Long, E> cache;
-    private final   Executor       executor;
+    protected final LoadingCache<Long, E> cache;
+    private final   Executor              executor;
     
+    
+    public ConcurrentCachedEntityManager(Database database) {
+        this(database, Executors.newFixedThreadPool(4));
+    }
     
     public ConcurrentCachedEntityManager(Database database, Executor executor) {
         super(database);
@@ -60,9 +65,19 @@ public abstract class ConcurrentCachedEntityManager<E extends Entity<M, E>, M ex
     public final E getEntityById(long id) {
         return cache
                 .asMap()
-                .getOrDefault(id, getEntityFromSave(id));
+                .getOrDefault(id, loadEntity(id));
     }
     
+    /**
+     * Gets entities using a predicate that filters through the cache.
+     * <p>
+     * Note: this will not get any entities that are not already loaded into cache.
+     *
+     * @param filter
+     *         Predicate to filter through the cache with. Must be stateless.
+     *
+     * @return Entity from the cache.
+     */
     @Override
     public final E getEntityByFilter(Predicate<E> filter) {
         return cache
@@ -71,38 +86,46 @@ public abstract class ConcurrentCachedEntityManager<E extends Entity<M, E>, M ex
                 .stream()
                 .filter(filter)
                 .findFirst()
-                .orElse(getAllEntities()
-                                .stream()
-                                .filter(filter)
-                                .findFirst()
-                                .orElse(null));
+                .orElse(null);
     }
+    
     
     @Override
     public final Collection<E> getEntitiesByFilter(Predicate<E> filter) {
         Set<E> filterSet = new HashSet<>();
         
-        getAllEntities().stream().filter(filter).forEach(filterSet::add);
-        cache.asMap().values().stream().filter(filter).forEach(filterSet::add); //must be after, so items in the cache are prioritized.
+        cache.asMap()
+             .values()
+             .stream()
+             .filter(filter)
+             .forEach(filterSet::add); //must be after, so items in the cache are prioritized.
         
         return filterSet;
     }
     
+    /**
+     * All the entities in the cache.
+     *
+     * @return Collection of all the entities in the cache.
+     */
     @Override
-    public Collection<E> getAllEntities() {
+    public final Collection<E> getAllEntities() {
         return cache.asMap().values();
     }
     
     @Override
-    public void saveAll() {
+    public final void saveAll() {
         cache.invalidateAll();
     }
     
-    protected abstract E getEntityFromSave(long id);
+    protected abstract E loadEntity(long id);
     
     @Override
     protected final void save(E e) {
-        cache.invalidate(e.getIdLong());
+        if (cache.asMap().containsValue(e)) {
+            cache.invalidate(e.getIdLong());
+            return;
+        }
         //TODO: save code
     }
     
@@ -111,7 +134,7 @@ public abstract class ConcurrentCachedEntityManager<E extends Entity<M, E>, M ex
         return null;
     }
     
-    public final Map<Long, E> getCache() {
+    public final Map<Long, E> getCacheMap() {
         return new HashMap<>(cache.asMap());
     }
     
@@ -119,10 +142,10 @@ public abstract class ConcurrentCachedEntityManager<E extends Entity<M, E>, M ex
         return executor;
     }
     
-    class DefaultCacheLoader extends CacheLoader<Long, E> {
+    final class DefaultCacheLoader extends CacheLoader<Long, E> {
         @Override
         public E load(@NotNull Long id) {
-            return getEntityFromSave(id);
+            return loadEntity(id);
         }
     }
     
@@ -137,10 +160,7 @@ public abstract class ConcurrentCachedEntityManager<E extends Entity<M, E>, M ex
         @Override
         public void onRemoval(@NotNull RemovalNotification<Long, E> notification) {
             executor.execute(() -> {
-                Long entityId = notification.getKey();
-                E    entity   = notification.getValue();
-                
-                entityManager.save(entity);
+                entityManager.save(notification.getValue());
             });
         }
     }

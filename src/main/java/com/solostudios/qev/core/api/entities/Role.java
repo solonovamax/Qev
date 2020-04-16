@@ -29,8 +29,8 @@ public class Role extends Entity<RoleManager, Role> {
     }
     
     @Override
-    public String getId() {
-        return null;
+    public void forceSave() {
+    
     }
     
     @Override

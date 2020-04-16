@@ -25,7 +25,7 @@ public interface GenericEntity<M extends GenericEntityManager<E, M>, E extends G
     /**
      * This is the numerical ID of the object with an identifier at the end for different types of objects.
      *
-     * @return The ID of the object + _[identifier]
+     * @return The ID of the object.
      */
     String getId();
     

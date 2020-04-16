@@ -50,11 +50,6 @@ public class Guild extends Entity<GuildManager, Guild> {
     }
     
     @Override
-    public String getId() {
-        return null;
-    }
-    
-    @Override
     public long getIdLong() {
         return id;
     }

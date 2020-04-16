@@ -20,8 +20,6 @@ package com.solostudios.qev.core.api.entities;
 import com.solostudios.qev.core.api.database.Database;
 import com.solostudios.qev.core.api.database.structure.raw.DataObject;
 
-import java.util.Collection;
-
 
 public class RoleManager extends InMemoryManager<Role, RoleManager> {
     public RoleManager(Database database, long guildId) {
@@ -29,13 +27,18 @@ public class RoleManager extends InMemoryManager<Role, RoleManager> {
     }
     
     @Override
-    public Collection<Role> getAllEntities() {
-        return null;
+    public boolean isConcurrent() {
+        return false;
     }
     
     @Override
-    protected Role getEntityFromSave(long id) {
-        return null;
+    protected void save(Role role) {
+    
+    }
+    
+    @Override
+    protected void createNew(long id) {
+    
     }
     
     @Override

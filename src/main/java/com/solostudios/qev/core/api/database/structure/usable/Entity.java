@@ -27,11 +27,15 @@ public abstract class Entity<M extends GenericEntityManager<E, M>, E extends Ent
         this.manager = manager;
     }
     
+    public abstract void forceSave();
+    
+    public final String getId() {
+        return Long.toString(getIdLong());
+    }
+    
     @Override
     public M getManager() {
         return manager;
     }
-    
-    public abstract void forceSave();
     
 }
