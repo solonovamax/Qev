@@ -50,6 +50,6 @@ public class User extends Entity<UserManager, User> {
     
     @Override
     public User fromDataObject(DataObject data, Map<String, Object> config) {
-        return null;
+        return fromDataObject(data);
     }
 }

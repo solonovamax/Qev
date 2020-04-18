@@ -22,7 +22,7 @@ import com.solostudios.qev.core.api.database.structure.raw.DataObject;
 
 
 public class UserManager extends InMemoryManager<User, UserManager> {
-    public UserManager(Database database, long id) {
+    public UserManager(Database database, long guildId) {
         super(database);
     }
     

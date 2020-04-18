@@ -15,8 +15,16 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.core.internal.utils;
+package com.solostudios.qev.core.internal.database.structure.raw;
 
-public class CacheUtil {
+import com.solostudios.qev.core.api.database.structure.raw.DataObject;
 
+import java.util.HashMap;
+
+
+public class DataObjectImpl extends HashMap<String, Object> implements DataObject {
+    @Override
+    public long getId() {
+        return (Long) this.get("id");
+    }
 }

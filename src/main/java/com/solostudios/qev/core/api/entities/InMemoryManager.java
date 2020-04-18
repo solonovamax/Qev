@@ -30,12 +30,11 @@ import java.util.stream.Collectors;
 
 
 public abstract class InMemoryManager<E extends Entity<M, E>, M extends InMemoryManager<E, M>> extends EntityManager<E, M> {
-    protected Database     database;
-    private   Boolean      finalized = false;
-    private   Map<Long, E> entityMap;
+    private Boolean      finalized = false;
+    private Map<Long, E> entityMap;
     
-    public InMemoryManager(Database database) {
-        super(database);
+    public InMemoryManager(Database database, Class<M> clazz) {
+        super(database, clazz);
         entityMap = new HashMap<>();
     }
     

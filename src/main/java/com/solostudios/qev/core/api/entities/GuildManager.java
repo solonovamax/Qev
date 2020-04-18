@@ -24,7 +24,7 @@ import com.solostudios.qev.core.api.database.structure.raw.DataObject;
 public class GuildManager extends ConcurrentCachedEntityManager<Guild, GuildManager> {
     
     public GuildManager(Database database) {
-        super(database);
+        super(database, GuildManager.class);
     }
     
     @Override

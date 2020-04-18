@@ -23,7 +23,7 @@ import com.solostudios.qev.core.api.database.structure.raw.DataObject;
 
 public class RoleManager extends InMemoryManager<Role, RoleManager> {
     public RoleManager(Database database, long guildId) {
-        super(database);
+        super(database, RoleManager.class);
     }
     
     @Override

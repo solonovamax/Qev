@@ -19,13 +19,17 @@ package com.solostudios.qev.core.api.database.structure.usable;
 
 import com.solostudios.qev.core.api.database.Database;
 import com.solostudios.qev.core.api.database.structure.raw.DataObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public abstract class EntityManager<E extends Entity<M, E>, M extends EntityManager<E, M>> implements GenericEntityManager<E, M> {
-    protected Database database;
+    protected final Logger   logger;
+    protected       Database database;
     
-    public EntityManager(Database database) {
+    public EntityManager(Database database, Class<? extends M> clazz) {
         this.database = database;
+        logger = LoggerFactory.getLogger(clazz);
     }
     
     protected abstract void save(E e);

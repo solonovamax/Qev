@@ -21,4 +21,8 @@ import com.solostudios.qev.core.api.database.structure.raw.DataObject;
 
 
 public class MongoData implements DataObject {
+    @Override
+    public long getId() {
+        return 0;
+    }
 }

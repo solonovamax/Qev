@@ -50,6 +50,6 @@ public class Role extends Entity<RoleManager, Role> {
     
     @Override
     public Role fromDataObject(DataObject data, Map<String, Object> config) {
-        return null;
+        return fromDataObject(data);
     }
 }
