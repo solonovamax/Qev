@@ -17,9 +17,9 @@
 
 package com.solostudios.qev.commands.administrative;
 
-import com.solostudios.qev.core.command.handler.abstracts.AbstractCommand;
-import com.solostudios.qev.core.command.handler.old.ArgumentContainer;
-import com.solostudios.qev.core.exceptions.IllegalInputException;
+import com.solostudios.qev.framework.command.handler.abstracts.AbstractCommand;
+import com.solostudios.qev.framework.command.handler.old.ArgumentContainer;
+import com.solostudios.qev.framework.old.exceptions.IllegalInputException;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public class GiveRole extends AbstractCommand {
 	private final Logger     logger       = LoggerFactory.getLogger(this.getClass());
-	private       Permission MANAGE_ROLES = Permission.MANAGE_ROLES;
+	private final Permission MANAGE_ROLES = Permission.MANAGE_ROLES;
 	
 	public GiveRole() {
 		super("giverole");

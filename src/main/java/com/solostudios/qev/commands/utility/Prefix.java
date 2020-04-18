@@ -17,10 +17,10 @@
 
 package com.solostudios.qev.commands.utility;
 
-import com.solostudios.qev.core.command.handler.abstracts.AbstractCommand;
-import com.solostudios.qev.core.command.handler.old.ArgumentContainer;
-import com.solostudios.qev.core.exceptions.IllegalInputException;
-import com.solostudios.qev.core.main.Qev;
+import com.solostudios.qev.framework.command.handler.abstracts.AbstractCommand;
+import com.solostudios.qev.framework.command.handler.old.ArgumentContainer;
+import com.solostudios.qev.framework.old.exceptions.IllegalInputException;
+import com.solostudios.qev.framework.old.main.Qev;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;

@@ -17,9 +17,9 @@
 
 package com.solostudios.qev.commands.administrative;
 
-import com.solostudios.qev.core.command.handler.abstracts.AbstractCommand;
-import com.solostudios.qev.core.command.handler.old.ArgumentContainer;
-import com.solostudios.qev.core.exceptions.IllegalInputException;
+import com.solostudios.qev.framework.command.handler.abstracts.AbstractCommand;
+import com.solostudios.qev.framework.command.handler.old.ArgumentContainer;
+import com.solostudios.qev.framework.old.exceptions.IllegalInputException;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -32,9 +32,9 @@ import org.slf4j.LoggerFactory;
 
 
 public class Ban extends AbstractCommand {
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	private Permission BAN_MEMBERS = Permission.BAN_MEMBERS;
+	private final Permission BAN_MEMBERS = Permission.BAN_MEMBERS;
 	
 	public Ban() {
 		super("ban");

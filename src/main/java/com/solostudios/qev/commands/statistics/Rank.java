@@ -17,12 +17,12 @@
 
 package com.solostudios.qev.commands.statistics;
 
-import com.solostudios.qev.core.command.handler.abstracts.AbstractCommand;
-import com.solostudios.qev.core.command.handler.old.ArgumentContainer;
-import com.solostudios.qev.core.exceptions.IllegalInputException;
-import com.solostudios.qev.core.main.LevelCard;
-import com.solostudios.qev.core.main.Qev;
-import com.solostudios.qev.core.main.UserStats;
+import com.solostudios.qev.framework.command.handler.abstracts.AbstractCommand;
+import com.solostudios.qev.framework.command.handler.old.ArgumentContainer;
+import com.solostudios.qev.framework.old.exceptions.IllegalInputException;
+import com.solostudios.qev.framework.old.main.LevelCard;
+import com.solostudios.qev.framework.old.main.Qev;
+import com.solostudios.qev.framework.old.main.UserStats;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -42,7 +42,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.solostudios.qev.core.utility.Sort.sortByValue;
+import static com.solostudios.qev.framework.old.utility.Sort.sortByValue;
 
 
 public class Rank extends AbstractCommand {

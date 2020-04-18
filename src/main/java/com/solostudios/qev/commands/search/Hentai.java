@@ -1,6 +1,5 @@
 /*
- *
- * Copyright 2016 2019 solonovamax <solonovamax@12oclockpoint.com>
+ * Copyright (c) 2020 solonovamax <solonovamax@12oclockpoint.com>
  *
  *       This program is free software: you can redistribute it and/or modify
  *       it under the terms of the GNU General Public License as published by
@@ -14,15 +13,14 @@
  *
  *       You should have received a copy of the GNU General Public License
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 package com.solostudios.qev.commands.search;
 
-import com.solostudios.qev.core.command.handler.abstracts.AbstractCommand;
-import com.solostudios.qev.core.command.handler.old.ArgumentContainer;
-import com.solostudios.qev.core.exceptions.IllegalInputException;
-import com.solostudios.qev.core.utility.WebUtilities;
+import com.solostudios.qev.framework.command.handler.abstracts.AbstractCommand;
+import com.solostudios.qev.framework.command.handler.old.ArgumentContainer;
+import com.solostudios.qev.framework.old.exceptions.IllegalInputException;
+import com.solostudios.qev.framework.old.utility.WebUtilities;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONArray;
@@ -35,7 +33,7 @@ public class Hentai extends AbstractCommand {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@SuppressWarnings("FieldCanBeLocal")
-	private String url = "https://danbooru.donmai.us/posts.json?random=true&tags=rating%3Ae&limit=1&min_level=30";
+	private final String url = "https://danbooru.donmai.us/posts.json?random=true&tags=rating%3Ae&limit=1&min_level=30";
 	
 	public Hentai() {
 		super("hentai");
