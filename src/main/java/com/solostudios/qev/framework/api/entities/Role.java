@@ -17,15 +17,14 @@
 
 package com.solostudios.qev.framework.api.entities;
 
+import com.solostudios.qev.framework.api.Client;
 import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
 import com.solostudios.qev.framework.api.database.structure.usable.Entity;
 
-import java.util.Map;
-
 
 public final class Role extends Entity<RoleManager, Role> {
-    public Role(RoleManager manager, DataObject data) {
-        super(manager, data);
+    public Role(RoleManager manager, DataObject data, Client client) {
+        super(manager, data, client);
     }
     
     @Override
@@ -41,15 +40,5 @@ public final class Role extends Entity<RoleManager, Role> {
     @Override
     public DataObject toDataObject() {
         return null;
-    }
-    
-    @Override
-    public Role fromDataObject(DataObject data) {
-        return null;
-    }
-    
-    @Override
-    public Role fromDataObject(DataObject data, Map<String, Object> config) {
-        return fromDataObject(data);
     }
 }

@@ -17,6 +17,7 @@
 
 package com.solostudios.qev.framework.api.entities;
 
+import com.solostudios.qev.framework.api.Client;
 import com.solostudios.qev.framework.api.database.GenericDatabase;
 import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
 
@@ -26,13 +27,12 @@ import java.util.concurrent.ExecutorService;
 
 public final class GuildManager extends ConcurrentCachedEntityManager<Guild, GuildManager> {
     
-    
-    public GuildManager(GenericDatabase database) {
-        this(database, getDefaultExecutor());
+    public GuildManager(GenericDatabase database, Client client) {
+        this(database, getDefaultExecutor(), client);
     }
     
-    public GuildManager(GenericDatabase database, ExecutorService executor) {
-        super(database, executor, GuildManager.class, "GuildConfig");
+    public GuildManager(GenericDatabase database, ExecutorService executor, Client client) {
+        super(database, executor, "GuildConfig", client, GuildManager.class);
     }
     
     @Override
@@ -41,17 +41,26 @@ public final class GuildManager extends ConcurrentCachedEntityManager<Guild, Gui
         if ((obj = entityTable.get(id)) == null) {
             return createNew(id);
         } else {
-            return new Guild(obj, this, new UserManager(database, id), new RoleManager(database, id));
+            return new Guild(obj, this, new UserManager(database, id, client), new RoleManager(database, id, client), client);
         }
     }
     
     @Override
     protected Guild createNew(long id) {
-        database.createDataObj(new HashMap<>())
+        HashMap<String, Object> initData = new HashMap<>();
+        //TODO
+        return new Guild(database.createDataObj(initData), this, new UserManager(database, id, client),
+                         new RoleManager(database, id, client), client);
     }
     
     @Override
     public Guild fromDataObject(DataObject object) {
-        return new Guild(object, this, new UserManager(database, object.getId()), new RoleManager(database, object.getId()));
+        return new Guild(object, this, new UserManager(database, object.getId(), client), new RoleManager(database, object.getId(), client),
+                         client);
+    }
+    
+    @Override
+    public void shutdown() {
+    
     }
 }

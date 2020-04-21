@@ -19,7 +19,6 @@ package com.solostudios.qev.framework.api.database.structure.usable;
 
 import com.solostudios.qev.framework.api.Client;
 import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
-import net.dv8tion.jda.api.JDA;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,14 +27,12 @@ import java.util.Map;
 public abstract class Entity<M extends EntityManager<E, M>, E extends Entity<M, E>> implements GenericEntity<M, E> {
     protected final M                   manager;
     protected final Map<String, Object> settings;
-    protected final JDA                 jda;
     protected final Client              client;
     
-    public Entity(M manager, DataObject object, Client client, JDA jda) {
-        this.jda = jda;
+    public Entity(M manager, DataObject object, Client client) {
         this.client = client;
         this.manager = manager;
-        
+    
         settings = new HashMap<>();
         for (Map.Entry<String, Object> entry : object.keySet()) {
             settings.put(entry.getKey(), entry.getValue());

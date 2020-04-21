@@ -20,21 +20,29 @@ package com.solostudios.qev.framework.api.entities;
 import com.solostudios.qev.framework.api.Client;
 import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
 import com.solostudios.qev.framework.api.database.structure.usable.Entity;
-import net.dv8tion.jda.api.JDA;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public final class Guild extends Entity<GuildManager, Guild> {
+    public static Map<String, Object> INIT_DATA;
+    static {
+        INIT_DATA = new HashMap<>();
+        INIT_DATA.put("channelConfig", new ArrayList<>());
+    }
     private final UserManager                        userManager;
     private final RoleManager                        roleManager;
     private final net.dv8tion.jda.api.entities.Guild jdaGuild;
     private       long                               id;
     
     
-    protected Guild(DataObject object, GuildManager manager, UserManager userManager, RoleManager roleManager, Client client, JDA jda) {
-        super(manager, object, client, jda);
+    protected Guild(DataObject object, GuildManager manager, UserManager userManager, RoleManager roleManager, Client client) {
+        super(manager, object, client);
         this.userManager = userManager;
         this.roleManager = roleManager;
-        this.jdaGuild = jda.getGuildById(object.getId());
+        this.jdaGuild = client.getJDA().getGuildById(object.getId());
     }
     
     public net.dv8tion.jda.api.entities.Guild getJdaGuild() {

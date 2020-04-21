@@ -17,6 +17,7 @@
 
 package com.solostudios.qev.framework.api.database.structure.usable;
 
+import com.solostudios.qev.framework.api.Client;
 import com.solostudios.qev.framework.api.database.GenericDatabase;
 import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
 import com.solostudios.qev.framework.api.database.structure.raw.Table;
@@ -28,11 +29,19 @@ public abstract class EntityManager<E extends Entity<M, E>, M extends EntityMana
     protected final Logger          logger;
     protected final GenericDatabase database;
     protected final Table           entityTable;
+    protected final Client          client;
+    protected       boolean         isShutdown = false;
     
-    public EntityManager(GenericDatabase database, Class<? extends M> clazz, String tableName) {
+    public EntityManager(GenericDatabase database, String tableName, Client client, Class<? extends M> clazz) {
         this.database = database;
         logger = LoggerFactory.getLogger(clazz);
         entityTable = database.getTable(tableName);
+        this.client = client;
+    }
+    
+    @Override
+    public final boolean isShutdown() {
+        return isShutdown;
     }
     
     protected abstract void save(E e);

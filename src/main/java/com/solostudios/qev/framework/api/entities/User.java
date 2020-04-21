@@ -17,13 +17,14 @@
 
 package com.solostudios.qev.framework.api.entities;
 
+import com.solostudios.qev.framework.api.Client;
 import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
 import com.solostudios.qev.framework.api.database.structure.usable.Entity;
 
 
 public final class User extends Entity<UserManager, User> {
-    public User(UserManager manager, DataObject data) {
-        super(manager, data);
+    public User(UserManager manager, DataObject data, Client client) {
+        super(manager, data, client);
     }
     
     @Override

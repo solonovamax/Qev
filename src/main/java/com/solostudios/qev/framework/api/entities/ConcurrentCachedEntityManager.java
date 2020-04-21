@@ -19,6 +19,7 @@ package com.solostudios.qev.framework.api.entities;
 
 import com.google.common.cache.*;
 import com.google.common.collect.ImmutableMap;
+import com.solostudios.qev.framework.api.Client;
 import com.solostudios.qev.framework.api.database.GenericDatabase;
 import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
 import com.solostudios.qev.framework.api.database.structure.usable.Entity;
@@ -40,18 +41,20 @@ public abstract class ConcurrentCachedEntityManager<E extends Entity<M, E>, M ex
     private final        ExecutorService       executor;
     
     
-    public ConcurrentCachedEntityManager(GenericDatabase database, Class<M> clazz, String tableName) {
-        this(database, Executors.newFixedThreadPool(4), clazz, tableName);
+    public ConcurrentCachedEntityManager(GenericDatabase database, String tableName, Client client, Class<M> clazz) {
+        this(database, Executors.newFixedThreadPool(4), tableName, client, clazz);
     }
     
-    public ConcurrentCachedEntityManager(GenericDatabase database, ExecutorService executor, Class<M> clazz, String tableName) {
-        super(database, clazz, tableName);
+    public ConcurrentCachedEntityManager(GenericDatabase database, ExecutorService executor, String tableName, Client client,
+                                         Class<M> clazz) {
+        super(database, tableName, client, clazz);
         this.executor = executor;
-        cache = CacheBuilder.newBuilder()
-                            .concurrencyLevel(4)
-                            .expireAfterAccess(600, TimeUnit.SECONDS)
-                            .removalListener(new DefaultRemovalListener<>(this))
-                            .build(new DefaultCacheLoader());
+        this.cache = CacheBuilder.newBuilder()
+                                 .concurrencyLevel(4)
+                                 .expireAfterAccess(600, TimeUnit.SECONDS)
+                                 .removalListener(new DefaultRemovalListener<>(this))
+                                 .build(new DefaultCacheLoader());
+        client.registerShutdownListener(this::shutdown);
     }
     
     /**
@@ -107,6 +110,7 @@ public abstract class ConcurrentCachedEntityManager<E extends Entity<M, E>, M ex
      * @return Entity from the cache.
      */
     @Override
+
     public final E getEntityByFilter(Predicate<E> filter) {
         E e = cache
                 .asMap()
@@ -115,7 +119,8 @@ public abstract class ConcurrentCachedEntityManager<E extends Entity<M, E>, M ex
                 .filter(filter)
                 .findFirst()
                 .orElse(null);
-        cache.refresh(e != null ? e.getIdLong() : 0L);
+        if (e != null)
+            cache.refresh(e.getIdLong());
     
         return e;
     }
@@ -135,9 +140,7 @@ public abstract class ConcurrentCachedEntityManager<E extends Entity<M, E>, M ex
                                         .stream()
                                         .filter(filter)
                                         .collect(Collectors.toList());
-        for (E e : collection) {
-            cache.refresh(e.getIdLong());
-        }
+        for (E e : collection) { cache.refresh(e.getIdLong()); }
         return collection;
     }
     
@@ -301,6 +304,4 @@ public abstract class ConcurrentCachedEntityManager<E extends Entity<M, E>, M ex
             });
         }
     }
-    
-    
 }

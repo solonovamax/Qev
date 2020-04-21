@@ -39,7 +39,6 @@ public class CommandListener extends ListenerAdapter {
 		}
 		Message message = event.getMessage();
 		
-		
 		if (message.getAuthor().isBot()) {
 			return;
 		}

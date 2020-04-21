@@ -36,4 +36,8 @@ public interface GenericEntityManager<E extends GenericEntity<M, E>, M extends G
     Collection<E> getAllEntities();
     
     void saveAll();
+    
+    void shutdown();
+    
+    boolean isShutdown();
 }

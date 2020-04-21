@@ -81,7 +81,6 @@ public class Qev {
 		VERSION = settings.version;
 		BOT_ADMINS = settings.botAdminList;
 		
-		
 		logger.debug("Validating Token.");
 		//Check if token exists.
 		if (settings.botToken == null || settings.botToken.equals("")) {
@@ -92,7 +91,7 @@ public class Qev {
 		
 		logger.info("Initializing Bot");
 		logger.info("Constructing JDABuilder");
-		shardBuilder = new JDABuilder(settings.botToken);
+		shardBuilder = JDABuilder.createDefault(settings.botToken);
 		
 		
 		logger.info("Initializing Command Handler");
@@ -101,6 +100,7 @@ public class Qev {
 		
 		logger.info("Attaching Listeners");
 		shardBuilder.addEventListeners(new CommandListener(), new EventHandler());
+		
 		
 		logger.info("--- Sharding Bot ---");
 		for (int i = 0; i < shardCount; i++) {

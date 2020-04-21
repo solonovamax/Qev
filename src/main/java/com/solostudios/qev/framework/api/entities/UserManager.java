@@ -17,13 +17,14 @@
 
 package com.solostudios.qev.framework.api.entities;
 
+import com.solostudios.qev.framework.api.Client;
 import com.solostudios.qev.framework.api.database.GenericDatabase;
 import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
 
 
 public final class UserManager extends InMemoryManager<User, UserManager> {
-    public UserManager(GenericDatabase database, long guildId) {
-        super(database, UserManager.class, "UserData");
+    public UserManager(GenericDatabase database, long guildId, Client client) {
+        super(database, "UserData", client, UserManager.class);
     }
     
     @Override
@@ -44,5 +45,10 @@ public final class UserManager extends InMemoryManager<User, UserManager> {
     @Override
     public boolean isConcurrent() {
         return false;
+    }
+    
+    @Override
+    public void shutdown() {
+    
     }
 }

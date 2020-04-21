@@ -17,9 +17,11 @@
 
 package com.solostudios.qev.framework.api.entities;
 
+import com.solostudios.qev.framework.api.Client;
 import com.solostudios.qev.framework.api.database.GenericDatabase;
 import com.solostudios.qev.framework.api.database.structure.usable.Entity;
 import com.solostudios.qev.framework.api.database.structure.usable.EntityManager;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,11 +32,11 @@ import java.util.stream.Collectors;
 
 
 public abstract class InMemoryManager<E extends Entity<M, E>, M extends InMemoryManager<E, M>> extends EntityManager<E, M> {
-    private Boolean      finalized = false;
-    private Map<Long, E> entityMap;
+    private final Boolean      finalized = false;
+    private final Map<Long, E> entityMap;
     
-    public InMemoryManager(GenericDatabase database, Class<M> clazz, String tableName) {
-        super(database, clazz, tableName);
+    public InMemoryManager(GenericDatabase database, String tableName, Client client, Class<M> clazz) {
+        super(database, tableName, client, clazz);
         entityMap = new HashMap<>();
     }
     
@@ -45,14 +47,13 @@ public abstract class InMemoryManager<E extends Entity<M, E>, M extends InMemory
     
     @Override
     public final E getEntityById(long id) {
-        if (finalized) throw new NullPointerException("You have already finalized this object. It can no longer be used.");
         E e;
         return (e = entityMap.get(id)) != null ? e : createNew(id);
     }
     
     @Override
+    @Nullable
     public final E getEntityByFilter(Predicate<E> filter) {
-        if (finalized) throw new NullPointerException("You have already finalized this object. It can no longer be used.");
         return entityMap.values()
                         .stream()
                         .filter(filter)
@@ -62,7 +63,6 @@ public abstract class InMemoryManager<E extends Entity<M, E>, M extends InMemory
     
     @Override
     public final Collection<E> getEntitiesByFilter(Predicate<E> filter) {
-        if (finalized) throw new NullPointerException("You have already finalized this object. It can no longer be used.");
         return entityMap.values()
                         .stream()
                         .filter(filter)
@@ -71,7 +71,6 @@ public abstract class InMemoryManager<E extends Entity<M, E>, M extends InMemory
     
     @Override
     public final Collection<E> getAllEntities() {
-        if (finalized) throw new NullPointerException("You have already finalized this object. It can no longer be used.");
         return new HashSet<>(entityMap.values());
     }
     
@@ -80,8 +79,6 @@ public abstract class InMemoryManager<E extends Entity<M, E>, M extends InMemory
         for (E e : entityMap.values()) {
             save(e);
         }
-        entityMap = null;
-        finalized = true;
     }
     
     public final boolean isFinalized() {

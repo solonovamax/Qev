@@ -18,7 +18,7 @@
 package com.solostudios.qev.framework.internal.clients;
 
 import com.solostudios.qev.framework.api.Client;
-import com.solostudios.qev.framework.api.database.DatabaseController;
+import com.solostudios.qev.framework.api.database.DatabaseManager;
 import com.solostudios.qev.framework.api.database.GenericDatabase;
 import com.solostudios.qev.framework.api.events.Event;
 import com.solostudios.qev.framework.api.events.EventListener;
@@ -129,7 +129,7 @@ public class AutoShardedClient implements Client {
     }
     
     @Override
-    public DatabaseController getDatabaseController() {
+    public DatabaseManager getDatabaseController() {
         return null;
     }
     

@@ -17,6 +17,6 @@
 
 package com.solostudios.qev.framework.api.database;
 
-public interface DatabaseController {
+public interface DatabaseManager {
 
 }

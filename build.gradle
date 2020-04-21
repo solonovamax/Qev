@@ -52,7 +52,7 @@ repositories {
 dependencies {
     //implementation("org.quartz-scheduler:quartz:2.3.2") // Fancy stuff
     implementation("org.json:json:20190722") // JSON
-    implementation("net.dv8tion:JDA:4.0.0_74") // What do you think this is for you complete buffoon?
+    implementation("net.dv8tion:JDA:+") // What do you think this is for you complete buffoon?
     implementation("org.reflections:reflections:0.9.11") // Hacky reflection stuff so I can seem cool
     implementation("org.mongodb:mongodb-driver-sync:3.12.0") // Database
     //implementation("org.discordbots:DBL-Java-Library:+")

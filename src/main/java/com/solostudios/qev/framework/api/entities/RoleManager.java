@@ -17,13 +17,14 @@
 
 package com.solostudios.qev.framework.api.entities;
 
+import com.solostudios.qev.framework.api.Client;
 import com.solostudios.qev.framework.api.database.GenericDatabase;
 import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
 
 
 public final class RoleManager extends InMemoryManager<Role, RoleManager> {
-    public RoleManager(GenericDatabase database, long guildId) {
-        super(database, RoleManager.class, "RoleData");
+    public RoleManager(GenericDatabase database, long guildId, Client client) {
+        super(database, "RoleConfig", client, RoleManager.class);
     }
     
     @Override
@@ -32,13 +33,18 @@ public final class RoleManager extends InMemoryManager<Role, RoleManager> {
     }
     
     @Override
+    public void shutdown() {
+    
+    }
+    
+    @Override
     protected void save(Role role) {
     
     }
     
     @Override
-    protected void createNew(long id) {
-    
+    protected Role createNew(long id) {
+        return null;
     }
     
     @Override

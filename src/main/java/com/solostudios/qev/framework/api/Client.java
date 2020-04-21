@@ -17,13 +17,13 @@
 
 package com.solostudios.qev.framework.api;
 
-import com.solostudios.qev.framework.api.database.DatabaseController;
+import com.solostudios.qev.framework.api.database.DatabaseManager;
 import com.solostudios.qev.framework.api.database.GenericDatabase;
+import com.solostudios.qev.framework.api.entities.Guild;
+import com.solostudios.qev.framework.api.entities.User;
 import com.solostudios.qev.framework.api.events.Event;
 import com.solostudios.qev.framework.api.events.EventListener;
 import com.solostudios.qev.framework.api.events.EventManager;
-import com.solostudios.qev.framework.entities.Guild;
-import com.solostudios.qev.framework.entities.User;
 import net.dv8tion.jda.api.JDA;
 
 import java.util.Set;
@@ -67,8 +67,7 @@ public interface Client {
      * Please see {@link JDA#awaitStatus(JDA.Status)} or {@link JDA#awaitStatus(JDA.Status, JDA.Status...)} for more.
      *
      * @param status
-     *         The init status to wait for, once JDA has reached the specified stage of the startup cycle this method
-     *         will return.
+     *         The init status to wait for, once JDA has reached the specified stage of the startup cycle this method will return.
      */
     void awaitJDAStatus(JDA.Status status);
     
@@ -116,6 +115,8 @@ public interface Client {
     
     <T extends Event> void dispatchEvent(T e);
     
+    void registerShutdownListener(Runnable shutdownListener);
+    
     /**
      * Gets the database.
      *
@@ -128,7 +129,7 @@ public interface Client {
      *
      * @return The database controller.
      */
-    DatabaseController getDatabaseController();
+    DatabaseManager getDatabaseManager();
     
     CompletableFuture<Set<Guild>> getGuilds();
     
@@ -162,8 +163,8 @@ public interface Client {
     boolean isShutdown();
     
     /**
-     * Shuts down the client. <b>ALWAYS</b> call this method before you shut down the bot, or else you may lose some
-     * guild data due to the caches not being saved.
+     * Shuts down the client. <b>ALWAYS</b> call this method before you shut down the bot, or else you may lose some guild data due to the
+     * caches not being saved.
      */
     void shutdown();
     
