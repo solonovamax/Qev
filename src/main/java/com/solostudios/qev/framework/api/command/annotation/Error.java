@@ -15,10 +15,16 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.internal.clients;
+package com.solostudios.qev.framework.api.command.annotation;
 
-import com.solostudios.qev.framework.api.Client;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 
-public class AutoShardedClient implements Client {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface Error {
+    String value();
 }

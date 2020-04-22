@@ -15,10 +15,10 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.internal.clients;
+package com.solostudios.qev.framework.api.command;
 
-import com.solostudios.qev.framework.api.Client;
-
-
-public class AutoShardedClient implements Client {
+public interface Category {
+    class NoCategory implements Category {
+    
+    }
 }
