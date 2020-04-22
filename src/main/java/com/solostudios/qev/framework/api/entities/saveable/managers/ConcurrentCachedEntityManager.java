@@ -15,16 +15,15 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.api.entities;
+package com.solostudios.qev.framework.api.entities.saveable.managers;
 
 import com.google.common.cache.*;
 import com.google.common.collect.ImmutableMap;
 import com.solostudios.qev.framework.api.Client;
+import com.solostudios.qev.framework.api.database.DataObject;
 import com.solostudios.qev.framework.api.database.GenericDatabase;
-import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
-import com.solostudios.qev.framework.api.database.structure.usable.Entity;
-import com.solostudios.qev.framework.api.database.structure.usable.EntityManager;
-import com.solostudios.qev.framework.api.database.structure.usable.GenericEntity;
+import com.solostudios.qev.framework.api.database.entities.SerializableEntity;
+import com.solostudios.qev.framework.api.database.entities.SerializableEntityManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -34,8 +33,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
-public abstract class ConcurrentCachedEntityManager<E extends Entity<M, E>, M extends ConcurrentCachedEntityManager<E, M>>
-        extends EntityManager<E, M> {
+public abstract class ConcurrentCachedEntityManager<E extends SerializableEntity<M, E>, M extends ConcurrentCachedEntityManager<E, M>>
+        implements SerializableEntityManager<E, M> {
     private static final ExecutorService       defaultExecutorService = Executors.newFixedThreadPool(4);
     protected final      LoadingCache<Long, E> cache;
     private final        ExecutorService       executor;
@@ -47,7 +46,6 @@ public abstract class ConcurrentCachedEntityManager<E extends Entity<M, E>, M ex
     
     public ConcurrentCachedEntityManager(GenericDatabase database, ExecutorService executor, String tableName, Client client,
                                          Class<M> clazz) {
-        super(database, tableName, client, clazz);
         this.executor = executor;
         this.cache = CacheBuilder.newBuilder()
                                  .concurrencyLevel(4)
@@ -242,7 +240,7 @@ public abstract class ConcurrentCachedEntityManager<E extends Entity<M, E>, M ex
      * Creates an entity using a data object that represents this entity.
      *
      * @param object
-     *         The {@link DataObject} that is used to construct a new {@link GenericEntity}.
+     *         The {@link DataObject} that is used to construct a new {@link SerializableEntity}.
      *
      * @return The Entity that was constructed using the data object.
      */

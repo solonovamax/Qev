@@ -15,24 +15,7 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.api.database.structure.raw;
+package com.solostudios.qev.framework.api.entities;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.Iterator;
-
-
-public interface Table extends Iterable<DataObject> {
-    DataObject get(long id);
-    
-    @NotNull
-    @Override
-    default Iterator<DataObject> iterator() {
-        return getData().iterator();
-    }
-    
-    Collection<DataObject> getData();
-    
-    void put(long id, DataObject obj);
+public interface MessageEntity {
 }

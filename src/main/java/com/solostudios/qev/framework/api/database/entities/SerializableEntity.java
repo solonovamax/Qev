@@ -15,11 +15,14 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.api.database;
+package com.solostudios.qev.framework.api.database.entities;
 
-import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
+import com.solostudios.qev.framework.api.database.DataObject;
+import com.solostudios.qev.framework.api.entities.Entity;
 
 
-public interface Saveable {
+public interface SerializableEntity<M extends SerializableEntityManager<E, M>, E extends SerializableEntity<M, E>> extends Entity {
+    M getManager();
+    
     DataObject toDataObject();
 }

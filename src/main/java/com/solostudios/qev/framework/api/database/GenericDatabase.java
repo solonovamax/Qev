@@ -18,8 +18,6 @@
 package com.solostudios.qev.framework.api.database;
 
 import com.solostudios.qev.framework.api.Client;
-import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
-import com.solostudios.qev.framework.api.database.structure.raw.Table;
 
 import java.util.Map;
 

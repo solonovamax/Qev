@@ -15,35 +15,16 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.api.database.structure.raw;
+package com.solostudios.qev.framework.api.entities.saveable;
+
+import com.solostudios.qev.framework.api.database.entities.SerializableEntity;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
 
 
-public interface DataObject {
-    Long getId();
+public interface Role extends SerializableEntity<RoleManager, Role> {
     
-    Set<Map.Entry<String, Object>> keySet();
     
-    Object get(String key);
+    Collection<User> getMembers();
     
-    Long getLong(String key);
-    
-    Double getDouble(String key);
-    
-    Integer getInt(String key);
-    
-    Collection<Object> getCollection(String key);
-    
-    <T> Collection<T> getCollection(String key, Class<T> clazz);
-    
-    <T> Collection<T> getCollection(String key, T obj);
-    
-    Map<String, Object> getMap(String key);
-    
-    <T> Map<String, T> getMap(String key, Class<T> clazz);
-    
-    <T> Map<String, T> getMap(String key, T obj);
 }

@@ -15,30 +15,35 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.internal.database.mongo;
+package com.solostudios.qev.framework.api.database;
 
-import com.solostudios.qev.framework.api.database.GenericDatabase;
-import com.solostudios.qev.framework.api.database.Table;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 
-public class MongoDatabase implements GenericDatabase {
-    @Override
-    public void setConnectionURL(String connectionURL) {
+public interface DataObject {
+    Long getId();
     
-    }
+    Set<Map.Entry<String, Object>> keySet();
     
-    @Override
-    public void init() {
+    Object get(String key);
     
-    }
+    Long getLong(String key);
     
-    @Override
-    public void openConnection() {
+    Double getDouble(String key);
     
-    }
+    Integer getInt(String key);
     
-    @Override
-    public Table getTable(String name) {
-        return null;
-    }
+    Collection<Object> getCollection(String key);
+    
+    <T> Collection<T> getCollection(String key, Class<T> clazz);
+    
+    <T> Collection<T> getCollection(String key, T obj);
+    
+    Map<String, Object> getMap(String key);
+    
+    <T> Map<String, T> getMap(String key, Class<T> clazz);
+    
+    <T> Map<String, T> getMap(String key, T obj);
 }

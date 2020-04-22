@@ -15,30 +15,24 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.api.entities;
+package com.solostudios.qev.framework.api.database;
 
-import com.solostudios.qev.framework.api.Client;
-import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
-import com.solostudios.qev.framework.api.database.structure.usable.Entity;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 
-public final class Role extends Entity<RoleManager, Role> {
-    public Role(RoleManager manager, DataObject data, Client client) {
-        super(manager, data, client);
-    }
+public interface Table extends Iterable<DataObject> {
+    DataObject get(long id);
     
+    @NotNull
     @Override
-    public void forceSave() {
-    
+    default Iterator<DataObject> iterator() {
+        return getData().iterator();
     }
     
-    @Override
-    public long getIdLong() {
-        return 0;
-    }
+    Collection<DataObject> getData();
     
-    @Override
-    public DataObject toDataObject() {
-        return null;
-    }
+    void put(long id, DataObject obj);
 }

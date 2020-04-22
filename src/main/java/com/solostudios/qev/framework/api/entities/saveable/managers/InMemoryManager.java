@@ -15,12 +15,12 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.api.entities;
+package com.solostudios.qev.framework.api.entities.saveable.managers;
 
 import com.solostudios.qev.framework.api.Client;
 import com.solostudios.qev.framework.api.database.GenericDatabase;
-import com.solostudios.qev.framework.api.database.structure.usable.Entity;
-import com.solostudios.qev.framework.api.database.structure.usable.EntityManager;
+import com.solostudios.qev.framework.api.database.entities.SerializableEntity;
+import com.solostudios.qev.framework.api.database.entities.SerializableEntityManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -31,7 +31,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
-public abstract class InMemoryManager<E extends Entity<M, E>, M extends InMemoryManager<E, M>> extends EntityManager<E, M> {
+public abstract class InMemoryManager<E extends SerializableEntity<M, E>, M extends InMemoryManager<E, M>>
+        extends SerializableEntityManager<E, M> {
     private final Boolean      finalized = false;
     private final Map<Long, E> entityMap;
     
@@ -43,6 +44,11 @@ public abstract class InMemoryManager<E extends Entity<M, E>, M extends InMemory
     @Override
     public final boolean usesCaching() {
         return true;
+    }
+    
+    @Override
+    public boolean isConcurrent() {
+        return false;
     }
     
     @Override

@@ -17,7 +17,7 @@
 
 package com.solostudios.qev.framework.internal.database.mongo;
 
-import com.solostudios.qev.framework.api.database.structure.raw.Table;
+import com.solostudios.qev.framework.api.database.Table;
 import org.bson.Document;
 
 import java.util.Collection;

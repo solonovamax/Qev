@@ -15,18 +15,21 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.api.entities;
+package com.solostudios.qev.framework.internal.entities;
 
 import com.solostudios.qev.framework.api.Client;
-import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
-import com.solostudios.qev.framework.api.database.structure.usable.Entity;
+import com.solostudios.qev.framework.api.database.DataObject;
+import com.solostudios.qev.framework.api.entities.saveable.Guild;
+import com.solostudios.qev.framework.api.entities.saveable.GuildManager;
+import com.solostudios.qev.framework.api.entities.saveable.RoleManager;
+import com.solostudios.qev.framework.api.entities.saveable.UserManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public final class Guild extends Entity<GuildManager, Guild> {
+public class InternalGuild implements Guild {
     public static Map<String, Object> INIT_DATA;
     static {
         INIT_DATA = new HashMap<>();
@@ -38,8 +41,8 @@ public final class Guild extends Entity<GuildManager, Guild> {
     private       long                               id;
     
     
-    protected Guild(DataObject object, GuildManager manager, UserManager userManager, RoleManager roleManager, Client client) {
-        super(manager, object, client);
+    protected InternalGuild(DataObject object, GuildManager manager, UserManager userManager, RoleManager roleManager, Client client) {
+        //super(manager, object, client);
         this.userManager = userManager;
         this.roleManager = roleManager;
         this.jdaGuild = client.getJDA().getGuildById(object.getId());
@@ -53,18 +56,8 @@ public final class Guild extends Entity<GuildManager, Guild> {
         return userManager;
     }
     
-    @Override
-    public final void forceSave() {
-        manager.save(this);
-    }
-    
     public RoleManager getRoleManager() {
         return roleManager;
-    }
-    
-    @Override
-    public long getIdLong() {
-        return id;
     }
     
     @Override
@@ -72,24 +65,8 @@ public final class Guild extends Entity<GuildManager, Guild> {
         return null;
     }
     
-    /*
     @Override
-    public Guild fromDataObject(DataObject data) {
-        throw new UnsupportedOperationException(
-                "You must use Guild#fromDataObject(DataObject, Map)! A Guild always requires a config map!");
+    public long getIdLong() {
+        return id;
     }
-    
-    @Override
-    public Guild fromDataObject(DataObject data, Map<String, Object> config) {
-        GuildManager guildManager = (GuildManager) config.get("guildManager");
-        UserManager  userManager  = (UserManager) config.get("userManager");
-        RoleManager  roleManager  = (RoleManager) config.get("roleManager");
-        Objects.requireNonNull(guildManager);
-        Objects.requireNonNull(userManager);
-        Objects.requireNonNull(roleManager);
-        
-        
-        return new Guild(data, guildManager, userManager, roleManager);
-    }
-     */
 }

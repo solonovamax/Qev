@@ -15,30 +15,11 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.internal.database.mongo;
+package com.solostudios.qev.framework.api.entities.saveable;
 
-import com.solostudios.qev.framework.api.database.GenericDatabase;
-import com.solostudios.qev.framework.api.database.Table;
+import com.solostudios.qev.framework.api.database.entities.SerializableEntity;
 
 
-public class MongoDatabase implements GenericDatabase {
-    @Override
-    public void setConnectionURL(String connectionURL) {
-    
-    }
-    
-    @Override
-    public void init() {
-    
-    }
-    
-    @Override
-    public void openConnection() {
-    
-    }
-    
-    @Override
-    public Table getTable(String name) {
-        return null;
-    }
+public interface User extends SerializableEntity<UserManager, User> {
+
 }

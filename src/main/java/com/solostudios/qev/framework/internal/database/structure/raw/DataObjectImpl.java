@@ -17,7 +17,7 @@
 
 package com.solostudios.qev.framework.internal.database.structure.raw;
 
-import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
+import com.solostudios.qev.framework.api.database.DataObject;
 
 import java.util.HashMap;
 

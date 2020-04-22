@@ -15,21 +15,17 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.api.entities;
+package com.solostudios.qev.framework.api.entities.saveable;
 
 import com.solostudios.qev.framework.api.Client;
+import com.solostudios.qev.framework.api.database.DataObject;
 import com.solostudios.qev.framework.api.database.GenericDatabase;
-import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
+import com.solostudios.qev.framework.api.entities.saveable.managers.InMemoryManager;
 
 
 public final class RoleManager extends InMemoryManager<Role, RoleManager> {
     public RoleManager(GenericDatabase database, long guildId, Client client) {
         super(database, "RoleConfig", client, RoleManager.class);
-    }
-    
-    @Override
-    public boolean isConcurrent() {
-        return false;
     }
     
     @Override

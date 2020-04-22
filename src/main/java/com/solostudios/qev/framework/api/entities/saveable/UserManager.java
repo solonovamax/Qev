@@ -15,31 +15,36 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.api.entities;
+package com.solostudios.qev.framework.api.entities.saveable;
 
 import com.solostudios.qev.framework.api.Client;
-import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
-import com.solostudios.qev.framework.api.database.structure.usable.Entity;
+import com.solostudios.qev.framework.api.database.DataObject;
+import com.solostudios.qev.framework.api.database.GenericDatabase;
+import com.solostudios.qev.framework.api.entities.saveable.managers.InMemoryManager;
 
 
-public final class User extends Entity<UserManager, User> {
-    public User(UserManager manager, DataObject data, Client client) {
-        super(manager, data, client);
+public final class UserManager extends InMemoryManager<User, UserManager> {
+    public UserManager(GenericDatabase database, long guildId, Client client) {
+        super(database, "UserData", client, UserManager.class);
     }
     
     @Override
-    public void forceSave() {
-        manager.save(this);
+    protected void save(User user) {
+    
     }
     
     @Override
-    public long getIdLong() {
-        return 0;
-    }
-    
-    
-    @Override
-    public DataObject toDataObject() {
+    protected User createNew(long id) {
         return null;
+    }
+    
+    @Override
+    public User fromDataObject(DataObject object) {
+        return null;
+    }
+    
+    @Override
+    public void shutdown() {
+    
     }
 }

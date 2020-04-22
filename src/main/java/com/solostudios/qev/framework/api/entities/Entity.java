@@ -15,13 +15,12 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.api.database.structure.usable;
+package com.solostudios.qev.framework.api.entities;
 
-import com.solostudios.qev.framework.api.database.Saveable;
 import com.solostudios.qev.framework.internal.utils.EntityUtil;
 
 
-public interface GenericEntity<M extends GenericEntityManager<E, M>, E extends GenericEntity<M, E>> extends Saveable {
+public interface Entity {
     /**
      * This is the numerical ID of the object with an identifier at the end for different types of objects.
      *
@@ -30,7 +29,7 @@ public interface GenericEntity<M extends GenericEntityManager<E, M>, E extends G
     String getId();
     
     /**
-     * Every entity MUST have a UNIQUE id that is a 64 bit integer (long).
+     * Every entity MUST have a UNIQUE id that is a 64 bit integer (aka a long).
      * <p>
      * You can generate ids using {@link EntityUtil#generateUniqueID()}. This class will generate a unique id in a similar way to how the
      * discord and twitter snowflake-ids work.
@@ -38,6 +37,4 @@ public interface GenericEntity<M extends GenericEntityManager<E, M>, E extends G
      * @return The numerical ID of the object. It will contain an ID resulting from the discord API, or 0.
      */
     long getIdLong();
-    
-    M getManager();
 }

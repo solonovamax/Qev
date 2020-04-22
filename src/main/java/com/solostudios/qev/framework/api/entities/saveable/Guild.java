@@ -15,29 +15,20 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.api.database.structure.usable;
+package com.solostudios.qev.framework.api.entities.saveable;
 
-import java.util.Collection;
-import java.util.function.Predicate;
+import com.solostudios.qev.framework.api.database.entities.SerializableEntity;
 
 
-public interface GenericEntityManager<E extends GenericEntity<M, E>, M extends GenericEntityManager<E, M>> {
+public interface Guild extends SerializableEntity<GuildManager, Guild> {
     
-    boolean usesCaching();
     
-    boolean isConcurrent();
+    net.dv8tion.jda.api.entities.Guild getJdaGuild();
     
-    E getEntityById(long id);
+    UserManager getUserManager();
     
-    E getEntityByFilter(Predicate<E> filter);
+    @Override
+    GuildManager getManager();
     
-    Collection<E> getEntitiesByFilter(Predicate<E> filter);
-    
-    Collection<E> getAllEntities();
-    
-    void saveAll();
-    
-    void shutdown();
-    
-    boolean isShutdown();
+    RoleManager getRoleManager();
 }

@@ -15,17 +15,18 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.api.entities;
+package com.solostudios.qev.framework.api.entities.saveable;
 
 import com.solostudios.qev.framework.api.Client;
+import com.solostudios.qev.framework.api.database.DataObject;
 import com.solostudios.qev.framework.api.database.GenericDatabase;
-import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
+import com.solostudios.qev.framework.api.entities.saveable.managers.ConcurrentCachedEntityManager;
 
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 
 
-public final class GuildManager extends ConcurrentCachedEntityManager<Guild, GuildManager> {
+public abstract class GuildManager extends ConcurrentCachedEntityManager<Guild, GuildManager> {
     
     public GuildManager(GenericDatabase database, Client client) {
         this(database, getDefaultExecutor(), client);
@@ -54,13 +55,13 @@ public final class GuildManager extends ConcurrentCachedEntityManager<Guild, Gui
     }
     
     @Override
-    public Guild fromDataObject(DataObject object) {
-        return new Guild(object, this, new UserManager(database, object.getId(), client), new RoleManager(database, object.getId(), client),
-                         client);
+    public void shutdown() {
+    
     }
     
     @Override
-    public void shutdown() {
-    
+    public Guild fromDataObject(DataObject object) {
+        return new Guild(object, this, new UserManager(database, object.getId(), client), new RoleManager(database, object.getId(), client),
+                         client);
     }
 }

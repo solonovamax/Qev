@@ -17,7 +17,7 @@
 
 package com.solostudios.qev.framework.internal.database.mongo;
 
-import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
+import com.solostudios.qev.framework.api.database.DataObject;
 
 
 public class MongoData implements DataObject {

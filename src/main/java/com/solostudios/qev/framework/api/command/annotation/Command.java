@@ -39,7 +39,6 @@ public @interface Command {
     
     Class<? extends Category>[] category() default {Category.NoCategory.class};
     
-    
     boolean nsfw() default false;
     
     boolean guildLocked() default false;

@@ -15,30 +15,10 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.internal.database.mongo;
+package com.solostudios.qev.framework.internal.entities;
 
-import com.solostudios.qev.framework.api.database.GenericDatabase;
-import com.solostudios.qev.framework.api.database.Table;
+import com.solostudios.qev.framework.api.entities.saveable.Role;
 
 
-public class MongoDatabase implements GenericDatabase {
-    @Override
-    public void setConnectionURL(String connectionURL) {
-    
-    }
-    
-    @Override
-    public void init() {
-    
-    }
-    
-    @Override
-    public void openConnection() {
-    
-    }
-    
-    @Override
-    public Table getTable(String name) {
-        return null;
-    }
+public class InternalRole implements Role {
 }

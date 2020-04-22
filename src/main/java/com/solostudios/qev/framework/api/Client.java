@@ -19,8 +19,8 @@ package com.solostudios.qev.framework.api;
 
 import com.solostudios.qev.framework.api.database.DatabaseManager;
 import com.solostudios.qev.framework.api.database.GenericDatabase;
-import com.solostudios.qev.framework.api.entities.Guild;
-import com.solostudios.qev.framework.api.entities.User;
+import com.solostudios.qev.framework.api.entities.saveable.Guild;
+import com.solostudios.qev.framework.api.entities.saveable.User;
 import com.solostudios.qev.framework.api.events.Event;
 import com.solostudios.qev.framework.api.events.EventListener;
 import com.solostudios.qev.framework.api.events.EventManager;

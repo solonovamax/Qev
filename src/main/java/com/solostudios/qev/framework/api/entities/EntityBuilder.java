@@ -17,38 +17,13 @@
 
 package com.solostudios.qev.framework.api.entities;
 
-import com.solostudios.qev.framework.api.Client;
-import com.solostudios.qev.framework.api.database.GenericDatabase;
-import com.solostudios.qev.framework.api.database.structure.raw.DataObject;
+import com.solostudios.qev.framework.api.database.DataObject;
+import com.solostudios.qev.framework.api.entities.saveable.Guild;
+import com.solostudios.qev.framework.api.entities.saveable.GuildManager;
+import com.solostudios.qev.framework.api.entities.saveable.RoleManager;
+import com.solostudios.qev.framework.api.entities.saveable.UserManager;
 
 
-public final class UserManager extends InMemoryManager<User, UserManager> {
-    public UserManager(GenericDatabase database, long guildId, Client client) {
-        super(database, "UserData", client, UserManager.class);
-    }
-    
-    @Override
-    protected void save(User user) {
-    
-    }
-    
-    @Override
-    protected User createNew(long id) {
-    
-    }
-    
-    @Override
-    public User fromDataObject(DataObject object) {
-        return null;
-    }
-    
-    @Override
-    public boolean isConcurrent() {
-        return false;
-    }
-    
-    @Override
-    public void shutdown() {
-    
-    }
+public interface EntityBuilder {
+    Guild createGuild(DataObject object, GuildManager manager, RoleManager roleManager, UserManager userManager);
 }

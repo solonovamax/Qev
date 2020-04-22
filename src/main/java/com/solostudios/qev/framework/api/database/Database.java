@@ -17,8 +17,6 @@
 
 package com.solostudios.qev.framework.api.database;
 
-import com.solostudios.qev.framework.api.database.structure.raw.Table;
-
 
 public abstract class Database implements GenericDatabase {
     protected final String connectionURL;
