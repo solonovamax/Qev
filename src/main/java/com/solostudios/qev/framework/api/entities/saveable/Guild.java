@@ -17,18 +17,28 @@
 
 package com.solostudios.qev.framework.api.entities.saveable;
 
-import com.solostudios.qev.framework.api.database.entities.SerializableEntity;
+import com.solostudios.qev.framework.api.entities.SerializableEntity;
+import com.solostudios.qev.framework.api.entities.saveable.managers.ConcurrentCachedEntityManager;
+import com.solostudios.qev.framework.api.entities.saveable.managers.InMemoryManager;
 
 
-public interface Guild extends SerializableEntity<GuildManager, Guild> {
+public interface Guild extends SerializableEntity<ConcurrentCachedEntityManager<Guild>, Guild> {
     
     
     net.dv8tion.jda.api.entities.Guild getJdaGuild();
     
-    UserManager getUserManager();
-    
     @Override
-    GuildManager getManager();
+    ConcurrentCachedEntityManager<Guild> getManager();
     
-    RoleManager getRoleManager();
+    InMemoryManager<Role> getRoleManager();
+    
+    long getMemberCount();
+    
+    String getName();
+    
+    default Member getUserById(long id) {
+        return getUserManager().getEntityById(id);
+    }
+    
+    ConcurrentCachedEntityManager<Member> getUserManager();
 }

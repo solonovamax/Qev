@@ -15,38 +15,36 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.api.database;
+package com.solostudios.qev.framework.api.entities;
 
 import com.solostudios.qev.framework.api.Client;
+import com.solostudios.qev.framework.api.database.Database;
+import com.solostudios.qev.framework.api.database.Table;
 
-import java.util.Map;
+import java.util.Collection;
+import java.util.function.Predicate;
 
 
-public interface GenericDatabase {
-    /**
-     * Gets a table from the database, based on name.
-     *
-     * @param name
-     *         Name of the table you want to get.
-     */
-    Table getTable(String name);
+public interface SerializableEntityManager<E extends SerializableEntity<M, E>, M extends SerializableEntityManager<E, M>> {
     
-    /**
-     * Used to create a {@link DataObject} from a {@link Map}. Used for saving objects and etc.
-     *
-     * @param map
-     *         {@link Map} used to construct the data object from.
-     *
-     * @return The new DataObject.
-     */
-    DataObject createDataObj(Map<String, Object> map);
+    Database getDatabase();
     
-    /**
-     * Returns a reference to the client. Useful for bringing together many different subsystems.
-     * <p>
-     * Yes, I too can pretend I know how to write good code.
-     *
-     * @return A client. What did you think it returned?
-     */
+    Table getEntityTable();
+    
     Client getClient();
+    
+    boolean usesCaching();
+    
+    boolean isConcurrent();
+    
+    E getEntityById(long id);
+    
+    E getEntityByFilter(Predicate<E> filter);
+    
+    Collection<E> getEntitiesByFilter(Predicate<E> filter);
+    
+    Collection<E> getAllEntities();
+    
+    void shutdown();
+    
 }

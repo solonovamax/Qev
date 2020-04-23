@@ -17,11 +17,11 @@
 
 package com.solostudios.qev.framework.internal.database.mongo;
 
-import com.solostudios.qev.framework.api.database.GenericDatabase;
+import com.solostudios.qev.framework.api.database.Database;
 import com.solostudios.qev.framework.api.database.Table;
 
 
-public class MongoDatabase implements GenericDatabase {
+public class MongoDatabase implements Database {
     @Override
     public void setConnectionURL(String connectionURL) {
     

@@ -20,9 +20,6 @@ package com.solostudios.qev.framework.internal.entities;
 import com.solostudios.qev.framework.api.Client;
 import com.solostudios.qev.framework.api.database.DataObject;
 import com.solostudios.qev.framework.api.entities.saveable.Guild;
-import com.solostudios.qev.framework.api.entities.saveable.GuildManager;
-import com.solostudios.qev.framework.api.entities.saveable.RoleManager;
-import com.solostudios.qev.framework.api.entities.saveable.UserManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;

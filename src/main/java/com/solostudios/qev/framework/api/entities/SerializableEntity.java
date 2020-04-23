@@ -15,10 +15,13 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.internal.entities;
+package com.solostudios.qev.framework.api.entities;
 
-import com.solostudios.qev.framework.api.entities.saveable.User;
+import com.solostudios.qev.framework.api.database.DataObject;
 
 
-public class InternalUser implements User {
+public interface SerializableEntity<M extends SerializableEntityManager<E, M>, E extends SerializableEntity<M, E>> extends Entity {
+    M getManager();
+    
+    DataObject toDataObject();
 }

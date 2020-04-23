@@ -15,14 +15,10 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.api.database.entities;
+package com.solostudios.qev.framework.api.events.command;
 
-import com.solostudios.qev.framework.api.database.DataObject;
-import com.solostudios.qev.framework.api.entities.Entity;
+import com.solostudios.qev.framework.api.events.Event;
 
 
-public interface SerializableEntity<M extends SerializableEntityManager<E, M>, E extends SerializableEntity<M, E>> extends Entity {
-    M getManager();
-    
-    DataObject toDataObject();
+public class CommandTriggeredEvent implements Event {
 }

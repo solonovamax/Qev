@@ -15,18 +15,10 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.api.entities.events;
+package com.solostudios.qev.framework.internal.entities;
 
-import com.solostudios.qev.framework.api.Client;
-import com.solostudios.qev.framework.api.events.Event;
+import com.solostudios.qev.framework.api.entities.saveable.Member;
 
 
-public class NewEntityEvent implements Event {
-    public NewEntityEvent(Client client) {
-    }
-    
-    @Override
-    public Client getClient() {
-        return null;
-    }
+public class InternalMember implements Member {
 }

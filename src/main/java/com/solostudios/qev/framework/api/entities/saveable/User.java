@@ -17,9 +17,5 @@
 
 package com.solostudios.qev.framework.api.entities.saveable;
 
-import com.solostudios.qev.framework.api.database.entities.SerializableEntity;
-
-
-public interface User extends SerializableEntity<UserManager, User> {
-
+public interface User {
 }

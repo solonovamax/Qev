@@ -17,10 +17,10 @@
 
 package com.solostudios.qev.framework.api;
 
+import com.solostudios.qev.framework.api.database.Database;
 import com.solostudios.qev.framework.api.database.DatabaseManager;
-import com.solostudios.qev.framework.api.database.GenericDatabase;
 import com.solostudios.qev.framework.api.entities.saveable.Guild;
-import com.solostudios.qev.framework.api.entities.saveable.User;
+import com.solostudios.qev.framework.api.entities.saveable.Member;
 import com.solostudios.qev.framework.api.events.Event;
 import com.solostudios.qev.framework.api.events.EventListener;
 import com.solostudios.qev.framework.api.events.EventManager;
@@ -122,7 +122,7 @@ public interface Client {
      *
      * @return The database.
      */
-    GenericDatabase getDatabase();
+    Database getDatabase();
     
     /**
      * Gets the database controller.
@@ -143,17 +143,17 @@ public interface Client {
     
     CompletableFuture<Guild> getGuildByID(String id);
     
-    CompletableFuture<Set<Guild>> getMutualGuilds(User user);
+    CompletableFuture<Set<Guild>> getMutualGuilds(Member member);
     
-    CompletableFuture<Set<User>> getUsersByName(String name);
+    CompletableFuture<Set<Member>> getUsersByName(String name);
     
-    CompletableFuture<Set<User>> getUsersByName(String name, boolean ignoreCase);
+    CompletableFuture<Set<Member>> getUsersByName(String name, boolean ignoreCase);
     
-    CompletableFuture<User> getUserByID(long id);
+    CompletableFuture<Member> getUserByID(long id);
     
-    CompletableFuture<User> getUserByID(String id);
+    CompletableFuture<Member> getUserByID(String id);
     
-    CompletableFuture<User> getUserByTag(String username, String discriminator);
+    CompletableFuture<Member> getUserByTag(String username, String discriminator);
     
     /**
      * Checks if the Client is shut down.

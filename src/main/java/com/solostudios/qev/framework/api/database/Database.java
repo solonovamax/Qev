@@ -17,24 +17,36 @@
 
 package com.solostudios.qev.framework.api.database;
 
+import com.solostudios.qev.framework.api.Client;
 
-public abstract class Database implements GenericDatabase {
-    protected final String connectionURL;
-    
-    public Database(String connectionURL) {
-        this.connectionURL = connectionURL;
-    }
-    
+import java.util.Map;
+
+
+public interface Database {
     /**
-     * Gets a <strike>collection</strike> table from the database, based on name.
-     * <p>
-     * I come from a MongoDB background, so I included this function along with the {@link GenericDatabase#getTable(String)} method. This
-     * method just calls that method; they are identical.
+     * Gets a table from the database, based on name.
      *
      * @param name
-     *         Name of the collection you want to get.
+     *         Name of the table you want to get.
      */
-    public final Table getCollection(String name) {
-        return getTable(name);
-    }
+    Table getTable(String name);
+    
+    /**
+     * Used to create a {@link DataObject} from a {@link Map}. Used for saving objects and etc.
+     *
+     * @param map
+     *         {@link Map} used to construct the data object from.
+     *
+     * @return The new DataObject.
+     */
+    DataObject createDataObj(Map<String, Object> map);
+    
+    /**
+     * Returns a reference to the client. Useful for bringing together many different subsystems.
+     * <p>
+     * Yes, I too can pretend I know how to write good code.
+     *
+     * @return A client. What did you think it returned?
+     */
+    Client getClient();
 }

@@ -15,36 +15,18 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.api.entities.saveable;
+package com.solostudios.qev.framework.api.events.entities;
 
 import com.solostudios.qev.framework.api.Client;
-import com.solostudios.qev.framework.api.database.DataObject;
-import com.solostudios.qev.framework.api.database.GenericDatabase;
-import com.solostudios.qev.framework.api.entities.saveable.managers.InMemoryManager;
+import com.solostudios.qev.framework.api.events.Event;
 
 
-public final class UserManager extends InMemoryManager<User, UserManager> {
-    public UserManager(GenericDatabase database, long guildId, Client client) {
-        super(database, "UserData", client, UserManager.class);
+public class NewEntityEvent implements Event {
+    public NewEntityEvent(Client client) {
     }
     
     @Override
-    protected void save(User user) {
-    
-    }
-    
-    @Override
-    protected User createNew(long id) {
+    public Client getClient() {
         return null;
-    }
-    
-    @Override
-    public User fromDataObject(DataObject object) {
-        return null;
-    }
-    
-    @Override
-    public void shutdown() {
-    
     }
 }

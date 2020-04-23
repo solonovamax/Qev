@@ -17,14 +17,15 @@
 
 package com.solostudios.qev.framework.api.entities.saveable;
 
-import com.solostudios.qev.framework.api.database.entities.SerializableEntity;
+import com.solostudios.qev.framework.api.entities.SerializableEntity;
+import com.solostudios.qev.framework.api.entities.saveable.managers.InMemoryManager;
 
 import java.util.Collection;
 
 
-public interface Role extends SerializableEntity<RoleManager, Role> {
+public interface Role extends SerializableEntity<InMemoryManager<Role>, Role> {
     
     
-    Collection<User> getMembers();
+    Collection<Member> getMembers();
     
 }

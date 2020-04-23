@@ -19,11 +19,10 @@ package com.solostudios.qev.framework.api.entities;
 
 import com.solostudios.qev.framework.api.database.DataObject;
 import com.solostudios.qev.framework.api.entities.saveable.Guild;
-import com.solostudios.qev.framework.api.entities.saveable.GuildManager;
-import com.solostudios.qev.framework.api.entities.saveable.RoleManager;
-import com.solostudios.qev.framework.api.entities.saveable.UserManager;
 
 
 public interface EntityBuilder {
     Guild createGuild(DataObject object, GuildManager manager, RoleManager roleManager, UserManager userManager);
+    
+    
 }

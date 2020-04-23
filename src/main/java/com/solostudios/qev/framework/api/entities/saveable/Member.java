@@ -17,34 +17,22 @@
 
 package com.solostudios.qev.framework.api.entities.saveable;
 
-import com.solostudios.qev.framework.api.Client;
-import com.solostudios.qev.framework.api.database.DataObject;
-import com.solostudios.qev.framework.api.database.GenericDatabase;
-import com.solostudios.qev.framework.api.entities.saveable.managers.InMemoryManager;
+import com.solostudios.qev.framework.api.entities.SerializableEntity;
+import com.solostudios.qev.framework.api.entities.saveable.managers.ConcurrentCachedEntityManager;
 
 
-public final class RoleManager extends InMemoryManager<Role, RoleManager> {
-    public RoleManager(GenericDatabase database, long guildId, Client client) {
-        super(database, "RoleConfig", client, RoleManager.class);
-    }
+public interface Member extends SerializableEntity<ConcurrentCachedEntityManager<Member>, Member> {
     
-    @Override
-    public void shutdown() {
+    Guild getGuild();
     
-    }
+    long getGuildId();
     
-    @Override
-    protected void save(Role role) {
+    User getUser();
     
-    }
+    long getXp();
     
-    @Override
-    protected Role createNew(long id) {
-        return null;
-    }
+    long getLevel();
     
-    @Override
-    public Role fromDataObject(DataObject object) {
-        return null;
-    }
+    long getRemainingXp();
+    
 }

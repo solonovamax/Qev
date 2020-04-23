@@ -18,27 +18,40 @@
 package com.solostudios.qev.framework.api.entities.saveable.managers;
 
 import com.solostudios.qev.framework.api.Client;
-import com.solostudios.qev.framework.api.database.GenericDatabase;
-import com.solostudios.qev.framework.api.database.entities.SerializableEntity;
-import com.solostudios.qev.framework.api.database.entities.SerializableEntityManager;
+import com.solostudios.qev.framework.api.database.DataObject;
+import com.solostudios.qev.framework.api.database.Database;
+import com.solostudios.qev.framework.api.database.Table;
+import com.solostudios.qev.framework.api.entities.SerializableEntity;
+import com.solostudios.qev.framework.api.entities.SerializableEntityManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
-public abstract class InMemoryManager<E extends SerializableEntity<M, E>, M extends InMemoryManager<E, M>>
-        extends SerializableEntityManager<E, M> {
-    private final Boolean      finalized = false;
-    private final Map<Long, E> entityMap;
+public abstract class InMemoryManager<E extends SerializableEntity<InMemoryManager<E>, E>>
+        implements SerializableEntityManager<E, InMemoryManager<E>> {
+    private final Boolean                 finalized = false;
+    private final Map<Long, E>            entityMap;
+    private final Client                  client;
+    private final Table                   table;
+    private final Database                database;
+    private final Function<DataObject, E> loaderFunction;
     
-    public InMemoryManager(GenericDatabase database, String tableName, Client client, Class<M> clazz) {
-        super(database, tableName, client, clazz);
+    public InMemoryManager(Database database, String tableName, Client client, Function<DataObject, E> loaderFunction) {
+        this.client = client;
+        this.database = database;
+        this.table = getDatabase().getTable(tableName);
         entityMap = new HashMap<>();
+        this.loaderFunction = loaderFunction;
+        for (DataObject dataObject : getEntityTable()) {
+            entityMap.put(dataObject.getId(), loaderFunction.apply(dataObject));
+        }
     }
     
     @Override
