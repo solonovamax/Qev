@@ -15,27 +15,8 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.internal.database.mongo;
+package com.solostudios.qev.framework.api.entities.saveable;
 
-import com.solostudios.qev.framework.api.database.DataObject;
-import com.solostudios.qev.framework.api.database.Table;
+public interface BannedMember {
 
-import java.util.Collection;
-
-
-public class MongoCollection implements Table {
-    @Override
-    public DataObject get(long id) {
-        return null;
-    }
-    
-    @Override
-    public Collection<DataObject> getData() {
-        return null;
-    }
-    
-    @Override
-    public void put(long id, DataObject obj) {
-    
-    }
 }

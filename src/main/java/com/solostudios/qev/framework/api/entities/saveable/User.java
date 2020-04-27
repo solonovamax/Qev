@@ -17,5 +17,37 @@
 
 package com.solostudios.qev.framework.api.entities.saveable;
 
-public interface User {
+import com.solostudios.qev.framework.api.actions.Action;
+import com.solostudios.qev.framework.api.entities.SerializableEntity;
+import com.solostudios.qev.framework.api.entities.saveable.managers.ConcurrentCachedEntityManager;
+import net.dv8tion.jda.api.entities.PrivateChannel;
+
+import java.awt.*;
+import java.util.Collection;
+
+
+public interface User extends SerializableEntity<ConcurrentCachedEntityManager<Member>, Member> {
+    net.dv8tion.jda.api.entities.User getJDAUser();
+    
+    Collection<Guild> getMutualGuilds();
+    
+    Member getMember(long guildId);
+    
+    Settings<User> getUserConfig();
+    
+    Object getSetting(String key);
+    
+    String getName();
+    
+    String getMention();
+    
+    String getAvatarURL();
+    
+    Image getAvatarImage();
+    
+    default Action<PrivateChannel> getDms() {
+        return getPrivateChannel();
+    }
+    
+    Action<PrivateChannel> getPrivateChannel();
 }

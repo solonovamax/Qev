@@ -17,28 +17,48 @@
 
 package com.solostudios.qev.framework.internal.database.mongo;
 
+import com.google.common.base.Charsets;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.solostudios.qev.framework.api.Client;
+import com.solostudios.qev.framework.api.database.DataObject;
 import com.solostudios.qev.framework.api.database.Database;
 import com.solostudios.qev.framework.api.database.Table;
 
+import java.net.URLEncoder;
+import java.util.Map;
+
 
 public class MongoDatabase implements Database {
-    @Override
-    public void setConnectionURL(String connectionURL) {
+    private final MongoClient client;
     
-    }
-    
-    @Override
-    public void init() {
-    
-    }
-    
-    @Override
-    public void openConnection() {
-    
+    public MongoDatabase(String ip, int port, String username, String password) {
+        client = MongoClients.create(MongoClientSettings.builder()
+                                                        .retryWrites(true)
+                                                        .retryReads(true)
+                                                        .applyConnectionString(
+                                                                new ConnectionString("mongodb://" +
+                                                                                     URLEncoder.encode(username,
+                                                                                                       Charsets.UTF_8) + ":" +
+                                                                                     URLEncoder.encode(password,
+                                                                                                       Charsets.UTF_8) + "@" +
+                                                                                     ip + ":" + port + "/Bot?authSource=admin")).build());
     }
     
     @Override
     public Table getTable(String name) {
+        return null;
+    }
+    
+    @Override
+    public DataObject createDataObj(Map<String, Object> map) {
+        return null;
+    }
+    
+    @Override
+    public Client getClient() {
         return null;
     }
 }

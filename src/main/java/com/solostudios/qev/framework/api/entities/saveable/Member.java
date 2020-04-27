@@ -17,17 +17,42 @@
 
 package com.solostudios.qev.framework.api.entities.saveable;
 
-import com.solostudios.qev.framework.api.entities.SerializableEntity;
-import com.solostudios.qev.framework.api.entities.saveable.managers.ConcurrentCachedEntityManager;
+import com.solostudios.qev.framework.api.actions.Action;
+
+import java.util.Collection;
 
 
-public interface Member extends SerializableEntity<ConcurrentCachedEntityManager<Member>, Member> {
+public interface Member extends User {
     
     Guild getGuild();
     
-    long getGuildId();
+    Collection<Role> getRoles();
     
-    User getUser();
+    default Action<BannedMember> ban() {
+        return ban(2);
+    }
+    
+    Action<BannedMember> ban(int daysToDelete);
+    
+    default Action<BannedMember> tempBan(long banLength) {
+        return tempBan(banLength, true);
+    }
+    
+    Action<BannedMember> tempBan(long banLength, boolean keepRolesOnReturn);
+    
+    default Action<User> kick() {
+        return kick(true);
+    }
+    
+    Action<User> kick(boolean keepRolesOnReturn);
+    
+    default Action<Member> mute(long length) {
+        return mute(length, false, true);
+    }
+    
+    Action<Member> mute(long length, boolean keepRoles, boolean returnRoles);
+    
+    long getGuildId();
     
     long getXp();
     
@@ -35,4 +60,9 @@ public interface Member extends SerializableEntity<ConcurrentCachedEntityManager
     
     long getRemainingXp();
     
+    Settings<Member> getMemberSettings();
+    
+    Object getGuildSetting(String key);
+    
+    String getGuildName();
 }

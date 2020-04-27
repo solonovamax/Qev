@@ -15,8 +15,15 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.api.database;
+package com.solostudios.qev.framework.api.entities.saveable;
 
-public interface DatabaseManager {
+import com.solostudios.qev.framework.api.database.DataObject;
 
+
+public interface Settings<T> extends DataObject {
+    T getEntity();
+    
+    Settings<T> getDefaultSettings();
+    
+    Object getDefault(String key);
 }

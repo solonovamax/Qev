@@ -17,8 +17,8 @@
 
 package com.solostudios.qev.framework.api;
 
+import com.solostudios.qev.framework.api.actions.Action;
 import com.solostudios.qev.framework.api.database.Database;
-import com.solostudios.qev.framework.api.database.DatabaseManager;
 import com.solostudios.qev.framework.api.entities.saveable.Guild;
 import com.solostudios.qev.framework.api.entities.saveable.Member;
 import com.solostudios.qev.framework.api.events.Event;
@@ -27,7 +27,6 @@ import com.solostudios.qev.framework.api.events.EventManager;
 import net.dv8tion.jda.api.JDA;
 
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 
@@ -40,13 +39,6 @@ public interface Client {
      * @return The token for your discord bot.
      */
     String getToken();
-    
-    /**
-     * All general initialization is performed within this event.
-     * <p>
-     * This will be called automatically when the client object is constructed.
-     */
-    void init();
     
     Client.Status getStatus();
     
@@ -91,12 +83,9 @@ public interface Client {
     
     JDA getJDA();
     
-    long getDatabasePing();
-    
     long getDiscordHeartbeat();
     
     long getDiscordRestPing();
-    
     
     /**
      * Gets the event manager.
@@ -113,7 +102,13 @@ public interface Client {
     
     <T extends EventListener> void removeEventListener(T listener);
     
-    <T extends Event> void dispatchEvent(T e);
+    void addEventListeners(Class<? extends EventListener>... listeners);
+    
+    void removeEventListeners(Class<? extends EventListener>... listeners);
+    
+    void addEventListener(Class<? extends EventListener> listener);
+    
+    void removeEventListener(Class<? extends EventListener> listener);
     
     void registerShutdownListener(Runnable shutdownListener);
     
@@ -124,36 +119,31 @@ public interface Client {
      */
     Database getDatabase();
     
-    /**
-     * Gets the database controller.
-     *
-     * @return The database controller.
-     */
-    DatabaseManager getDatabaseManager();
+    long getDatabasePing();
     
-    CompletableFuture<Set<Guild>> getGuilds();
+    Action<Set<Guild>> getGuilds();
     
-    CompletableFuture<Set<Guild>> getGuildCache();
+    Action<Set<Guild>> getGuildCache();
     
-    CompletableFuture<Set<Guild>> getGuildsByName(String name);
+    Action<Set<Guild>> getGuildsByName(String name);
     
-    CompletableFuture<Set<Guild>> getGuildsByName(String name, boolean ignoreCase);
+    Action<Set<Guild>> getGuildsByName(String name, boolean ignoreCase);
     
-    CompletableFuture<Guild> getGuildByID(long id);
+    Action<Guild> getGuildByID(long id);
     
-    CompletableFuture<Guild> getGuildByID(String id);
+    Action<Guild> getGuildByID(String id);
     
-    CompletableFuture<Set<Guild>> getMutualGuilds(Member member);
+    Action<Set<Guild>> getMutualGuilds(Member member);
     
-    CompletableFuture<Set<Member>> getUsersByName(String name);
+    Action<Set<Member>> getUsersByName(String name);
     
-    CompletableFuture<Set<Member>> getUsersByName(String name, boolean ignoreCase);
+    Action<Set<Member>> getUsersByName(String name, boolean ignoreCase);
     
-    CompletableFuture<Member> getUserByID(long id);
+    Action<Member> getUserByID(long id);
     
-    CompletableFuture<Member> getUserByID(String id);
+    Action<Member> getUserByID(String id);
     
-    CompletableFuture<Member> getUserByTag(String username, String discriminator);
+    Action<Member> getUserByTag(String username, String discriminator);
     
     /**
      * Checks if the Client is shut down.
@@ -165,6 +155,8 @@ public interface Client {
     /**
      * Shuts down the client. <b>ALWAYS</b> call this method before you shut down the bot, or else you may lose some guild data due to the
      * caches not being saved.
+     * <p>
+     * This will automatically be called if the JVM shuts down, via a shutdown hook.
      */
     void shutdown();
     

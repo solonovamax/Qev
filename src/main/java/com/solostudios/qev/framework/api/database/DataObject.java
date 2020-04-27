@@ -19,13 +19,10 @@ package com.solostudios.qev.framework.api.database;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 
-public interface DataObject {
+public interface DataObject extends Map<String, Object> {
     Long getId();
-    
-    Set<Map.Entry<String, Object>> keySet();
     
     Object get(String key);
     

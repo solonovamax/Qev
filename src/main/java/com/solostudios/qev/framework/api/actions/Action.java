@@ -15,29 +15,42 @@
  *       along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.solostudios.qev.framework.api.entities;
+package com.solostudios.qev.framework.api.actions;
 
 import com.solostudios.qev.framework.api.Client;
-import com.solostudios.qev.framework.internal.utils.EntityUtil;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 
-public interface Entity {
+public interface Action<T> {
     /**
-     * This is the numerical ID of the object with an identifier at the end for different types of objects.
+     * Gets the client.
      *
-     * @return The ID of the object.
+     * @return The client.
      */
-    String getId();
-    
-    /**
-     * Every entity MUST have a UNIQUE id that is a 64 bit integer (aka a long).
-     * <p>
-     * You can generate ids using {@link EntityUtil#generateUniqueID()}. This class will generate a unique id in a similar way to how the
-     * discord and twitter snowflake-ids work.
-     *
-     * @return The numerical ID of the object. It will contain an ID resulting from the discord API, or 0.
-     */
-    long getIdLong();
-    
     Client getClient();
+    
+    T get();
+    
+    T await(long millis) throws TimeoutException;
+    
+    T await(long timeout, TimeUnit unit);
+    
+    void getAsync(Consumer<T> action);
+    
+    void getAsync(Consumer<T> action, Consumer<? extends Exception> onException);
+    
+    void onException(Consumer<? extends Exception> onException);
+    
+    CompletableFuture<T> submit();
+    
+    <V> Action<V> andThen(Function<T, V> function);
+    
+    boolean isCompleted();
+    
+    boolean isCanceled();
 }
