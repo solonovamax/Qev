@@ -20,11 +20,12 @@ plugins {
     id "idea"
     id "com.github.johnrengelman.shadow" version "5.2.0"
     id "nebula.lint" version "16.7.0"
+    id "com.palantir.git-version" version "0.12.3"
 }
 
 gradleLint.rules = ['all-dependency']
 
-version = "3.0.0-SNAPSHOT-33.0"
+version = "3.0.0-SNAPSHOT-${versionDetails().gitHash}"
 group = "com.solostudios"
 
 
